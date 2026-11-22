@@ -139,12 +139,13 @@ class DtoStrictLinter:
         """Generate baseline JSON from violations."""
         baseline_data = []
         for violation in violations:
+            message_hash = self._hash_message(violation.message)
             baseline_data.append(
                 {
                     const.BASELINE_KEY_FILE: violation.file,
                     const.BASELINE_KEY_LINE: violation.line,
                     const.BASELINE_KEY_RULE_ID: violation.rule_id,
-                    const.BASELINE_KEY_MESSAGE_HASH: self._hash_message(violation.message),
+                    const.BASELINE_KEY_MESSAGE_HASH: message_hash,
                 }
             )
         return baseline_data

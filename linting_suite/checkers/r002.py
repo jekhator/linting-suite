@@ -147,11 +147,12 @@ class R002Checker(BaseChecker):
                                 break
 
                     if not has_justification:
+                        file = str(self.file_path)
                         self.violations.append(
                             Violation(
                                 rule_id=const.RULE_ID_R002,
                                 severity=RuleSeverity.MEDIUM,
-                                file=str(self.file_path),
+                                file=file,
                                 line=node.lineno,
                                 col=node.col_offset,
                                 message=const.MSG_R002_MISSING_JUSTIFICATION,
@@ -163,25 +164,29 @@ class R002Checker(BaseChecker):
                 if self.config.max_exception_tags_per_file is not None:
                     self.tag_count += 1
                     if self.tag_count > self.config.max_exception_tags_per_file:
+                        file = str(self.file_path)
+                        message = const.MSG_R002_TAG_LIMIT.format(limit=self.config.max_exception_tags_per_file)
                         self.violations.append(
                             Violation(
                                 rule_id=const.RULE_ID_R002,
                                 severity=RuleSeverity.MEDIUM,
-                                file=str(self.file_path),
+                                file=file,
                                 line=node.lineno,
                                 col=node.col_offset,
-                                message=const.MSG_R002_TAG_LIMIT.format(limit=self.config.max_exception_tags_per_file),
+                                message=message,
                             )
                         )
             else:
+                file = str(self.file_path)
+                message = const.MSG_R002_INLINE_DICT.format(count=string_keys)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R002,
                         severity=RuleSeverity.MEDIUM,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R002_INLINE_DICT.format(count=string_keys),
+                        message=message,
                     )
                 )
 

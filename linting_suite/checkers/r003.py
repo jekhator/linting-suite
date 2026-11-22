@@ -41,14 +41,16 @@ class R003Checker(BaseChecker):
                         if has_repr_false and not self._is_sensitivity_aware_repr_false(
                             node
                         ):
+                            file = str(self.file_path)
+                            message = const.MSG_R003_REPR_FALSE.format(name=node.name)
                             self.violations.append(
                                 Violation(
                                     rule_id=const.RULE_ID_R003,
                                     severity=RuleSeverity.MEDIUM,
-                                    file=str(self.file_path),
+                                    file=file,
                                     line=node.lineno,
                                     col=node.col_offset,
-                                    message=const.MSG_R003_REPR_FALSE.format(name=node.name),
+                                    message=message,
                                 )
                             )
                     else:
@@ -62,14 +64,17 @@ class R003Checker(BaseChecker):
                             if not has_slots:
                                 missing.append(const.DATACLASS_SLOTS_TRUE)
 
+                            file = str(self.file_path)
+                            missing_text = const.ELEMENT_SEPARATOR.join(missing)
+                            message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                             self.violations.append(
                                 Violation(
                                     rule_id=const.RULE_ID_R003,
                                     severity=RuleSeverity.MEDIUM,
-                                    file=str(self.file_path),
+                                    file=file,
                                     line=node.lineno,
                                     col=node.col_offset,
-                                    message=const.MSG_R003_MISSING.format(missing=const.ELEMENT_SEPARATOR.join(missing), name=node.name),
+                                    message=message,
                                 )
                             )
                 else:
@@ -86,14 +91,17 @@ class R003Checker(BaseChecker):
                         if not has_repr_false:
                             missing.append(const.DATACLASS_REPR_FALSE)
 
+                        file = str(self.file_path)
+                        missing_text = const.ELEMENT_SEPARATOR.join(missing)
+                        message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                         self.violations.append(
                             Violation(
                                 rule_id=const.RULE_ID_R003,
                                 severity=RuleSeverity.MEDIUM,
-                                file=str(self.file_path),
+                                file=file,
                                 line=node.lineno,
                                 col=node.col_offset,
-                                message=const.MSG_R003_MISSING.format(missing=const.ELEMENT_SEPARATOR.join(missing), name=node.name),
+                                message=message,
                             )
                         )
 

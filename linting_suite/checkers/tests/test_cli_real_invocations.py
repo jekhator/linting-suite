@@ -12,6 +12,7 @@ class TestCLIRealInvocations:
         """Test CLI linting with text output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -21,7 +22,7 @@ class TestCLIRealInvocations:
                 "--format",
                 "text",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -34,6 +35,7 @@ class TestCLIRealInvocations:
         """Test CLI linting with JSON output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -43,7 +45,7 @@ class TestCLIRealInvocations:
                 "--format",
                 "json",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -63,6 +65,7 @@ class TestCLIRealInvocations:
         """Test CLI linting with GitHub Actions output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -72,7 +75,7 @@ class TestCLIRealInvocations:
                 "--format",
                 "github",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -84,6 +87,7 @@ class TestCLIRealInvocations:
         """Test CLI linting clean file exits with 0."""
         good_file = cli_project_dir / "apps" / "services" / "good.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -93,7 +97,7 @@ class TestCLIRealInvocations:
                 "--format",
                 "text",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -102,6 +106,7 @@ class TestCLIRealInvocations:
 
     def test_cli_generate_baseline(self, cli_project_dir):
         """Test CLI baseline generation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -110,7 +115,7 @@ class TestCLIRealInvocations:
                 str(cli_project_dir),
                 "--generate-baseline",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -128,6 +133,7 @@ class TestCLIRealInvocations:
         baseline_file = cli_project_dir / ".strict-module-baseline.json"
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         gen_result = subprocess.run(
             [
                 sys.executable,
@@ -136,13 +142,14 @@ class TestCLIRealInvocations:
                 str(bad_file),
                 "--generate-baseline",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
 
         baseline_file.write_text(gen_result.stdout)
 
+        cwd = str(cli_project_dir)
         lint_result = subprocess.run(
             [
                 sys.executable,
@@ -152,7 +159,7 @@ class TestCLIRealInvocations:
                 "--baseline",
                 str(baseline_file),
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -161,6 +168,7 @@ class TestCLIRealInvocations:
 
     def test_cli_loc_cap_help(self, cli_project_dir):
         """Test loc-cap subcommand basic invocation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -169,7 +177,7 @@ class TestCLIRealInvocations:
                 "loc-cap",
                 str(cli_project_dir),
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -182,9 +190,10 @@ class TestCLIRealInvocations:
 
     def test_cli_missing_path_error(self, cli_project_dir):
         """Test CLI error when path is missing."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [sys.executable, "-m", "linting_suite.module.cli"],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -198,6 +207,7 @@ class TestCLILocCap:
 
     def test_loc_cap_generate_baseline(self, cli_project_dir):
         """Test loc-cap baseline generation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -207,7 +217,7 @@ class TestCLILocCap:
                 str(cli_project_dir),
                 "--generate-baseline",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -221,6 +231,7 @@ class TestCLILocCap:
 
     def test_loc_cap_with_custom_limits(self, cli_project_dir):
         """Test loc-cap with custom hard and soft limits."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -233,7 +244,7 @@ class TestCLILocCap:
                 "--soft-target",
                 "30",
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )
@@ -245,6 +256,7 @@ class TestCLILocCap:
         baseline_file = cli_project_dir / ".loc-cap-baseline.txt"
         baseline_file.write_text("apps/services/bad.py: 100\n")
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
                 sys.executable,
@@ -255,7 +267,7 @@ class TestCLILocCap:
                 "--baseline",
                 str(baseline_file),
             ],
-            cwd=str(cli_project_dir),
+            cwd=cwd,
             capture_output=True,
             text=True,
         )

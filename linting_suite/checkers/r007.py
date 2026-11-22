@@ -26,14 +26,16 @@ class R007Checker(BaseChecker):
                 if self.is_suppressed(node, const.RULE_ID_R007):
                     continue
 
+                file = str(self.file_path)
+                message = const.MSG_R007_FIXTURE.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R007,
                         severity=RuleSeverity.MEDIUM,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R007_FIXTURE.format(name=node.name),
+                        message=message,
                     )
                 )
 

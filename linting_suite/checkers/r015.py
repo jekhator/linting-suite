@@ -87,14 +87,17 @@ class R015Checker(BaseChecker):
 
             gap = next_statement.lineno - current.end_lineno
             if gap > const.R015_MAX_GROUP_GAP:
+                file = str(self.file_path)
+                leg = leg_type.capitalize()
+                message = const.MSG_R015_GROUPS.format(leg=leg)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R015,
                         severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
+                        file=file,
                         line=next_statement.lineno,
                         col=0,
-                        message=const.MSG_R015_GROUPS.format(leg=leg_type.capitalize()),
+                        message=message,
                     )
                 )
 
@@ -108,11 +111,12 @@ class R015Checker(BaseChecker):
                 if current.end_lineno is not None and next_statement.lineno is not None:
                     gap = next_statement.lineno - current.end_lineno
                     if gap > 1:
+                        file = str(self.file_path)
                         self.violations.append(
                             Violation(
                                 rule_id=const.RULE_ID_R015,
                                 severity=RuleSeverity.INFO,
-                                file=str(self.file_path),
+                                file=file,
                                 line=next_statement.lineno,
                                 col=0,
                                 message=const.MSG_R015_TIMING,

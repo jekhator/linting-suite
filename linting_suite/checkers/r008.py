@@ -22,13 +22,15 @@ class R008Checker(BaseChecker):
                     if self.is_suppressed(item, const.RULE_ID_R008):
                         continue
 
+                    file = str(self.file_path)
+                    message = const.MSG_R008_TEST_FUNCTION.format(name=item.name)
                     self.violations.append(
                         Violation(
                             rule_id=const.RULE_ID_R008,
                             severity=RuleSeverity.MEDIUM,
-                            file=str(self.file_path),
+                            file=file,
                             line=item.lineno,
                             col=item.col_offset,
-                            message=const.MSG_R008_TEST_FUNCTION.format(name=item.name),
+                            message=message,
                         )
                     )

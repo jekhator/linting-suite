@@ -102,13 +102,15 @@ class R013Checker(BaseChecker):
         for line_num, param_names in sorted_lines:
             param_count = len(param_names)
             if param_count > const.R013_MAX_PARAMETERS_PER_LINE:
+                file = str(self.file_path)
+                message = const.MSG_R013_HANDLER_LINE.format(count=param_count)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R013,
                         severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
+                        file=file,
                         line=line_num,
                         col=0,
-                        message=const.MSG_R013_HANDLER_LINE.format(count=param_count),
+                        message=message,
                     )
                 )

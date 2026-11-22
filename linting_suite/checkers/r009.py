@@ -32,14 +32,17 @@ class R009Checker(BaseChecker):
                 if self.is_suppressed(item, const.RULE_ID_R009):
                     continue
 
+                file = str(self.file_path)
+                allowed = self._format_allowed_list()
+                message = const.MSG_R009_MODULE_FUNCTION.format(name=item.name, allowed=allowed)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R009,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=item.lineno,
                         col=item.col_offset,
-                        message=const.MSG_R009_MODULE_FUNCTION.format(name=item.name, allowed=self._format_allowed_list()),
+                        message=message,
                     )
                 )
 

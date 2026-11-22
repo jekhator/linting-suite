@@ -163,11 +163,12 @@ class TestRunLocCap:
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
         (tmp_path / "file.py").write_text("a\n" * 700)
+        baseline_text = str(baseline_file)
         exit_code = LocCap.run_loc_cap(
             str(tmp_path),
             hard_cap=694,
             soft_target=500,
-            baseline_file=str(baseline_file),
+            baseline_file=baseline_text,
         )
         assert exit_code == 0
 
@@ -177,11 +178,12 @@ class TestRunLocCap:
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
         (tmp_path / "file.py").write_text("a\n" * 750)
+        baseline_text = str(baseline_file)
         exit_code = LocCap.run_loc_cap(
             str(tmp_path),
             hard_cap=694,
             soft_target=500,
-            baseline_file=str(baseline_file),
+            baseline_file=baseline_text,
         )
         assert exit_code == 1
         captured = capsys.readouterr()
@@ -201,11 +203,12 @@ class TestRunLocCap:
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
         (tmp_path / "file.py").write_text("a\n" * 600)
+        baseline_text = str(baseline_file)
         exit_code = LocCap.run_loc_cap(
             str(tmp_path),
             hard_cap=694,
             soft_target=500,
-            baseline_file=str(baseline_file),
+            baseline_file=baseline_text,
         )
         assert exit_code == 0
         captured = capsys.readouterr()

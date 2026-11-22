@@ -25,14 +25,16 @@ class R010Checker(BaseChecker):
                     self.generic_visit(node)
                     return
 
+                file = str(self.file_path)
+                message = const.MSG_R010_LEGACY_IMPORT.format(name=imported_name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R010,
                         severity=RuleSeverity.MEDIUM,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R010_LEGACY_IMPORT.format(name=imported_name),
+                        message=message,
                     )
                 )
 

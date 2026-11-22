@@ -24,14 +24,16 @@ class R001Checker(BaseChecker):
         for argument in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
             if argument.annotation:
                 if AnnotationInspector.is_dict_str_any(argument.annotation):
+                    file = str(self.file_path)
+                    message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                     self.violations.append(
                         Violation(
                             rule_id=const.RULE_ID_R001,
                             severity=RuleSeverity.HIGH,
-                            file=str(self.file_path),
+                            file=file,
                             line=node.lineno,
                             col=node.col_offset,
-                            message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
+                            message=message,
                         )
                     )
                     return
@@ -39,28 +41,32 @@ class R001Checker(BaseChecker):
                     self.config.strict_collections
                     and AnnotationInspector.is_bare_collection(argument.annotation)
                 ):
+                    file = str(self.file_path)
+                    message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                     self.violations.append(
                         Violation(
                             rule_id=const.RULE_ID_R001,
                             severity=RuleSeverity.HIGH,
-                            file=str(self.file_path),
+                            file=file,
                             line=node.lineno,
                             col=node.col_offset,
-                            message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
+                            message=message,
                         )
                     )
                     return
 
         if node.args.vararg and node.args.vararg.annotation:
             if AnnotationInspector.is_dict_str_any(node.args.vararg.annotation):
+                file = str(self.file_path)
+                message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
@@ -68,28 +74,32 @@ class R001Checker(BaseChecker):
                 self.config.strict_collections
                 and AnnotationInspector.is_bare_collection(node.args.vararg.annotation)
             ):
+                file = str(self.file_path)
+                message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
 
         if node.args.kwarg and node.args.kwarg.annotation:
             if AnnotationInspector.is_dict_str_any(node.args.kwarg.annotation):
+                file = str(self.file_path)
+                message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
@@ -97,42 +107,48 @@ class R001Checker(BaseChecker):
                 self.config.strict_collections
                 and AnnotationInspector.is_bare_collection(node.args.kwarg.annotation)
             ):
+                file = str(self.file_path)
+                message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
 
         if node.returns:
             if AnnotationInspector.is_dict_str_any(node.returns):
+                file = str(self.file_path)
+                message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
+                        message=message,
                     )
                 )
             elif (
                 self.config.strict_collections
                 and AnnotationInspector.is_bare_collection(node.returns)
             ):
+                file = str(self.file_path)
+                message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
+                        message=message,
                     )
                 )
 

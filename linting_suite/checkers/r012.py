@@ -42,11 +42,12 @@ class R012Checker(BaseChecker):
         try:
             reconstructed = self._reconstruct_call(node, node.lineno, node.end_lineno)
             if reconstructed and len(reconstructed) <= const.R012_MAX_ONE_LINE_LENGTH:
+                file = str(self.file_path)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R012,
                         severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
                         message=const.MSG_R012_SINGLE_ARGUMENT,

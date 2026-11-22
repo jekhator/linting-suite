@@ -32,14 +32,16 @@ class R005Checker(BaseChecker):
         has_validation_error = self._has_validation_error(node)
 
         if not (has_from_dict or has_validation_error):
+            file = str(self.file_path)
+            message = const.MSG_R005_NO_FROM_DICT.format(name=node.name)
             self.violations.append(
                 Violation(
                     rule_id=const.RULE_ID_R005,
                     severity=RuleSeverity.LOW,
-                    file=str(self.file_path),
+                    file=file,
                     line=node.lineno,
                     col=node.col_offset,
-                    message=const.MSG_R005_NO_FROM_DICT.format(name=node.name),
+                    message=message,
                 )
             )
 

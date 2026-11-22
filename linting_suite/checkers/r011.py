@@ -41,11 +41,12 @@ class R011Checker(BaseChecker):
 
         has_literal = self._check_for_string_literals(node.exc)
         if has_literal:
+            file = str(self.file_path)
             self.violations.append(
                 Violation(
                     rule_id=const.RULE_ID_R011,
                     severity=RuleSeverity.HIGH,
-                    file=str(self.file_path),
+                    file=file,
                     line=node.lineno,
                     col=node.col_offset,
                     message=const.MSG_R011_RAISE_LITERAL,

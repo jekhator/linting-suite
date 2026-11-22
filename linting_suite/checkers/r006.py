@@ -23,55 +23,63 @@ class R006Checker(BaseChecker):
 
         for argument in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
             if argument.annotation and AnnotationInspector.contains_any(argument.annotation):
+                file = str(self.file_path)
+                message = const.MSG_R006_PARAMETER.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R006_PARAMETER.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
 
         if node.args.vararg and node.args.vararg.annotation:
             if AnnotationInspector.contains_any(node.args.vararg.annotation):
+                file = str(self.file_path)
+                message = const.MSG_R006_VARARGS.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R006_VARARGS.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
 
         if node.args.kwarg and node.args.kwarg.annotation:
             if AnnotationInspector.contains_any(node.args.kwarg.annotation):
+                file = str(self.file_path)
+                message = const.MSG_R006_KWARGS.format(name=node.name)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
-                        file=str(self.file_path),
+                        file=file,
                         line=node.lineno,
                         col=node.col_offset,
-                        message=const.MSG_R006_KWARGS.format(name=node.name),
+                        message=message,
                     )
                 )
                 return
 
         if node.returns and AnnotationInspector.contains_any(node.returns):
+            file = str(self.file_path)
+            message = const.MSG_R006_RETURN.format(name=node.name)
             self.violations.append(
                 Violation(
                     rule_id=const.RULE_ID_R006,
                     severity=RuleSeverity.HIGH,
-                    file=str(self.file_path),
+                    file=file,
                     line=node.lineno,
                     col=node.col_offset,
-                    message=const.MSG_R006_RETURN.format(name=node.name),
+                    message=message,
                 )
             )
 

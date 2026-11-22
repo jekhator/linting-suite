@@ -32,14 +32,16 @@ class R004Checker(BaseChecker):
                 if not self._has_exception_tag(
                     item
                 ) and not self._is_class_method_wrapper(item):
+                    file = str(self.file_path)
+                    message = const.MSG_R004_NO_TAG.format(name=item.name)
                     self.violations.append(
                         Violation(
                             rule_id=const.RULE_ID_R004,
                             severity=RuleSeverity.HIGH,
-                            file=str(self.file_path),
+                            file=file,
                             line=item.lineno,
                             col=item.col_offset,
-                            message=const.MSG_R004_NO_TAG.format(name=item.name),
+                            message=message,
                         )
                     )
 
