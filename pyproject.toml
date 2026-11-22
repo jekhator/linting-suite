@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "strict-suite"
+name = "linting-suite"
 dynamic = ["version"]
 description = "Consolidated Python linter with R001-R015 rules for DTO discipline, module structure, typing compliance, constants enforcement, and formatting standards."
 readme = "README.md"
@@ -26,36 +26,36 @@ classifiers = [
 keywords = ["linter", "ast", "dto", "dataclass", "code-quality", "static-analysis", "strict"]
 
 [project.urls]
-Homepage = "https://pypi.org/project/strict-suite/"
-Repository = "https://github.com/jekhator/strict-suite"
-Issues = "https://github.com/jekhator/strict-suite/issues"
-Changelog = "https://github.com/jekhator/strict-suite/blob/main/CHANGELOG.md"
+Homepage = "https://pypi.org/project/linting-suite/"
+Repository = "https://github.com/jekhator/linting-suite"
+Issues = "https://github.com/jekhator/linting-suite/issues"
+Changelog = "https://github.com/jekhator/linting-suite/blob/main/CHANGELOG.md"
 
 [project.scripts]
-strict-module = "strict_module.cli:main"
-dto-strict = "strict_module.cli:main"
+strict-module = "linting_suite.module.cli:main"
+dto-strict = "linting_suite.module.cli:main"
 
 [project.optional-dependencies]
 dev = ["pytest>=8", "pytest-cov", "mypy"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["strict_checkers", "strict_config", "strict_inspection", "strict_linter", "strict_loc_cap", "strict_rules", "strict_module"]
+packages = ["linting_suite"]
 exclude = [
-    "*/tests",
-    "*/fixtures",
+    "**/tests",
+    "**/fixtures",
 ]
 
 [tool.hatch.version]
-path = "strict_config/_version.py"
+path = "linting_suite/config/_version.py"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-testpaths = ["strict_checkers/tests"]
+testpaths = ["linting_suite/checkers/tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
 
 [tool.coverage.run]
-source = ["strict_checkers", "strict_config", "strict_inspection", "strict_linter", "strict_loc_cap", "strict_rules", "strict_module"]
+source = ["linting_suite"]
 branch = true
 
 [tool.coverage.report]
@@ -71,14 +71,14 @@ exclude_lines = [
 
 [tool.ruff]
 target-version = "py312"
-extend-exclude = ["strict_checkers/tests/fixtures/bad/"]
+extend-exclude = ["linting_suite/checkers/tests/fixtures/bad/"]
 
 [tool.ruff.format]
 exclude = [
-    "strict_checkers/r012.py",
-    "strict_checkers/r013.py",
-    "strict_checkers/r014.py",
-    "strict_checkers/tests/test_r012_r013_r014_r015.py",
+    "linting_suite/checkers/r012.py",
+    "linting_suite/checkers/r013.py",
+    "linting_suite/checkers/r014.py",
+    "linting_suite/checkers/tests/test_r012_r013_r014_r015.py",
 ]
 
 [tool.ruff.lint]
@@ -86,13 +86,13 @@ extend-select = ["I", "TID252", "PLC0414", "UP035"]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
-known-first-party = ["strict_checkers", "strict_config", "strict_inspection", "strict_linter", "strict_loc_cap", "strict_rules", "strict_module"]
+known-first-party = ["linting_suite"]
 
 [tool.ruff.lint.flake8-tidy-imports]
 ban-relative-imports = "all"
 
 [tool.strict-module]
-paths = ["strict_checkers/", "strict_config/", "strict_inspection/", "strict_linter/", "strict_loc_cap/", "strict_rules/", "strict_module/"]
+paths = ["linting_suite/checkers/", "linting_suite/config/", "linting_suite/inspection/", "linting_suite/linter/", "linting_suite/loc_cap/", "linting_suite/rules/", "linting_suite/module/"]
 service_paths = ["apps/*/services/*.py", "**/services/*.py"]
 dto_paths = ["**/dtos.py", "**/dtos/*.py"]
 exception_tags = [
@@ -101,7 +101,7 @@ exception_tags = [
 ]
 disabled_rules = []
 severity_overrides = {}
-# Note: strict_checkers/tests/fixtures/bad/*.py intentionally contain violations
+# Note: linting_suite/checkers/tests/fixtures/bad/*.py intentionally contain violations
 # for use as test corpus. These files are not linted by CI; see setup.cfg.
 
 [tool.strict-module.loc-cap]

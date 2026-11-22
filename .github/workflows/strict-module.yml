@@ -29,6 +29,6 @@ jobs:
         run: uv python install 3.12
       - name: Run strict-module
         run: |
-          uv run --python 3.12 python -m strict_module.cli \
-            $(find strict_checkers strict_config strict_inspection strict_linter strict_loc_cap strict_rules strict_module -name "*.py" ! -path "*/tests/*" ! -path "*/fixtures/*" | sort) \
+          uv run --python 3.12 python -m linting_suite.module.cli \
+            $(find linting_suite/checkers linting_suite/config linting_suite/inspection linting_suite/linter linting_suite/loc_cap linting_suite/rules linting_suite/module -name "*.py" ! -path "*/tests/*" ! -path "*/fixtures/*" | sort) \
             --format github

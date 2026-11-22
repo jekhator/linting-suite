@@ -4,17 +4,17 @@ Issues and pull requests welcome. Please include fixtures (good and bad examples
 
 When submitting a fix or feature:
 
-1. Ensure all tests pass: `python3.12 -m pytest strict_module/tests/ -v --tb=short`
-2. Format code: `ruff format strict_module/`
-3. Lint code: `ruff check strict_module/` and `strict-module strict_module/`
-4. Check LOC caps: `strict-module loc-cap strict_module/`
+1. Ensure all tests pass: `python3.12 -m pytest linting_suite/module/tests/ -v --tb=short`
+2. Format code: `ruff format linting_suite/module/`
+3. Lint code: `ruff check linting_suite/module/` and `strict-module linting_suite/module/`
+4. Check LOC caps: `strict-module loc-cap linting_suite/module/`
 5. Update CHANGELOG.md with your changes under an [Unreleased] section
 
 ## Development Setup
 
 ```bash
-git clone https://github.com/jekhator/strict-suite.git
-cd strict-suite
+git clone https://github.com/jekhator/linting-suite.git
+cd linting-suite
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"

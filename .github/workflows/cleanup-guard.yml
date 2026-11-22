@@ -16,9 +16,9 @@ jobs:
 
           echo "Checking that all strict-module features have audit and review documentation..."
 
-          FEATURES_DIR="strict_module"
-          AUDITS_DIR="docs/strict_module/audits"
-          REVIEWS_DIR="docs/strict_module/reviews"
+          FEATURES_DIR="linting_suite/module"
+          AUDITS_DIR="docs/linting_suite/audits"
+          REVIEWS_DIR="docs/linting_suite/reviews"
 
           if [ ! -d "$FEATURES_DIR" ]; then
             echo "ERROR: Features directory not found: $FEATURES_DIR"
@@ -43,12 +43,12 @@ jobs:
             review_file=$(find "$REVIEWS_DIR" -name "*$feature*review*" 2>/dev/null | head -1)
 
             if [ -z "$audit_file" ]; then
-              echo "FAIL: Feature '$feature' missing audit doc in docs/strict_module/audits"
+              echo "FAIL: Feature '$feature' missing audit doc in docs/linting_suite/audits"
               MISSING_DOCS=$((MISSING_DOCS + 1))
             fi
 
             if [ -z "$review_file" ]; then
-              echo "FAIL: Feature '$feature' missing review doc in docs/strict_module/reviews"
+              echo "FAIL: Feature '$feature' missing review doc in docs/linting_suite/reviews"
               MISSING_DOCS=$((MISSING_DOCS + 1))
             fi
           done
@@ -57,8 +57,8 @@ jobs:
             echo ""
             echo "ERROR: $MISSING_DOCS feature(s) missing documentation."
             echo "Each feature must have:"
-            echo "  - docs/strict_module/audits/*<feature>*audit*.md"
-            echo "  - docs/strict_module/reviews/*<feature>*review*.md"
+            echo "  - docs/linting_suite/audits/*<feature>*audit*.md"
+            echo "  - docs/linting_suite/reviews/*<feature>*review*.md"
             exit 1
           fi
 

@@ -1,7 +1,9 @@
-# strict-suite
+# linting-suite
 
-[![PyPI](https://img.shields.io/pypi/v/strict-suite.svg?style=flat)](https://pypi.org/project/strict-suite/)
-[![CI](https://github.com/jekhator/strict-suite/workflows/CI/badge.svg)](https://github.com/jekhator/strict-suite/actions)
+Formerly strict-suite.
+
+[![PyPI](https://img.shields.io/pypi/v/linting-suite.svg?style=flat)](https://pypi.org/project/linting-suite/)
+[![CI](https://github.com/jekhator/linting-suite/workflows/CI/badge.svg)](https://github.com/jekhator/linting-suite/actions)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 
@@ -27,13 +29,13 @@ All rules are configurable; violations can be disabled, severity overridden, or 
 ## Install
 
 ```bash
-pip install strict-suite
+pip install linting-suite
 ```
 
 Or with optional development dependencies:
 
 ```bash
-pip install strict-suite[dev]
+pip install linting-suite[dev]
 ```
 
 Both CLI entry points (strict-module and dto-strict) are available post-install.
@@ -247,9 +249,9 @@ The package exports the following public symbols:
 Example usage:
 
 ```python
-from strict_module import DtoStrictLinter, Rule, RuleSeverity, __version__
+from linting_suite.module import DtoStrictLinter, Rule, RuleSeverity, __version__
 
-print(f"strict-suite {__version__}")
+print(f"linting-suite {__version__}")
 
 linter = DtoStrictLinter()
 violations = linter.lint_file("mymodule.py")
@@ -274,27 +276,27 @@ pip install -e ".[dev]"
 Run tests:
 
 ```bash
-python3.12 -m pytest strict_module/tests/ -v
+python3.12 -m pytest linting_suite/module/tests/ -v
 ```
 
 Run the self-lint check:
 
 ```bash
-strict-module strict_module/ --format text
-dto-strict strict_module/
+strict-module linting_suite/module/ --format text
+dto-strict linting_suite/module/
 ```
 
 Run format and style checks:
 
 ```bash
-ruff check strict_module/
-ruff format --check strict_module/
+ruff check linting_suite/module/
+ruff format --check linting_suite/module/
 ```
 
 Run LOC cap check:
 
 ```bash
-strict-module loc-cap strict_module/
+strict-module loc-cap linting_suite/module/
 ```
 
 ## License

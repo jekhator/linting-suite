@@ -1,6 +1,6 @@
-# strict-suite Documentation
+# linting-suite Documentation
 
-This directory contains comprehensive documentation for the strict-suite linting and static analysis tools.
+This directory contains comprehensive documentation for the linting-suite linting and static analysis tools.
 
 ## Rules Reference
 
@@ -39,7 +39,7 @@ The linter enforces 8 rules across Python code:
 
 ## Components
 
-### CLI (`strict_module/cli.py`)
+### CLI (`linting_suite/module/cli.py`)
 
 The command-line interface provides two equivalent entry points:
 - `strict-module`: Primary CLI entry point
@@ -54,7 +54,7 @@ The command-line interface provides two equivalent entry points:
 - `github`: GitHub Actions annotation format
 - `json`: Machine-readable JSON format
 
-### Configuration Layer (`strict_module/config/`)
+### Configuration Layer (`linting_suite/module/config/`)
 
 Configuration is loaded from `pyproject.toml` with the following sections:
 
@@ -68,7 +68,7 @@ Configuration is loaded from `pyproject.toml` with the following sections:
 - `severity_overrides`: Dict mapping rule IDs to override severity levels (e.g., `{"R002": "HIGH", "R011": "INFO"}`)
 - `loc_cap`: LOC cap configuration (hard_cap, soft_target, baseline_file)
 
-### Linter Rules Engine (`strict_module/linter.py`, `strict_module/rules.py`)
+### Linter Rules Engine (`linting_suite/module/linter.py`, `linting_suite/module/rules.py`)
 
 The core AST-based analysis engine that detects violations:
 
@@ -86,7 +86,7 @@ The core AST-based analysis engine that detects violations:
 - R007: Test files only (R007 checks pytest fixtures)
 - R008: Test files only (R008 checks test functions)
 
-### LOC Cap Subcommand (`strict_module/loc_cap.py`)
+### LOC Cap Subcommand (`linting_suite/module/loc_cap.py`)
 
 Enforces lines-of-code limits per file:
 
@@ -106,11 +106,11 @@ Violations can be suppressed inline using `# noqa` comments:
 - **Multiple rules:** `# noqa: R006, R011` suppresses both R006 and R011.
 - **Namespaced form (ruff-friendly):** `# noqa: strict-module-R006` uses the external-rule-friendly namespace.
 
-**Ruff coexistence:** When running ruff alongside strict-suite, declare `[tool.ruff.lint] external = ["strict-module"]` to prevent ruff from warning on external rule codes.
+**Ruff coexistence:** When running ruff alongside linting-suite, declare `[tool.ruff.lint] external = ["strict-module"]` to prevent ruff from warning on external rule codes.
 
 ## Backward Compatibility
 
-As of v0.1.0, strict-suite consolidates the strict-module v0.5.0 package. The following are preserved:
+As of v0.1.0, linting-suite consolidates the strict-module v0.5.0 package. The following are preserved:
 
 - **Config section names:** Both `[tool.strict-module]` and legacy `[tool.dto-strict]` are recognized
 - **Baseline files:** Both `.strict-module-baseline.json` and legacy `.dto-strict-baseline.json` are supported

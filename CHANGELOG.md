@@ -4,12 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-22
+
 ### Fixed
 
 - **Baseline loading error handling** - `load_baseline()` now raises a typed `BaselineLoadError` for missing, unreadable, malformed, undecodable (non-UTF-8), or structurally invalid baseline files instead of silently returning an empty dict. Missing or malformed baselines are now hard errors that fail the gate with exit code 1, preventing silent ratchet disablement.
 
 ### Changed
 
+- **Renamed from strict-suite to linting-suite** - Distribution renamed; all top-level packages moved under one import root, `linting_suite` (strict_checkers -> linting_suite.checkers, strict_config -> linting_suite.config, strict_inspection -> linting_suite.inspection, strict_linter -> linting_suite.linter, strict_loc_cap -> linting_suite.loc_cap, strict_rules -> linting_suite.rules, strict_module -> linting_suite.module). Console scripts `strict-module` and `dto-strict` and the `[tool.strict-module]` config section are unchanged. The old strict-suite project stays installable on PyPI.
 - **Baseline file validation is strict** - Previously, any error loading a baseline file (missing path, invalid JSON, missing entry keys) silently disabled the ratchet. Now all validation errors raise `BaselineLoadError` with a descriptive message to stderr. The ratchet only activates when a valid baseline is loaded.
 
 ## [0.5.0] - 2026-07-22

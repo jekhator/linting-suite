@@ -317,7 +317,7 @@ wheels = [
 ]
 
 [[package]]
-name = "strict-suite"
+name = "linting-suite"
 source = { editable = "." }
 
 [package.optional-dependencies]
