@@ -20,11 +20,11 @@ class R005Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        has_payload_param = any(
+        has_payload_parameter = any(
             argument.arg == const.PARAMETER_PAYLOAD for argument in node.args.args + node.args.kwonlyargs
         )
 
-        if not has_payload_param:
+        if not has_payload_parameter:
             self.generic_visit(node)
             return
 

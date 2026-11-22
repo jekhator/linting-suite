@@ -45,9 +45,9 @@ class R013Checker(BaseChecker):
 
     def _check_signature(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """Check signature formatting per P14 calibration."""
-        params_after_self = self._get_params_after_self(node.args)
+        parameters_after_self = self._get_params_after_self(node.args)
 
-        if len(params_after_self) <= const.R013_MIN_PARAMETERS:
+        if len(parameters_after_self) <= const.R013_MIN_PARAMETERS:
             return
 
         if node.lineno == node.end_lineno:
@@ -59,15 +59,15 @@ class R013Checker(BaseChecker):
         if not self._is_handler_method(node.name):
             return
 
-        self._check_handler_signature(node, params_after_self)
+        self._check_handler_signature(node, parameters_after_self)
 
     def _get_params_after_self(self, args: ast.arguments) -> list[ast.arg]:
         """Extract regular parameters after self/cls (excluding *args, **kwargs)."""
-        params = []
+        parameters = []
         if len(args.args) > 0:
-            params = args.args[1:]
-        params += args.posonlyargs + args.kwonlyargs
-        return params
+            parameters = args.args[1:]
+        parameters += args.posonlyargs + args.kwonlyargs
+        return parameters
 
     def _is_classmethod(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check if function is a classmethod (never flag)."""
@@ -84,25 +84,25 @@ class R013Checker(BaseChecker):
             or method_name.startswith(const.R013_HANDLER_PREFIX_WRAP)
         )
 
-    def _check_handler_signature(self, node: ast.FunctionDef | ast.AsyncFunctionDef, params: list[ast.arg]) -> None:
+    def _check_handler_signature(self, node: ast.FunctionDef | ast.AsyncFunctionDef, parameters: list[ast.arg]) -> None:
         """Check handler signature for proper grouping (2-5 per line)."""
-        param_lines: dict[int, list[str]] = {}
-        for param in params:
-            line = param.lineno  # type: ignore[union-attr]
-            if line not in param_lines:
-                param_lines[line] = []
-            param_lines[line].append(param.arg)
+        parameter_lines: dict[int, list[str]] = {}
+        for parameter in parameters:
+            line = parameter.lineno  # type: ignore[union-attr]
+            if line not in parameter_lines:
+                parameter_lines[line] = []
+            parameter_lines[line].append(parameter.arg)
 
-        sorted_lines = sorted(param_lines.items())
+        sorted_lines = sorted(parameter_lines.items())
 
-        for line_num, param_names in sorted_lines:
-            param_count = len(param_names)
-            if param_count > const.R013_MAX_PARAMETERS_PER_LINE:
+        for line_number, parameter_names in sorted_lines:
+            parameter_count = len(parameter_names)
+            if parameter_count > const.R013_MAX_PARAMETERS_PER_LINE:
                 file = str(self.file_path)
-                message = const.MSG_R013_HANDLER_LINE.format(count=param_count)
+                message = const.MSG_R013_HANDLER_LINE.format(count=parameter_count)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R013, severity=RuleSeverity.INFO, file=file,
-                        line=line_num, col=0, message=message
+                        line=line_number, col=0, message=message
                     )
                 )

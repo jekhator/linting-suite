@@ -1574,15 +1574,15 @@ except Exception:
 """
         tree = ast.parse(source)
         try_node = tree.body[0]
-        first_stmt = try_node.body[0]
+        first_statement = try_node.body[0]
 
         config = Config()
         checker = R015Checker(Path("test.py"), source, config)
 
-        old_end_lineno = first_stmt.end_lineno
-        first_stmt.end_lineno = None
+        old_end_lineno = first_statement.end_lineno
+        first_statement.end_lineno = None
         checker.visit(tree)
-        first_stmt.end_lineno = old_end_lineno
+        first_statement.end_lineno = old_end_lineno
 
         assert isinstance(checker.violations, list)
 

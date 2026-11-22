@@ -87,9 +87,9 @@ class TestFindPythonFiles:
     def test_find_python_files_excludes_management_commands(self, tmp_path):
         """Find Python files excludes management commands."""
         (tmp_path / "file.py").write_text("a\n")
-        mgmt_dir = tmp_path / "management" / "commands"
-        mgmt_dir.mkdir(parents=True)
-        (mgmt_dir / "cmd.py").write_text("a\nb\n")
+        management_dir = tmp_path / "management" / "commands"
+        management_dir.mkdir(parents=True)
+        (management_dir / "cmd.py").write_text("a\nb\n")
         files = LocCap.find_python_files(str(tmp_path))
         assert len(files) == 1
         assert str(tmp_path / "file.py") in files

@@ -27,9 +27,9 @@ class TestLocCapTestExemption:
     def test_loc_cap_counts_source_files(self, temp_project_with_test_files):
         """Source files that are not test files are counted."""
         files = LocCap.find_python_files(str(temp_project_with_test_files))
-        found_src = False
+        found_source = False
         for path, loc in files.items():
             if "src/module.py" in path or "src" + chr(92) + "module.py" in path:
-                found_src = True
+                found_source = True
                 assert loc == 500, "Source file should be counted with correct line count"
-        assert found_src, "Source file should be present in results"
+        assert found_source, "Source file should be present in results"

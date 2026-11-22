@@ -87,5 +87,5 @@ service_paths = ["**/*.py"]
         assert exit_code != 0
 
         captured = capsys.readouterr()
-        expected_msg = const.ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
-        assert expected_msg in captured.err
+        expected_message = const.ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
+        assert expected_message in captured.err

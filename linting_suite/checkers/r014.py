@@ -61,8 +61,8 @@ class R014Checker(BaseChecker):
         if not node.func.attr.startswith(const.LOG_METHOD_PREFIX):
             return False
 
-        first_arg = node.args[0]
-        return self._is_log_event_constant(first_arg)
+        first_argument = node.args[0]
+        return self._is_log_event_constant(first_argument)
 
     def _is_log_event_constant(self, node: ast.expr) -> bool:
         """Check if node is a LOG_EVENT_* constant reference (e.g., const.LOG_EVENT_*)."""
@@ -93,7 +93,7 @@ class R014Checker(BaseChecker):
         self, sorted_lines: list[tuple[int, list[str]]], first_kwarg_line: int | None, call_line: int | None
     ) -> None:
         """Check >=4 kwargs: flag ONLY over-packing (>3 per line). One-per-line never flagged."""
-        for line_num, kwarg_names in sorted_lines:
+        for line_number, kwarg_names in sorted_lines:
             count = len(kwarg_names)
             if count > const.R014_MAX_KWARGS_PER_LINE:
                 file = str(self.file_path)
@@ -101,18 +101,18 @@ class R014Checker(BaseChecker):
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
-                        line=line_num, col=0, message=message
+                        line=line_number, col=0, message=message
                     )
                 )
 
     def _check_log_event_full_explode(self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call) -> None:
         """Check 2-3 kwargs: must FULL-EXPLODE one-per-line (constant on its own line)."""
-        for line_num, kwarg_names in sorted_lines:
+        for line_number, kwarg_names in sorted_lines:
             if len(kwarg_names) != 1:
                 file = str(self.file_path)
                 self.violations.append(
                     Violation(
                         rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
-                        line=line_num, col=0, message=const.MSG_R014_EXPLODE
+                        line=line_number, col=0, message=const.MSG_R014_EXPLODE
                     )
                 )

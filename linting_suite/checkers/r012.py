@@ -30,8 +30,8 @@ class R012Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        arg_count = len(node.args) + len(node.keywords)
-        if arg_count != 1:
+        argument_count = len(node.args) + len(node.keywords)
+        if argument_count != 1:
             self.generic_visit(node)
             return
 

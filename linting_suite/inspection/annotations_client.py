@@ -111,29 +111,29 @@ class AnnotationInspector:
             return True
 
         if noqa_part.startswith(const.NOQA_SPEC_SEPARATOR):
-            spec = noqa_part[1:].strip()
-            if const.COMMENT_MARKER in spec:
-                spec = spec.split(const.COMMENT_MARKER)[0].strip()
+            specification = noqa_part[1:].strip()
+            if const.COMMENT_MARKER in specification:
+                specification = specification.split(const.COMMENT_MARKER)[0].strip()
 
-            parts = spec.split()
+            parts = specification.split()
             if len(parts) > 1:
                 second = parts[1]
                 if second and second[0] in const.NOQA_REASON_DASHES:
-                    spec = parts[0]
+                    specification = parts[0]
 
-            if spec == const.PREFIX_STRICT_MODULE:
+            if specification == const.PREFIX_STRICT_MODULE:
                 return True
 
-            if spec == const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_STRICT_MODULE, rule_id=rule_id):
+            if specification == const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_STRICT_MODULE, rule_id=rule_id):
                 return True
 
-            if spec == const.PREFIX_DTO_STRICT:
+            if specification == const.PREFIX_DTO_STRICT:
                 return True
 
-            if spec == const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_DTO_STRICT, rule_id=rule_id):
+            if specification == const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_DTO_STRICT, rule_id=rule_id):
                 return True
 
-            tokens = [token.strip() for token in spec.split(const.NOQA_TOKEN_SEPARATOR)]
+            tokens = [token.strip() for token in specification.split(const.NOQA_TOKEN_SEPARATOR)]
             if (
                 const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_STRICT_MODULE, rule_id=rule_id) in tokens
                 or const.TEMPLATE_PREFIXED_RULE.format(prefix=const.PREFIX_DTO_STRICT, rule_id=rule_id) in tokens

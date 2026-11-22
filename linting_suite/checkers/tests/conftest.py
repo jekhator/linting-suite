@@ -40,9 +40,9 @@ def temp_project(tmp_path):
     project_root = tmp_path / "project"
     project_root.mkdir()
 
-    src_dir = project_root / "src"
-    src_dir.mkdir()
-    (src_dir / "__init__.py").touch()
+    source_dir = project_root / "src"
+    source_dir.mkdir()
+    (source_dir / "__init__.py").touch()
 
     return project_root
 
@@ -119,9 +119,9 @@ def temp_project_with_test_files(tmp_path):
     """
     root = tmp_path
 
-    src_file = root / "src" / "module.py"
-    src_file.parent.mkdir(parents=True, exist_ok=True)
-    src_file.write_text("x = 1\n" * 500)
+    source_file = root / "src" / "module.py"
+    source_file.parent.mkdir(parents=True, exist_ok=True)
+    source_file.write_text("x = 1\n" * 500)
 
     test_file = root / "test_module.py"
     test_file.write_text("x = 1\n" * 600)
@@ -134,8 +134,8 @@ def temp_project_with_test_files(tmp_path):
     test_in_dir = tests_dir / "test_helper.py"
     test_in_dir.write_text("x = 1\n" * 800)
 
-    src_test_file = root / "src" / "tests" / "helper.py"
-    src_test_file.parent.mkdir(parents=True, exist_ok=True)
-    src_test_file.write_text("x = 1\n" * 750)
+    source_test_file = root / "src" / "tests" / "helper.py"
+    source_test_file.parent.mkdir(parents=True, exist_ok=True)
+    source_test_file.write_text("x = 1\n" * 750)
 
     return root

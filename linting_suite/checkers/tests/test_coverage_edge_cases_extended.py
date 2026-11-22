@@ -203,9 +203,9 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for constant."""
         source = "x: 'int' = 1"
         tree = ast.parse(source)
-        ann_assign = tree.body[0]
+        annotated_assign = tree.body[0]
 
-        result = AnnotationInspector.get_annotation_string(ann_assign.annotation)
+        result = AnnotationInspector.get_annotation_string(annotated_assign.annotation)
         assert "'int'" in result or "int" in result
 
     def test_is_dict_str_any_valid(self):
