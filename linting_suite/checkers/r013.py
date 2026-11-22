@@ -7,7 +7,8 @@ from linting_suite.rules import RuleSeverity, Violation
 
 
 class R013Checker(BaseChecker):
-    """Check compact method signatures per P14 calibration.
+    """
+    Check compact method signatures per P14 calibration.
 
     Per 2026-07-23 calibration:
     - Handler methods (log_*, record_*, wrap_*): 2-5 params per line

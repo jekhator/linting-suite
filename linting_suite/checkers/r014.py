@@ -7,7 +7,8 @@ from linting_suite.rules import RuleSeverity, Violation
 
 
 class R014Checker(BaseChecker):
-    """Check packed keyword groups per P15 calibration (authority: formatting-rule-boundaries.md).
+    """
+    Check packed keyword groups per P15 calibration (authority: formatting-rule-boundaries.md).
 
     Conditions:
     1. Log-event calls (first arg = LOG_EVENT_* constant reference):

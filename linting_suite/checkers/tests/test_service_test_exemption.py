@@ -11,7 +11,8 @@ class TestServiceTestExemption:
     """Test suite for related functionality."""
 
     def test_service_test_file_exempt_from_r001_r004_r006(self):
-        """Test files in services/ are exempt from R001, R004, R006.
+        """
+        Test files in services/ are exempt from R001, R004, R006.
 
         This test verifies that a conftest.py with:
         - module-level @pytest.fixture (would trigger R004 in production code)
@@ -60,7 +61,8 @@ def helper_function():
             )
 
     def test_production_service_file_still_flagged_for_r001_r004_r006(self):
-        """Verify that production code in services/ is still properly flagged.
+        """
+        Verify that production code in services/ is still properly flagged.
 
         This ensures the exemption only applies to test files, not all service files.
         """

@@ -8,7 +8,8 @@ from linting_suite.rules import RuleSeverity, Violation
 
 
 class R011Checker(BaseChecker):
-    """Check for string literals in raise exception arguments.
+    """
+    Check for string literals in raise exception arguments.
 
     Enforces that exception message arguments must be references to ERR_*
     constants (via const.* or similar), never inline string literals or
@@ -61,7 +62,8 @@ class R011Checker(BaseChecker):
         )
 
     def _check_for_string_literals(self, call_node: ast.Call) -> bool:
-        """Check if a Call node contains string literal arguments.
+        """
+        Check if a Call node contains string literal arguments.
 
         Returns True if any positional or keyword argument is:
         - An ast.Constant with string value

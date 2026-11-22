@@ -17,7 +17,8 @@ class AnnotationInspector:
 
     @staticmethod
     def get_annotation_string(annotation: Optional[ast.expr]) -> str:
-        """Convert annotation AST node to string representation.
+        """
+        Convert annotation AST node to string representation.
 
         Handles Python 3.8 compatibility where ast.Index wraps the actual index
         in subscript nodes.
@@ -89,7 +90,11 @@ class AnnotationInspector:
 
     @staticmethod
     def has_noqa_comment(node: ast.AST, rule_id: str, source_lines: list[str]) -> bool:
-        """Check if node's line has a noqa comment suppressing the given rule (supports backward-compat dto-strict tags and bare rule codes)."""
+        """
+        Check if node's line has a noqa comment suppressing the given rule.
+
+        Supports backward-compat dto-strict tags and bare rule codes.
+        """
         if not hasattr(node, "lineno") or node.lineno is None:
             return False
         if node.lineno > len(source_lines):

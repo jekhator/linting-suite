@@ -7,7 +7,8 @@ from linting_suite.rules import RuleSeverity, Violation
 
 
 class R015Checker(BaseChecker):
-    """Check wrap-path blank-line rhythm per P16 final calibration.
+    """
+    Check wrap-path blank-line rhythm per P16 final calibration.
 
     Applies ONLY to wrap-function try/except constructs:
     - Nested function inside a wrapper class/method
@@ -71,7 +72,11 @@ class R015Checker(BaseChecker):
     def _check_group_separation(
         self, statements: list[ast.stmt], leg_type: str
     ) -> None:
-        """Check that statement groups are separated by EXACTLY one blank line."""
+        """
+        Check that statement groups are separated by EXACTLY one blank line.
+
+        The gap is the line distance between two statements: 1 is contiguous, 2 is one blank line, more is too many.
+        """
         for i in range(len(statements) - 1):
             curr = statements[i]
             next_stmt = statements[i + 1]

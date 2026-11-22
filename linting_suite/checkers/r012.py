@@ -7,7 +7,8 @@ from linting_suite.rules import RuleSeverity, Violation
 
 
 class R012Checker(BaseChecker):
-    """Check for multi-line calls that would fit on a single line within 100 chars.
+    """
+    Check for multi-line calls that would fit on a single line within 100 chars.
 
     Only flags calls with very few arguments (1-2) that span multiple lines
     unnecessarily, avoiding false positives for intentional vertical formatting

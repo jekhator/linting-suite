@@ -24,7 +24,8 @@ class TestR007Fixtures:
         assert any("conftest" in v.message.lower() for v in r007_violations)
 
     def test_r007_good_fixture_defined_in_conftest(self, fixture_dir):
-        """Good: fixtures properly defined in conftest.py are not flagged.
+        """
+        Good: fixtures properly defined in conftest.py are not flagged.
 
         This test verifies that test files with conftest.py don't trigger R007.
         The conftest.py file itself can contain fixtures.

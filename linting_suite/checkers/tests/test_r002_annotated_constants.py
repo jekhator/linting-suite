@@ -1,4 +1,5 @@
-"""Tests for R002 rule on annotated constants.
+"""
+Tests for R002 rule on annotated constants.
 
 Verifies that R002 correctly skips annotated module-level and class-level
 constants while still flagging actual inline dict literals in function bodies.
