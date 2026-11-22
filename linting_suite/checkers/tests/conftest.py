@@ -92,28 +92,23 @@ def temp_project_with_test_files(tmp_path):
     """Create a temporary project structure with test and source files."""
     root = tmp_path
 
-    # Create source file (should be counted)
     src_file = root / "src" / "module.py"
     src_file.parent.mkdir(parents=True, exist_ok=True)
-    src_file.write_text("x = 1\n" * 500)  # 500 lines
+    src_file.write_text("x = 1\n" * 500)
 
-    # Create test_*.py file (should be exempt)
     test_file = root / "test_module.py"
-    test_file.write_text("x = 1\n" * 600)  # 600 lines (would normally warn)
+    test_file.write_text("x = 1\n" * 600)
 
-    # Create conftest.py (should be exempt)
     conftest = root / "conftest.py"
-    conftest.write_text("x = 1\n" * 700)  # 700 lines (would normally error)
+    conftest.write_text("x = 1\n" * 700)
 
-    # Create file under tests/ directory (should be exempt)
     tests_dir = root / "tests"
     tests_dir.mkdir()
     test_in_dir = tests_dir / "test_helper.py"
-    test_in_dir.write_text("x = 1\n" * 800)  # 800 lines (would normally error)
+    test_in_dir.write_text("x = 1\n" * 800)
 
-    # Create another source file under src/tests/ (should be exempt because under tests/)
     src_test_file = root / "src" / "tests" / "helper.py"
     src_test_file.parent.mkdir(parents=True, exist_ok=True)
-    src_test_file.write_text("x = 1\n" * 750)  # 750 lines
+    src_test_file.write_text("x = 1\n" * 750)
 
     return root

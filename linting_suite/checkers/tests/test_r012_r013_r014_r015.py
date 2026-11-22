@@ -847,7 +847,6 @@ string'''
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # This might flag because after reconstruction it could fit on one line
         assert isinstance(checker.violations, list)
 
     def test_r012_noqa_on_closing_paren(self):
@@ -862,8 +861,6 @@ helper(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # May or may not be suppressed depending on noqa line position
-        # Ensure no exception raised
         assert isinstance(checker.violations, list)
 
 
@@ -884,7 +881,6 @@ def log_something(
         checker = R013Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Property decorator, handler check still applies
         assert len(checker.violations) == 1
 
     def test_r013_handler_method_single_param(self):
@@ -1085,7 +1081,6 @@ func(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # May flag or not depending on reconstruction
         assert isinstance(checker.violations, list)
 
     def test_r012_call_with_escaped_quotes(self):
@@ -1134,7 +1129,6 @@ def log_method(
         checker = R013Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Second line has exactly 5 params (b, c, d, e, f) - allowed
         assert len(checker.violations) == 0
 
     def test_r013_kwonly_args(self):
@@ -1181,7 +1175,6 @@ LOG_EVENT_DIRECT(a=1, b=2, c=3, d=4)
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Direct call (not self.log_*) should not be checked
         assert len(checker.violations) == 0
 
     def test_r014_exactly_two_kwargs_in_log_event(self):
@@ -1284,7 +1277,6 @@ func(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Ensure no exception from reconstruction
         assert isinstance(checker.violations, list)
 
     def test_r013_multiple_decorators(self):
@@ -1302,8 +1294,6 @@ def log_event(
         checker = R013Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Even with decorators, handler rule applies
-        # (staticmethod is weird here but testing edge case)
         assert isinstance(checker.violations, list)
 
     def test_r014_call_with_complex_kwargs(self):
@@ -1341,7 +1331,6 @@ except Exception:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Both try blocks should be checked
         assert isinstance(checker.violations, list)
 
     def test_r014_log_call_with_starargs(self):
@@ -1361,7 +1350,6 @@ self.log_event(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Should only count kwargs, not *args
         assert isinstance(checker.violations, list)
 
     def test_r015_timing_with_complex_calc(self):
@@ -1517,13 +1505,11 @@ class TestDirectASTManipulation:
         config = Config()
         checker = R012Checker(Path("test.py"), source, config)
 
-        # Manually set end_lineno to None to test defensive code
         old_end_lineno = call_node.end_lineno
         call_node.end_lineno = None
         checker.visit(tree)
         call_node.end_lineno = old_end_lineno
 
-        # Should not crash and should not flag (None end_lineno)
         assert isinstance(checker.violations, list)
 
     def test_r013_function_with_none_lineno(self):
@@ -1538,13 +1524,11 @@ def log_method(self, a: int) -> None:
         config = Config()
         checker = R013Checker(Path("test.py"), source, config)
 
-        # Manually set lineno to None
         old_lineno = func_node.lineno
         func_node.lineno = None
         checker.visit(tree)
         func_node.lineno = old_lineno
 
-        # Should not crash and should not flag
         assert isinstance(checker.violations, list)
 
     def test_r014_call_with_no_keywords(self):
@@ -1555,7 +1539,6 @@ def log_method(self, a: int) -> None:
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Should not flag (no keywords, only positional args)
         assert len(checker.violations) == 0
 
     def test_r015_try_with_none_lineno(self):
@@ -1572,13 +1555,11 @@ except Exception:
         config = Config()
         checker = R015Checker(Path("test.py"), source, config)
 
-        # Manually set lineno to None
         old_lineno = try_node.lineno
         try_node.lineno = None
         checker.visit(tree)
         try_node.lineno = old_lineno
 
-        # Should not crash and should not flag
         assert isinstance(checker.violations, list)
 
     def test_r015_statement_with_none_end_lineno(self):
@@ -1598,13 +1579,11 @@ except Exception:
         config = Config()
         checker = R015Checker(Path("test.py"), source, config)
 
-        # Manually set end_lineno to None
         old_end_lineno = first_stmt.end_lineno
         first_stmt.end_lineno = None
         checker.visit(tree)
         first_stmt.end_lineno = old_end_lineno
 
-        # Should skip comparison and not crash
         assert isinstance(checker.violations, list)
 
 
@@ -1623,7 +1602,6 @@ func(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Should normalize spaces and potentially flag
         assert isinstance(checker.violations, list)
 
     def test_r012_normalize_quote_handling(self):
@@ -1685,7 +1663,6 @@ except Exception:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # perf_counter is in expression, not direct assignment
         assert len(checker.violations) == 0
 
     def test_r015_round_in_complex_expression(self):
@@ -1704,7 +1681,6 @@ except Exception:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Complex expression with round
         assert isinstance(checker.violations, list)
 
     def test_r013_record_prefix_handler(self):
@@ -1752,7 +1728,6 @@ self.log_info(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # No positional args, so not a log-event call
         assert len(checker.violations) == 0
 
     def test_r014_non_attribute_func(self):
@@ -1767,7 +1742,6 @@ log_info(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Direct call (not self.log_*), not a log-event call
         assert len(checker.violations) == 0
 
     def test_r015_multiple_timing_pairs_in_leg(self):
@@ -1789,7 +1763,6 @@ except Exception:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Two timing pairs properly separated
         assert len(checker.violations) == 0
 
 
@@ -1807,7 +1780,6 @@ short(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Only 2 lines but might still be flagged if < 80 chars
         assert isinstance(checker.violations, list)
 
     def test_r012_long_call_no_flag(self):
@@ -1949,7 +1921,6 @@ f(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Should normalize and check length
         assert isinstance(checker.violations, list)
 
     def test_r014_log_attribute_access(self):
@@ -1964,7 +1935,6 @@ self.logger.log_event(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # log_event but through logger attribute
         assert isinstance(checker.violations, list)
 
 
@@ -1983,7 +1953,6 @@ outer(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Complex but might still fit on one line
         assert isinstance(checker.violations, list)
 
     def test_r012_call_with_trailing_comma(self):
@@ -2015,7 +1984,6 @@ func2(
         checker = R012Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Both should be flagged
         assert len(checker.violations) == 2
 
     def test_r013_non_handler_method_not_flagged(self):
@@ -2031,7 +1999,6 @@ def process_data(
         checker = R013Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Not a handler, should not flag
         assert len(checker.violations) == 0
 
     def test_r013_handler_upper_limit_5_params(self):
@@ -2061,7 +2028,6 @@ self.log_event(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # None is not LOG_EVENT_*, so not a log-event call
         assert len(checker.violations) == 0
 
     def test_r015_empty_except_handler(self):
@@ -2077,7 +2043,6 @@ except Exception:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # No raise in except, not a wrap function
         assert len(checker.violations) == 0
 
     def test_r015_try_finally_no_except(self):
@@ -2093,7 +2058,6 @@ finally:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # No except handlers, not a wrap function
         assert len(checker.violations) == 0
 
     def test_r015_except_with_type_filter(self):
@@ -2109,7 +2073,6 @@ except ValueError as error:
         checker = R015Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # Raise is there, should check
         assert isinstance(checker.violations, list)
 
     def test_r014_kwarg_only_call(self):
@@ -2127,7 +2090,6 @@ build(
         checker = R014Checker(Path("test.py"), source, config)
         checker.visit(tree)
 
-        # No positional args, can't be a log-event call
         assert len(checker.violations) == 0
 
     def test_r012_empty_lines_in_source(self):

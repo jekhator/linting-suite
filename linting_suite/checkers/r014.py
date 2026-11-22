@@ -56,11 +56,9 @@ class R014Checker(BaseChecker):
         if not isinstance(node.func, ast.Attribute):
             return False
 
-        # Must be self.log_* or cls.log_* pattern
         if not node.func.attr.startswith("log"):
             return False
 
-        # Check if first positional arg is a LOG_EVENT_* constant reference
         first_arg = node.args[0]
         return self._is_log_event_constant(first_arg)
 
@@ -95,8 +93,6 @@ class R014Checker(BaseChecker):
         """Check >=4 kwargs: flag ONLY over-packing (>3 per line). One-per-line never flagged."""
         for line_num, kwarg_names in sorted_lines:
             count = len(kwarg_names)
-            # Only flag if line has MORE than 3 kwargs (over-packing)
-            # One-per-line is never flagged for any call, any size
             if count > 3:
                 self.violations.append(
                     Violation(
@@ -113,8 +109,6 @@ class R014Checker(BaseChecker):
         self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call
     ) -> None:
         """Check 2-3 kwargs: must FULL-EXPLODE one-per-line (constant on its own line)."""
-        # For 2-3 kwarg calls, each kwarg should be on its own line
-        # Event constant should be on its own line (no kwargs on that line)
         for line_num, kwarg_names in sorted_lines:
             if len(kwarg_names) != 1:
                 self.violations.append(

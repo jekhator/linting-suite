@@ -33,7 +33,6 @@ class TestR007Fixtures:
             service_paths=["**/*.py"],
             dto_paths=["**/dtos.py"],
         )
-        # Create a temporary conftest.py to test
         with tempfile.TemporaryDirectory() as tmpdir:
             conftest_path = Path(tmpdir) / "conftest.py"
             conftest_path.write_text("""
@@ -46,5 +45,4 @@ def sample_data():
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(conftest_path)
             r007_violations = [v for v in violations if v.rule_id == "R007"]
-            # conftest.py should not trigger R007
             assert len(r007_violations) == 0

@@ -88,18 +88,15 @@ def bad_function(x: Dict[str, Any]):
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
 
-            # First, generate baseline from current violations
             baseline_data = linter.generate_baseline(violations)
             baseline = {}
             for entry in baseline_data:
                 key = (entry["file"], entry["line"], entry["rule_id"])
                 baseline[key] = entry["message_hash"]
 
-            # Now lint again with baseline loaded
             linter_with_baseline = DtoStrictLinter(config, baseline=baseline)
             violations_filtered = linter_with_baseline.lint_file(path)
 
-            # All violations should be filtered (in baseline)
             assert len(violations_filtered) == 0, (
                 f"Baseline violations should be filtered. Got {violations_filtered}"
             )
@@ -125,7 +122,6 @@ def bad_function_2(x: Dict[str, Any]):
         try:
             config = Config(service_paths=["**/*.py"])
 
-            # Generate baseline from original
             linter = DtoStrictLinter(config)
             violations_original = linter.lint_file(path)
             baseline_data = linter.generate_baseline(violations_original)
@@ -134,14 +130,11 @@ def bad_function_2(x: Dict[str, Any]):
                 key = (entry["file"], entry["line"], entry["rule_id"])
                 baseline[key] = entry["message_hash"]
 
-            # Now update file with new violation
             path.write_text(source_new)
 
-            # Lint with baseline
             linter_with_baseline = DtoStrictLinter(config, baseline=baseline)
             violations_new = linter_with_baseline.lint_file(path)
 
-            # Should detect new violation not in baseline
             assert len(violations_new) > 0, "New violations should not be filtered"
         finally:
             path.unlink()

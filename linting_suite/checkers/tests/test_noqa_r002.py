@@ -37,7 +37,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have no R002 violations
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
@@ -70,7 +69,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have no R002 violations
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
@@ -107,7 +105,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have no R002 violations
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
@@ -140,7 +137,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have exactly 1 R002 violation
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (
@@ -173,7 +169,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have exactly 1 R002 violation (noqa is for R001, not R002)
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (
@@ -206,7 +201,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have no R002 violations
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
@@ -242,8 +236,6 @@ class TestNoqaR002:
                 text=True,
             )
 
-            # Should have exactly 1 R002 violation
-            # (noqa on line above the dict doesn't suppress)
             violations = json.loads(result.stdout)
             r002_violations = [v for v in violations if v["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (

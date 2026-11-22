@@ -87,7 +87,6 @@ def process(data: Dict[str, str]) -> None:
 
     def test_r006_scoped_to_r006_paths(self, tmp_path):
         """R006 respects r006_paths config."""
-        # File NOT in r006_paths should not be checked
         other_file = tmp_path / "utils.py"
         other_file.write_text(
             """
@@ -98,7 +97,7 @@ def helper(x: Any) -> Any:  # allowed: not in r006_paths
 """
         )
         config = Config(
-            r006_paths=["**/services/*.py"],  # only services
+            r006_paths=["**/services/*.py"],
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(other_file)

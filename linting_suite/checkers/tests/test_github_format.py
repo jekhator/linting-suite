@@ -51,7 +51,7 @@ class TestGithubFormat:
         output = violation.format_github()
         assert (
             "::notice" in output or "::warning" in output
-        )  # LOW may be notice or warning
+        )
 
     def test_text_format(self):
         """Test text format output."""

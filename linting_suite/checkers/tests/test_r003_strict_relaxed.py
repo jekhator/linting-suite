@@ -29,7 +29,7 @@ class UserDTO:
             config = Config(
                 dto_paths=["**/*.py"],
                 r003_mode="canonical",
-                r003_strict_repr=True,  # Strict mode (default)
+                r003_strict_repr=True,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
@@ -59,7 +59,7 @@ class UserDTO:
             config = Config(
                 dto_paths=["**/*.py"],
                 r003_mode="canonical",
-                r003_strict_repr=True,  # Strict mode
+                r003_strict_repr=True,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
@@ -89,7 +89,7 @@ class UserDTO:
             config = Config(
                 dto_paths=["**/*.py"],
                 r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
+                r003_strict_repr=False,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
@@ -119,7 +119,7 @@ class UserDTO:
             config = Config(
                 dto_paths=["**/*.py"],
                 r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
+                r003_strict_repr=False,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
@@ -149,7 +149,7 @@ class UserDTO:
             config = Config(
                 dto_paths=["**/*.py"],
                 r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
+                r003_strict_repr=False,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)

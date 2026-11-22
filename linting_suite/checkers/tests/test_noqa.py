@@ -81,14 +81,12 @@ class TestNoqaCommentDetection:
         tree = ast.parse(source)
         func_node = tree.body[0]
 
-        # Note: leading whitespace in the line is OK; we find the noqa marker and work from there
         assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is True
 
     def test_noqa_missing_lineno(self):
         """Node without lineno should return False."""
         source = "x = 1"
         lines = source.splitlines()
-        # Create a node without lineno
         node = ast.AST()
         assert AnnotationInspector.has_noqa_comment(node, "R001", lines) is False
 
@@ -98,7 +96,6 @@ class TestNoqaCommentDetection:
         lines = source.splitlines()
         tree = ast.parse(source)
         func_node = tree.body[0]
-        # Manually set lineno beyond file length
         func_node.lineno = 999
         assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
 
@@ -109,9 +106,6 @@ class TestNoqaCommentDetection:
         tree = ast.parse(source)
         func_node = tree.body[0]
 
-        # This should not match because we search for the noqa marker starting from the first occurrence
-        # In this case, "# some comment noqa" doesn't have the marker, so it won't match
-        # The implementation looks for the marker explicitly, which is correct
         assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
 
     def test_noqa_standard_pylint_style(self):
@@ -128,5 +122,4 @@ class TestNoqaCommentDetection:
         lines = source.splitlines()
         tree = ast.parse(source)
         func_node = tree.body[0]
-        # This won't match dto-strict rules since the comment doesn't mention them
         assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False

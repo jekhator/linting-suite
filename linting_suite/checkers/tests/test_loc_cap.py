@@ -121,9 +121,8 @@ class TestGenerateBaseline:
         output = LocCap.generate_baseline(str(tmp_path))
         lines = output.strip().split("\n")
         assert len(lines) == 2
-        # Should be sorted by LOC descending
-        assert "100" in lines[0]  # file1 is first (higher LOC)
-        assert "50" in lines[1]  # file2 is second (lower LOC)
+        assert "100" in lines[0]
+        assert "50" in lines[1]
 
     def test_generate_baseline_with_floor(self, tmp_path):
         """Generate baseline respects floor parameter."""
@@ -177,7 +176,7 @@ class TestRunLocCap:
         baseline_file = tmp_path / "baseline.txt"
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
-        (tmp_path / "file.py").write_text("a\n" * 750)  # Grew from 700 to 750
+        (tmp_path / "file.py").write_text("a\n" * 750)
         exit_code = LocCap.run_loc_cap(
             str(tmp_path),
             hard_cap=694,
@@ -201,7 +200,7 @@ class TestRunLocCap:
         baseline_file = tmp_path / "baseline.txt"
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
-        (tmp_path / "file.py").write_text("a\n" * 600)  # Improved from 700 to 600
+        (tmp_path / "file.py").write_text("a\n" * 600)
         exit_code = LocCap.run_loc_cap(
             str(tmp_path),
             hard_cap=694,

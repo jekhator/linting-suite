@@ -27,7 +27,7 @@ def build_response():
         try:
             config = Config(
                 service_paths=["**/*.py"],
-                min_dict_keys=2,  # Lower threshold
+                min_dict_keys=2,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
@@ -55,7 +55,7 @@ def build_response():
         try:
             config = Config(
                 service_paths=["**/*.py"],
-                min_dict_keys=3,  # Default
+                min_dict_keys=3,
             )
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)

@@ -64,10 +64,8 @@ class R015Checker(BaseChecker):
         if not statements or start_line is None:
             return
 
-        # Check for timing-capture contiguity (no blank within timing pair)
         self._check_timing_capture_contiguity(statements)
 
-        # Check for statement group separation: exactly one blank between groups
         self._check_group_separation(statements, leg_type)
 
     def _check_group_separation(
@@ -82,9 +80,6 @@ class R015Checker(BaseChecker):
                 continue
 
             gap = next_stmt.lineno - curr.end_lineno
-            # gap == 1: no blank (statements are contiguous)
-            # gap == 2: one blank (correct separation)
-            # gap > 2: multiple blanks (incorrect)
             if gap > 2:
                 self.violations.append(
                     Violation(
@@ -104,7 +99,6 @@ class R015Checker(BaseChecker):
             next_stmt = statements[i + 1]
 
             if self._is_timing_start(curr) and self._is_timing_end(next_stmt):
-                # Timing pair found - check for gap
                 if curr.end_lineno is not None and next_stmt.lineno is not None:
                     gap = next_stmt.lineno - curr.end_lineno
                     if gap > 1:
@@ -129,7 +123,6 @@ class R015Checker(BaseChecker):
         """Check if statement is a timing-end (latency calculation)."""
         if not isinstance(stmt, ast.Assign):
             return False
-        # Check for latency_ms = ... with round() call
         for target in stmt.targets:
             if isinstance(target, ast.Name) and "latency" in target.id:
                 return self._contains_round(stmt.value)

@@ -18,7 +18,6 @@ class TestR008TestFunctions:
             fixture_dir / "bad" / "test_r008_bad_bare_test_functions.py"
         )
         r008_violations = [v for v in violations if v.rule_id == "R008"]
-        # Should find at least 3 bare test functions
         assert len(r008_violations) >= 3
         assert all("module-level" in v.message.lower() for v in r008_violations)
         assert any("test_addition" in v.message for v in r008_violations)

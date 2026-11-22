@@ -74,7 +74,6 @@ def process3():  # facade - celery schedule
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r002_violations = [v for v in violations if v.rule_id == "R002"]
-        # Should flag the third tag usage
         assert len(r002_violations) >= 1
 
     def test_r002_no_justification_required(self, tmp_path):
@@ -90,7 +89,7 @@ def process():  # facade - celery schedule
         config = Config(
             service_paths=["**/*.py"],
             exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=False,  # default
+            exception_tag_requires_justification=False,
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)

@@ -37,12 +37,9 @@ class TestR002SerializerExemption:
             fixture_dir / "bad" / "r002_bad_non_serializer.py"
         )
         r002_violations = [v for v in violations if v.rule_id == "R002"]
-        # get_metadata() should be flagged (non-to_* in dataclass)
-        # to_dict() in PlainClass should be flagged (non-dataclass)
         assert len(r002_violations) >= 1, (
             "get_metadata() with inline dict should be flagged"
         )
-        # Verify at least one violation mentions the line or shows the dict counts
         assert any("keys" in v.message for v in r002_violations), (
             "Violation should mention dict keys"
         )

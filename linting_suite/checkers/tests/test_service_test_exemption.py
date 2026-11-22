@@ -25,7 +25,6 @@ class TestServiceTestExemption:
         linter = DtoStrictLinter(config)
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create services/tests/test_x/conftest.py
             services_dir = Path(tmpdir) / "services" / "tests" / "test_x"
             services_dir.mkdir(parents=True, exist_ok=True)
 
@@ -46,12 +45,10 @@ def helper_function():
 
             violations = linter.lint_file(conftest_path)
 
-            # Filter by rule IDs
             r001_violations = [v for v in violations if v.rule_id == "R001"]
             r004_violations = [v for v in violations if v.rule_id == "R004"]
             r006_violations = [v for v in violations if v.rule_id == "R006"]
 
-            # None of these should trigger because the file is a test file
             assert len(r001_violations) == 0, (
                 f"R001 should not trigger in test files: {r001_violations}"
             )
@@ -74,7 +71,6 @@ def helper_function():
         linter = DtoStrictLinter(config)
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create services/handler.py (NOT a test file)
             services_dir = Path(tmpdir) / "services"
             services_dir.mkdir(parents=True, exist_ok=True)
 
@@ -89,11 +85,9 @@ def process_data(data: dict[str, Any]) -> dict[str, Any]:
 
             violations = linter.lint_file(handler_path)
 
-            # Filter by rule IDs
             r001_violations = [v for v in violations if v.rule_id == "R001"]
             r006_violations = [v for v in violations if v.rule_id == "R006"]
 
-            # These should trigger because it's production code
             assert len(r001_violations) >= 1, (
                 "R001 should trigger for production service code with Dict[str, Any]"
             )
