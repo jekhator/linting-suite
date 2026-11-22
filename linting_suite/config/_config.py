@@ -106,10 +106,10 @@ class Config:
             service_paths=service_paths, dto_paths=dto_paths, exception_tags=exception_tags,
             disabled_rules=disabled_rules, severity_overrides=severity_overrides, strict_collections=strict_collections,
             exception_tag_requires_justification=exception_tag_requires_justification,
-            max_exception_tags_per_file=max_exception_tags_per_file,
-            r003_mode=r003_mode, r006_paths=r006_paths, min_dict_keys=min_dict_keys,
-            r003_strict_repr=r003_strict_repr, r003_sensitivity_bases=r003_sensitivity_bases,
-            r003_sensitivity_allowlist=r003_sensitivity_allowlist, loc_cap=loc_cap
+            max_exception_tags_per_file=max_exception_tags_per_file, r003_mode=r003_mode, r006_paths=r006_paths,
+            min_dict_keys=min_dict_keys, r003_strict_repr=r003_strict_repr,
+            r003_sensitivity_bases=r003_sensitivity_bases, r003_sensitivity_allowlist=r003_sensitivity_allowlist,
+            loc_cap=loc_cap
         )
 
     def is_rule_enabled(self, rule_id: str) -> bool:

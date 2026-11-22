@@ -56,8 +56,7 @@ class LocCap:
 
     @staticmethod
     def find_python_files(
-        root_path: str,
-        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS
+        root_path: str, exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS
     ) -> dict[str, int]:
         """Find all Python files under root_path, exempting test files and excluded patterns."""
         current_locs: dict[str, int] = {}
@@ -81,9 +80,7 @@ class LocCap:
 
     @staticmethod
     def generate_baseline(
-        root_path: str,
-        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS,
-        floor: int = 0
+        root_path: str, exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS, floor: int = 0
     ) -> str:
         """Generate baseline output in path:loc format, sorted by LOC descending."""
         files = LocCap.find_python_files(root_path, exclude_patterns)
@@ -98,8 +95,7 @@ class LocCap:
     def run_loc_cap(
         path: str, hard_cap: int = const.DEFAULT_LOC_HARD_CAP,
         soft_target: int = const.DEFAULT_LOC_SOFT_TARGET, baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE,
-        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS,
-        generate: bool = False
+        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS, generate: bool = False
     ) -> int:
         """Run LOC cap checker with hard/soft caps and baseline ratchet enforcement."""
         if generate:

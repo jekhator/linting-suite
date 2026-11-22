@@ -59,8 +59,7 @@ service_paths = ["**/*.py"]
         )
 
         monkeypatch.setattr(
-            sys, "argv",
-            ["dto-strict", str(fixture_file), "--format", "github", "--config", str(config_file)]
+            sys, "argv", ["dto-strict", str(fixture_file), "--format", "github", "--config", str(config_file)]
         )
 
         exit_code = main()
