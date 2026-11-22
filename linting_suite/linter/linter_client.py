@@ -6,7 +6,6 @@ import json
 from pathlib import Path
 
 import linting_suite.config.constants as const
-import linting_suite.linter.linter_objects as objs
 from linting_suite.checkers import (
     R001Checker,
     R002Checker,
@@ -25,6 +24,7 @@ from linting_suite.checkers import (
     R015Checker,
 )
 from linting_suite.config._config import Config
+from linting_suite.linter.linter_objects import BaselineLoadError
 from linting_suite.rules import RuleSeverity, Violation
 
 
@@ -136,22 +136,20 @@ class DtoStrictLinter:
             with open(baseline_path, const.FILE_MODE_READ) as handle:
                 data = json.load(handle)
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
-            raise objs.BaselineLoadError(const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)) from error
+            raise BaselineLoadError(const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)) from error
         except OSError as error:
-            raise objs.BaselineLoadError(const.ERR_BASELINE_MISSING.format(path=baseline_path)) from error
+            raise BaselineLoadError(const.ERR_BASELINE_MISSING.format(path=baseline_path)) from error
 
         if not isinstance(data, list):
-            raise objs.BaselineLoadError(const.ERR_BASELINE_NOT_LIST.format(path=baseline_path))
+            raise BaselineLoadError(const.ERR_BASELINE_NOT_LIST.format(path=baseline_path))
 
         baseline = {}
         for index, entry in enumerate(data):
             if not isinstance(entry, dict):
-                raise objs.BaselineLoadError(
-                    const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(index=index, path=baseline_path)
-                )
+                raise BaselineLoadError(const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(index=index, path=baseline_path))
             for key in const.REQUIRED_BASELINE_KEYS:
                 if key not in entry:
-                    raise objs.BaselineLoadError(
+                    raise BaselineLoadError(
                         const.ERR_BASELINE_ENTRY_SHAPE.format(index=index, key=key, path=baseline_path)
                     )
             baseline_key = (
