@@ -20,8 +20,8 @@ class R006Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        for arg in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
-            if arg.annotation and AnnotationInspector.contains_any(arg.annotation):
+        for argument in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
+            if argument.annotation and AnnotationInspector.contains_any(argument.annotation):
                 self.violations.append(
                     Violation(
                         rule_id="R006",

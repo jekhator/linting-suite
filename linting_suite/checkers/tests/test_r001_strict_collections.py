@@ -22,9 +22,9 @@ def process_data(config: dict) -> None:  # bad: bare dict
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Bare collection" in v.message for v in r001_violations)
+        assert any("Bare collection" in violation.message for violation in r001_violations)
 
     def test_r001_strict_collections_bare_list(self, tmp_path):
         """Bare list flagged with strict_collections=True."""
@@ -41,7 +41,7 @@ def get_items() -> list:  # bad: bare list
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
 
     def test_r001_strict_collections_bare_tuple(self, tmp_path):
@@ -59,7 +59,7 @@ def unpack_data() -> tuple:  # bad: bare tuple
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
 
     def test_r001_strict_collections_disabled(self, tmp_path):
@@ -77,7 +77,7 @@ def process_data(config: dict) -> None:  # allowed when strict_collections=False
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) == 0
 
     def test_r001_typed_collections_allowed(self, tmp_path):
@@ -95,5 +95,5 @@ def process_data(config: dict[str, str]) -> list[int] -> None:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) == 0

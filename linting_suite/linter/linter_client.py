@@ -93,9 +93,9 @@ class DtoStrictLinter:
             violations.extend(checker.violations)
 
         filtered = []
-        for v in violations:
-            if self.config.is_rule_enabled(v.rule_id):
-                filtered.append(v)
+        for violation in violations:
+            if self.config.is_rule_enabled(violation.rule_id):
+                filtered.append(violation)
 
         if self.baseline:
             filtered = self._filter_by_baseline(filtered)
@@ -113,9 +113,9 @@ class DtoStrictLinter:
                 all_violations.extend(self.lint_file(py_file))
 
         filtered = []
-        for v in all_violations:
-            if self.config.is_rule_enabled(v.rule_id):
-                filtered.append(v)
+        for candidate in all_violations:
+            if self.config.is_rule_enabled(candidate.rule_id):
+                filtered.append(candidate)
 
         if self.baseline:
             filtered = self._filter_by_baseline(filtered)
@@ -140,10 +140,10 @@ class DtoStrictLinter:
     def _filter_by_baseline(self, violations: list[Violation]) -> list[Violation]:
         """Filter violations by baseline, removing accepted violations by file+line+rule_id."""
         new_violations = []
-        for v in violations:
-            key = (v.file, v.line, v.rule_id)
+        for violation in violations:
+            key = (violation.file, violation.line, violation.rule_id)
             if key not in self.baseline:
-                new_violations.append(v)
+                new_violations.append(violation)
         return new_violations
 
     @staticmethod
@@ -154,13 +154,13 @@ class DtoStrictLinter:
     def generate_baseline(self, violations: list[Violation]) -> list[dict]:
         """Generate baseline JSON from violations."""
         baseline_data = []
-        for v in violations:
+        for violation in violations:
             baseline_data.append(
                 {
-                    "file": v.file,
-                    "line": v.line,
-                    "rule_id": v.rule_id,
-                    "message_hash": self._hash_message(v.message),
+                    "file": violation.file,
+                    "line": violation.line,
+                    "rule_id": violation.rule_id,
+                    "message_hash": self._hash_message(violation.message),
                 }
             )
         return baseline_data
@@ -169,8 +169,8 @@ class DtoStrictLinter:
     def load_baseline(baseline_path: Path) -> dict[tuple[str, int, str], str]:
         """Load baseline JSON file."""
         try:
-            with open(baseline_path, "r") as f:
-                data = json.load(f)
+            with open(baseline_path, "r") as handle:
+                data = json.load(handle)
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise BaselineLoadError(
                 ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
@@ -207,34 +207,34 @@ class DtoStrictLinter:
     ) -> str:
         """Format violations for output."""
         if format_type == FORMAT_GITHUB:
-            return "\n".join(v.format_github() for v in violations)
+            return "\n".join(violation.format_github() for violation in violations)
         elif format_type == FORMAT_JSON:
             return json.dumps(
                 [
                     {
-                        "rule_id": v.rule_id,
-                        "severity": v.severity.value,
-                        "file": v.file,
-                        "line": v.line,
-                        "col": v.col,
-                        "message": v.message,
+                        "rule_id": violation.rule_id,
+                        "severity": violation.severity.value,
+                        "file": violation.file,
+                        "line": violation.line,
+                        "col": violation.col,
+                        "message": violation.message,
                     }
-                    for v in violations
+                    for violation in violations
                 ],
                 indent=2,
             )
         else:
-            return "\n".join(v.format_text() for v in violations)
+            return "\n".join(violation.format_text() for violation in violations)
 
     def get_exit_code(self, violations: list[Violation]) -> int:
         """Determine exit code based on violation severities."""
         if not violations:
             return EXIT_CODE_SUCCESS
 
-        has_high = any(v.severity == RuleSeverity.HIGH for v in violations)
-        has_medium = any(v.severity == RuleSeverity.MEDIUM for v in violations)
-        has_low = any(v.severity == RuleSeverity.LOW for v in violations)
-        has_info = any(v.severity == RuleSeverity.INFO for v in violations)
+        has_high = any(violation.severity == RuleSeverity.HIGH for violation in violations)
+        has_medium = any(violation.severity == RuleSeverity.MEDIUM for violation in violations)
+        has_low = any(violation.severity == RuleSeverity.LOW for violation in violations)
+        has_info = any(violation.severity == RuleSeverity.INFO for violation in violations)
 
         if has_high:
             return EXIT_CODE_HIGH_VIOLATION

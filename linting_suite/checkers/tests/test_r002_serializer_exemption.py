@@ -18,7 +18,7 @@ class TestR002SerializerExemption:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r002_good_serializer.py")
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) == 0, (
             "to_* methods in dataclasses should be exempt from R002"
         )
@@ -36,10 +36,10 @@ class TestR002SerializerExemption:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r002_bad_non_serializer.py"
         )
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) >= 1, (
             "get_metadata() with inline dict should be flagged"
         )
-        assert any("keys" in v.message for v in r002_violations), (
+        assert any("keys" in violation.message for violation in r002_violations), (
             "Violation should mention dict keys"
         )

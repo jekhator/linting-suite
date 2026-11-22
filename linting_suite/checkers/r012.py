@@ -71,12 +71,12 @@ class R012Checker(BaseChecker):
         result = []
         in_string = False
         string_char = None
-        i = 0
+        index = 0
 
-        while i < len(text):
-            char = text[i]
+        while index < len(text):
+            char = text[index]
 
-            if char in ('"', "'") and (i == 0 or text[i - 1] != "\\"):
+            if char in ('"', "'") and (index == 0 or text[index - 1] != "\\"):
                 if not in_string:
                     in_string = True
                     string_char = char
@@ -90,6 +90,6 @@ class R012Checker(BaseChecker):
             else:
                 result.append(char)
 
-            i += 1
+            index += 1
 
         return "".join(result).strip()

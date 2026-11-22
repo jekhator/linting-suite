@@ -15,7 +15,7 @@ class TestR005ValidatorPattern:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r005_good_validator.py")
-        r005_violations = [v for v in violations if v.rule_id == "R005"]
+        r005_violations = [violation for violation in violations if violation.rule_id == "R005"]
         assert len(r005_violations) == 0
 
     def test_r005_bad_loose_validation(self, fixture_dir):
@@ -26,5 +26,5 @@ class TestR005ValidatorPattern:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r005_bad_validator.py")
-        r005_violations = [v for v in violations if v.rule_id == "R005"]
+        r005_violations = [violation for violation in violations if violation.rule_id == "R005"]
         assert len(r005_violations) >= 2

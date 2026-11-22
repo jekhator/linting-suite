@@ -26,10 +26,10 @@ class TestBaselineRatchet:
 def bad_function(x: Dict[str, Any]):
     return {"key": "value"}
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             config = Config(service_paths=["**/*.py"])
@@ -114,10 +114,10 @@ def bad_function_1(x: Dict[str, Any]):
 def bad_function_2(x: Dict[str, Any]):
     return {"foo": "bar"}
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source_original)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source_original)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             config = Config(service_paths=["**/*.py"])
@@ -247,7 +247,7 @@ def bad_function(x: Dict[str, Any]):
 
             loaded_baseline = DtoStrictLinter.load_baseline(baseline_path)
             assert len(loaded_baseline) == len(violations)
-            for v in violations:
-                key = (v.file, v.line, v.rule_id)
+            for violation in violations:
+                key = (violation.file, violation.line, violation.rule_id)
                 assert key in loaded_baseline
-                assert loaded_baseline[key] == linter._hash_message(v.message)
+                assert loaded_baseline[key] == linter._hash_message(violation.message)

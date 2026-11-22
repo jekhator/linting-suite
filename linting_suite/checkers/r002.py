@@ -92,9 +92,9 @@ class R002Checker(BaseChecker):
         ):
             return False
 
-        for stmt in ast.walk(self.current_function):
-            if isinstance(stmt, ast.Return) and stmt.value:
-                for child in ast.walk(stmt.value):
+        for statement in ast.walk(self.current_function):
+            if isinstance(statement, ast.Return) and statement.value:
+                for child in ast.walk(statement.value):
                     if child is dict_node:
                         return True
 
@@ -139,8 +139,8 @@ class R002Checker(BaseChecker):
                     has_justification = False
                     for tag in self.config.exception_tags:
                         if tag in comment:
-                            tag_idx = comment.find(tag)
-                            after_tag = comment[tag_idx + len(tag) :].strip()
+                            tag_index = comment.find(tag)
+                            after_tag = comment[tag_index + len(tag) :].strip()
                             if after_tag.startswith(":") and len(after_tag) > 1:
                                 has_justification = True
                                 break

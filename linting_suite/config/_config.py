@@ -61,8 +61,8 @@ class Config:
             return cls()
 
         try:
-            with open(path, "rb") as f:
-                data = tomllib.load(f)
+            with open(path, "rb") as handle:
+                data = tomllib.load(handle)
         except Exception:
             return cls()
 

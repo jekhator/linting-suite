@@ -20,9 +20,9 @@ class R001Checker(BaseChecker):
         if self.is_suppressed(node, "R001"):
             return
 
-        for arg in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
-            if arg.annotation:
-                if AnnotationInspector.is_dict_str_any(arg.annotation):
+        for argument in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
+            if argument.annotation:
+                if AnnotationInspector.is_dict_str_any(argument.annotation):
                     self.violations.append(
                         Violation(
                             rule_id="R001",
@@ -36,7 +36,7 @@ class R001Checker(BaseChecker):
                     return
                 elif (
                     self.config.strict_collections
-                    and AnnotationInspector.is_bare_collection(arg.annotation)
+                    and AnnotationInspector.is_bare_collection(argument.annotation)
                 ):
                     self.violations.append(
                         Violation(

@@ -24,9 +24,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.LOW, (
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.LOW, (
                         "Override not applied: R011 should have LOW severity"
                     )
 
@@ -41,9 +41,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.HIGH, (
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.HIGH, (
                         "R011 should have original HIGH severity without override"
                     )
 
@@ -58,9 +58,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R002":
-                    assert v.severity == RuleSeverity.HIGH, (
+            for violation in result:
+                if violation.rule_id == "R002":
+                    assert violation.severity == RuleSeverity.HIGH, (
                         "Override not applied: R002 should have HIGH severity"
                     )
 
@@ -82,9 +82,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R001":
-                    assert v.severity == RuleSeverity.MEDIUM, (
+            for violation in result:
+                if violation.rule_id == "R001":
+                    assert violation.severity == RuleSeverity.MEDIUM, (
                         "Override not applied: R001 should have MEDIUM severity"
                     )
 
@@ -122,9 +122,9 @@ class TestInfoSeverityLevel:
 
             exit_code = linter.get_exit_code(result)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.INFO, "R011 should be INFO"
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.INFO, "R011 should be INFO"
 
             assert exit_code == 0, "Exit code should be 0 when only INFO violations"
 
@@ -191,10 +191,10 @@ class TestNoqaRuleCodeShorthand:
         source = "def foo(x: Any): pass  # noqa: R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_bare_rule_code_r011(self):
         """# noqa: R011 should suppress R011 only."""
@@ -211,66 +211,66 @@ class TestNoqaRuleCodeShorthand:
         source = "def foo(x: Any): pass  # noqa: R006, R011"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R011", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R011", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_bare_code_not_suppressing_other(self):
         """# noqa: R006 should NOT suppress R001."""
         source = "def foo(x: dict[str, Any]): pass  # noqa: R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_namespaced_still_works(self):
         """Existing # noqa: strict-module-R006 should still work."""
         source = "def foo(x: Any): pass  # noqa: strict-module-R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_dto_strict_compat_still_works(self):
         """Existing # noqa: dto-strict-R006 backward-compat should still work."""
         source = "def foo(x: Any): pass  # noqa: dto-strict-R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_bare_code_with_explanation(self):
         """# noqa: R006 - explanation should work."""
         source = "def foo(x: Any): pass  # noqa: R006 - legacy payload"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_negative_control_without_comment(self):
         """RED control: Without noqa comment, should return False."""
         source = "def foo(x: Any): pass"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is False
 
     def test_noqa_negative_control_wrong_rule(self):
         """RED control: # noqa: R001 should not suppress R006."""
         source = "def foo(x: Any): pass  # noqa: R001"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is False
 
 
 class TestInfoSeverityFormatting:

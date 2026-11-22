@@ -16,7 +16,7 @@ class TestR010LegacyTypingABC:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r010_legacy_typing_abc.py")
-        r010_violations = [v for v in violations if v.rule_id == "R010"]
+        r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
         assert len(r010_violations) == 4, (
             f"Expected 4 R010 violations (Callable, Mapping, Iterable, Awaitable), "
@@ -34,7 +34,7 @@ class TestR010LegacyTypingABC:
         violations = linter.lint_file(
             fixture_dir / "good" / "r010_modern_abc_imports.py"
         )
-        r010_violations = [v for v in violations if v.rule_id == "R010"]
+        r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
         assert len(r010_violations) == 0, (
             f"Expected 0 R010 violations for collections.abc imports, "
@@ -52,7 +52,7 @@ class TestR010LegacyTypingABC:
         violations = linter.lint_file(
             fixture_dir / "good" / "r010_modern_abc_imports.py"
         )
-        r010_violations = [v for v in violations if v.rule_id == "R010"]
+        r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
         assert len(r010_violations) == 0, (
             "R010 should not flag typing.Any, typing.TypeVar, etc."
@@ -67,7 +67,7 @@ class TestR010LegacyTypingABC:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r010_legacy_typing_abc.py")
-        r010_violations = [v for v in violations if v.rule_id == "R010"]
+        r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
         assert len(r010_violations) > 0
         message = r010_violations[0].message

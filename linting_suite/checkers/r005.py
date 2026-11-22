@@ -20,7 +20,7 @@ class R005Checker(BaseChecker):
             return
 
         has_payload_param = any(
-            arg.arg == "payload" for arg in node.args.args + node.args.kwonlyargs
+            argument.arg == "payload" for argument in node.args.args + node.args.kwonlyargs
         )
 
         if not has_payload_param:

@@ -17,10 +17,10 @@ class TestR008TestFunctions:
         violations = linter.lint_file(
             fixture_dir / "bad" / "test_r008_bad_bare_test_functions.py"
         )
-        r008_violations = [v for v in violations if v.rule_id == "R008"]
+        r008_violations = [violation for violation in violations if violation.rule_id == "R008"]
         assert len(r008_violations) >= 3
-        assert all("module-level" in v.message.lower() for v in r008_violations)
-        assert any("test_addition" in v.message for v in r008_violations)
+        assert all("module-level" in violation.message.lower() for violation in r008_violations)
+        assert any("test_addition" in violation.message for violation in r008_violations)
 
     def test_r008_good_test_functions_in_classes(self, fixture_dir):
         """Good: test functions properly organized in classes."""
@@ -32,5 +32,5 @@ class TestR008TestFunctions:
         violations = linter.lint_file(
             fixture_dir / "good" / "test_r008_good_test_class.py"
         )
-        r008_violations = [v for v in violations if v.rule_id == "R008"]
+        r008_violations = [violation for violation in violations if violation.rule_id == "R008"]
         assert len(r008_violations) == 0

@@ -38,7 +38,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
                 f"Expected 0 R002, got {len(r002_violations)}"
             )
@@ -70,7 +70,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
                 f"Expected 0 R002, got {len(r002_violations)}"
             )
@@ -106,7 +106,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
                 f"Expected 0 R002, got {len(r002_violations)}"
             )
@@ -138,7 +138,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (
                 f"Expected 1 R002, got {len(r002_violations)}"
             )
@@ -170,7 +170,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (
                 f"Expected 1 R002, got {len(r002_violations)}"
             )
@@ -202,7 +202,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 0, (
                 f"Expected 0 R002, got {len(r002_violations)}"
             )
@@ -237,7 +237,7 @@ class TestNoqaR002:
             )
 
             violations = json.loads(result.stdout)
-            r002_violations = [v for v in violations if v["rule_id"] == "R002"]
+            r002_violations = [violation for violation in violations if violation["rule_id"] == "R002"]
             assert len(r002_violations) == 1, (
                 f"Expected 1 R002, got {len(r002_violations)}"
             )

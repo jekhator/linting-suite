@@ -43,8 +43,8 @@ class R015Checker(BaseChecker):
             return False
 
         for handler in node.handlers:
-            for stmt in handler.body:
-                if isinstance(stmt, ast.Raise):
+            for statement in handler.body:
+                if isinstance(statement, ast.Raise):
                     return True
 
         return False
@@ -77,21 +77,21 @@ class R015Checker(BaseChecker):
 
         The gap is the line distance between two statements: 1 is contiguous, 2 is one blank line, more is too many.
         """
-        for i in range(len(statements) - 1):
-            curr = statements[i]
-            next_stmt = statements[i + 1]
+        for index in range(len(statements) - 1):
+            current = statements[index]
+            next_statement = statements[index + 1]
 
-            if curr.end_lineno is None or next_stmt.lineno is None:
+            if current.end_lineno is None or next_statement.lineno is None:
                 continue
 
-            gap = next_stmt.lineno - curr.end_lineno
+            gap = next_statement.lineno - current.end_lineno
             if gap > 2:
                 self.violations.append(
                     Violation(
                         rule_id="R015",
                         severity=RuleSeverity.INFO,
                         file=str(self.file_path),
-                        line=next_stmt.lineno,
+                        line=next_statement.lineno,
                         col=0,
                         message=f"{leg_type.capitalize()} leg: statement groups must be separated by EXACTLY one blank line.",
                     )
@@ -99,38 +99,38 @@ class R015Checker(BaseChecker):
 
     def _check_timing_capture_contiguity(self, statements: list[ast.stmt]) -> None:
         """Check that timing-capture pair (perf_counter + latency calculation) has zero internal blanks."""
-        for i in range(len(statements) - 1):
-            curr = statements[i]
-            next_stmt = statements[i + 1]
+        for index in range(len(statements) - 1):
+            current = statements[index]
+            next_statement = statements[index + 1]
 
-            if self._is_timing_start(curr) and self._is_timing_end(next_stmt):
-                if curr.end_lineno is not None and next_stmt.lineno is not None:
-                    gap = next_stmt.lineno - curr.end_lineno
+            if self._is_timing_start(current) and self._is_timing_end(next_statement):
+                if current.end_lineno is not None and next_statement.lineno is not None:
+                    gap = next_statement.lineno - current.end_lineno
                     if gap > 1:
                         self.violations.append(
                             Violation(
                                 rule_id="R015",
                                 severity=RuleSeverity.INFO,
                                 file=str(self.file_path),
-                                line=next_stmt.lineno,
+                                line=next_statement.lineno,
                                 col=0,
                                 message="Timing-capture pair (perf_counter + latency calc) must be contiguous (no blank lines within).",
                             )
                         )
 
-    def _is_timing_start(self, stmt: ast.stmt) -> bool:
+    def _is_timing_start(self, statement: ast.stmt) -> bool:
         """Check if statement is a timing-start (perf_counter call)."""
-        if not isinstance(stmt, ast.Assign):
+        if not isinstance(statement, ast.Assign):
             return False
-        return self._contains_perf_counter(stmt.value)
+        return self._contains_perf_counter(statement.value)
 
-    def _is_timing_end(self, stmt: ast.stmt) -> bool:
+    def _is_timing_end(self, statement: ast.stmt) -> bool:
         """Check if statement is a timing-end (latency calculation)."""
-        if not isinstance(stmt, ast.Assign):
+        if not isinstance(statement, ast.Assign):
             return False
-        for target in stmt.targets:
+        for target in statement.targets:
             if isinstance(target, ast.Name) and "latency" in target.id:
-                return self._contains_round(stmt.value)
+                return self._contains_round(statement.value)
         return False
 
     def _contains_perf_counter(self, node: ast.expr) -> bool:

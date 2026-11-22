@@ -17,9 +17,9 @@ class TestR001VarArgKwarg:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r001_bad_vararg_dict_str_any.py"
         )
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Dict[str, Any]" in v.message for v in r001_violations)
+        assert any("Dict[str, Any]" in violation.message for violation in r001_violations)
 
     def test_r001_bad_kwarg_dict_str_any(self, fixture_dir):
         """Bad: Dict[str, Any] in **kwargs."""
@@ -31,9 +31,9 @@ class TestR001VarArgKwarg:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r001_bad_kwarg_dict_str_any.py"
         )
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Dict[str, Any]" in v.message for v in r001_violations)
+        assert any("Dict[str, Any]" in violation.message for violation in r001_violations)
 
     def test_r001_bad_vararg_bare_collection(self, fixture_dir):
         """Bad: bare dict in *args with strict_collections=True."""
@@ -46,9 +46,9 @@ class TestR001VarArgKwarg:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r001_bad_vararg_bare_collection.py"
         )
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Bare collection type" in v.message for v in r001_violations)
+        assert any("Bare collection type" in violation.message for violation in r001_violations)
 
     def test_r001_bad_kwarg_bare_collection(self, fixture_dir):
         """Bad: bare list in **kwargs with strict_collections=True."""
@@ -61,9 +61,9 @@ class TestR001VarArgKwarg:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r001_bad_kwarg_bare_collection.py"
         )
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Bare collection type" in v.message for v in r001_violations)
+        assert any("Bare collection type" in violation.message for violation in r001_violations)
 
 
 class TestR006VarArgKwarg:
@@ -78,9 +78,9 @@ class TestR006VarArgKwarg:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r006_bad_vararg_any.py")
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
-        assert any("*args" in v.message for v in r006_violations)
+        assert any("*args" in violation.message for violation in r006_violations)
 
     def test_r006_bad_kwarg_any(self, fixture_dir):
         """Bad: typing.Any in **kwargs."""
@@ -91,9 +91,9 @@ class TestR006VarArgKwarg:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r006_bad_kwarg_any.py")
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
-        assert any("**kwargs" in v.message for v in r006_violations)
+        assert any("**kwargs" in violation.message for violation in r006_violations)
 
 
 class TestR007FixtureDecorators:
@@ -109,9 +109,9 @@ class TestR007FixtureDecorators:
         violations = linter.lint_file(
             fixture_dir / "bad" / "test_r007_bare_fixture_decorator.py"
         )
-        r007_violations = [v for v in violations if v.rule_id == "R007"]
+        r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
         assert len(r007_violations) >= 1
-        assert any("conftest.py" in v.message for v in r007_violations)
+        assert any("conftest.py" in violation.message for violation in r007_violations)
 
     def test_r007_bad_fixture_with_call(self, fixture_dir):
         """Bad: @pytest.fixture(scope="function") form."""
@@ -123,9 +123,9 @@ class TestR007FixtureDecorators:
         violations = linter.lint_file(
             fixture_dir / "bad" / "test_r007_fixture_with_call.py"
         )
-        r007_violations = [v for v in violations if v.rule_id == "R007"]
+        r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
         assert len(r007_violations) >= 1
-        assert any("conftest.py" in v.message for v in r007_violations)
+        assert any("conftest.py" in violation.message for violation in r007_violations)
 
 
 class TestR001Suppressed:
@@ -152,7 +152,7 @@ class ServiceClass:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) == 0
 
 
@@ -181,7 +181,7 @@ class ServiceClass:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) == 0
 
 
@@ -211,7 +211,7 @@ def my_resource():  # noqa: strict-module-R007
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r007_violations = [v for v in violations if v.rule_id == "R007"]
+        r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
         assert len(r007_violations) == 0
 
 
@@ -230,8 +230,8 @@ class TestR002TagJustification:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r002_bad_dict_no_justification.py"
         )
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
-        assert any("justification" in v.message.lower() for v in r002_violations)
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
+        assert any("justification" in violation.message.lower() for violation in r002_violations)
 
     def test_r002_bad_max_tags_exceeded(self, fixture_dir):
         """Bad: exceeding max exception tags per file."""
@@ -246,5 +246,5 @@ class TestR002TagJustification:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r002_bad_dict_max_tags_exceeded.py"
         )
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
-        assert any("Exceeded max" in v.message for v in r002_violations)
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
+        assert any("Exceeded max" in violation.message for violation in r002_violations)

@@ -22,15 +22,15 @@ def process_data():
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(code_file)
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [found for found in violations if found.rule_id == "R002"]
 
         assert len(r002_violations) >= 1
         for violation in r002_violations:
-            msg = violation.message
-            if "Format:" in msg:
-                assert "Format: 'tag: explanation'" in msg
-                assert "facade - celery schedule:" in msg
-                assert "—" not in msg
+            message = violation.message
+            if "Format:" in message:
+                assert "Format: 'tag: explanation'" in message
+                assert "facade - celery schedule:" in message
+                assert "—" not in message
 
     def test_tag_separator_uses_colon_not_em_dash(self, tmp_path):
         """Test that tag separator format shows colon, not em dash."""

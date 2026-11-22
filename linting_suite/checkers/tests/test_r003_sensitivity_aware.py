@@ -26,9 +26,9 @@ class PlainDTO:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) >= 1
-        assert any("repr=False" in v.message for v in r003_violations)
+        assert any("repr=False" in violation.message for violation in r003_violations)
 
     def test_r003_sensitivity_base_allows_repr_false(self, tmp_path):
         """repr=False allowed when class inherits SensitiveRepr base."""
@@ -50,7 +50,7 @@ class SensitiveDTO(SensitiveRepr):
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_sensitivity_field_metadata_allows_repr_false(self, tmp_path):
@@ -74,7 +74,7 @@ class SensitiveDTO:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_allowlist_by_class_name_allows_repr_false(self, tmp_path):
@@ -97,7 +97,7 @@ class AllowlistedDTO:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_allowlist_by_full_path_allows_repr_false(self, tmp_path):
@@ -120,7 +120,7 @@ class FullPathAllowlistedDTO:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_multiple_sensitivity_bases_allowed(self, tmp_path):
@@ -146,5 +146,5 @@ class SensitiveDTO(CustomSensitiveBase):
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0

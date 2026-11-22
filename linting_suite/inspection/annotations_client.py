@@ -38,7 +38,7 @@ class AnnotationInspector:
             return f"{base}[{index}]"
         elif isinstance(annotation, ast.Tuple):
             elements = ", ".join(
-                AnnotationInspector.get_annotation_string(e) for e in annotation.elts
+                AnnotationInspector.get_annotation_string(element) for element in annotation.elts
             )
             return f"({elements})"
         elif isinstance(annotation, ast.Attribute):
@@ -56,12 +56,12 @@ class AnnotationInspector:
             return False
 
         try:
-            ann_str = ast.unparse(annotation)
+            annotation_text = ast.unparse(annotation)
         except Exception:
             return False
 
-        ann_lower = ann_str.lower().replace(" ", "")
-        return DICT_STR_ANY_PATTERN in ann_lower
+        annotation_lower = annotation_text.lower().replace(" ", "")
+        return DICT_STR_ANY_PATTERN in annotation_lower
 
     @staticmethod
     def is_bare_collection(annotation: Optional[ast.expr]) -> bool:
@@ -81,12 +81,12 @@ class AnnotationInspector:
             return False
 
         try:
-            ann_str = ast.unparse(annotation)
+            annotation_text = ast.unparse(annotation)
         except Exception:
             return False
 
-        ann_lower = ann_str.lower().replace(" ", "")
-        return "any" in ann_lower
+        annotation_lower = annotation_text.lower().replace(" ", "")
+        return "any" in annotation_lower
 
     @staticmethod
     def has_noqa_comment(node: ast.AST, rule_id: str, source_lines: list[str]) -> bool:
@@ -105,8 +105,8 @@ class AnnotationInspector:
         if "#" not in line:
             return False
 
-        comment_idx = line.find("#")
-        comment_part = line[comment_idx + 1 :].strip()
+        comment_index = line.find("#")
+        comment_part = line[comment_index + 1 :].strip()
 
         if not comment_part.startswith(NOQA_KEYWORD):
             return False
@@ -139,7 +139,7 @@ class AnnotationInspector:
             if spec == f"{PREFIX_DTO_STRICT}-{rule_id}":
                 return True
 
-            tokens = [t.strip() for t in spec.split(",")]
+            tokens = [token.strip() for token in spec.split(",")]
             if (
                 f"{PREFIX_STRICT_MODULE}-{rule_id}" in tokens
                 or f"{PREFIX_DTO_STRICT}-{rule_id}" in tokens

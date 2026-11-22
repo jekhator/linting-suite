@@ -46,9 +46,9 @@ def helper_function():
 
             violations = linter.lint_file(conftest_path)
 
-            r001_violations = [v for v in violations if v.rule_id == "R001"]
-            r004_violations = [v for v in violations if v.rule_id == "R004"]
-            r006_violations = [v for v in violations if v.rule_id == "R006"]
+            r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
+            r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
+            r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
 
             assert len(r001_violations) == 0, (
                 f"R001 should not trigger in test files: {r001_violations}"
@@ -87,8 +87,8 @@ def process_data(data: dict[str, Any]) -> dict[str, Any]:
 
             violations = linter.lint_file(handler_path)
 
-            r001_violations = [v for v in violations if v.rule_id == "R001"]
-            r006_violations = [v for v in violations if v.rule_id == "R006"]
+            r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
+            r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
 
             assert len(r001_violations) >= 1, (
                 "R001 should trigger for production service code with Dict[str, Any]"

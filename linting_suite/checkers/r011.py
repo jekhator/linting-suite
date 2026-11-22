@@ -69,8 +69,8 @@ class R011Checker(BaseChecker):
         - An ast.Constant with string value
         - An ast.JoinedStr (f-string)
         """
-        for arg in call_node.args:
-            if self._is_string_literal(arg):
+        for argument in call_node.args:
+            if self._is_string_literal(argument):
                 return True
 
         for keyword in call_node.keywords:

@@ -22,9 +22,9 @@ class TestR002MultipleDataclassRegression:
         violations = linter.lint_file(
             fixture_dir / "good" / "r002_multiple_dataclass_serializers.py"
         )
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
 
-        dataclass_violations = [v for v in r002_violations if v.line != 50]
+        dataclass_violations = [violation for violation in r002_violations if violation.line != 50]
         assert len(dataclass_violations) == 0, (
             "Dataclass to_* methods should be exempt. "
             f"Got {len(dataclass_violations)} violations in dataclass methods"
@@ -45,12 +45,12 @@ class TestR002MultipleDataclassRegression:
         violations = linter.lint_file(
             fixture_dir / "good" / "r002_multiple_dataclass_serializers.py"
         )
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
 
         assert len(r002_violations) >= 1, (
             "Plain class to_dict() method with 3+ keys should be flagged"
         )
 
-        assert any(v.line == 50 for v in r002_violations), (
+        assert any(violation.line == 50 for violation in r002_violations), (
             "Violation should be at line 50 (RegularClass.to_dict return)"
         )

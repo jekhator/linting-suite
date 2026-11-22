@@ -1519,15 +1519,15 @@ def log_method(self, a: int) -> None:
     pass
 """
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
         config = Config()
         checker = R013Checker(Path("test.py"), source, config)
 
-        old_lineno = func_node.lineno
-        func_node.lineno = None
+        old_lineno = function_node.lineno
+        function_node.lineno = None
         checker.visit(tree)
-        func_node.lineno = old_lineno
+        function_node.lineno = old_lineno
 
         assert isinstance(checker.violations, list)
 

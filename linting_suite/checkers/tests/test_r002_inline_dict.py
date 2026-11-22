@@ -15,7 +15,7 @@ class TestR002InlineDict:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r002_good_dict.py")
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) == 0
 
     def test_r002_bad_inline_dict(self, fixture_dir):
@@ -26,5 +26,5 @@ class TestR002InlineDict:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r002_bad_inline.py")
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) >= 1

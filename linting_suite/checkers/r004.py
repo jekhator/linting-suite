@@ -44,17 +44,17 @@ class R004Checker(BaseChecker):
 
     def _is_class_method_wrapper(self, node: ast.FunctionDef) -> bool:
         """Check if function body delegates to class methods (auto-detected wrapper pattern)."""
-        for stmt in node.body:
-            if isinstance(stmt, ast.Return) and stmt.value:
-                if self._is_method_delegation(stmt.value):
+        for statement in node.body:
+            if isinstance(statement, ast.Return) and statement.value:
+                if self._is_method_delegation(statement.value):
                     return True
         return False
 
     def _is_method_delegation(self, node: ast.expr) -> bool:
         """Check if node is a method call (attribute access followed by call)."""
         if isinstance(node, ast.Call):
-            func = node.func
-            if isinstance(func, ast.Attribute):
+            function = node.func
+            if isinstance(function, ast.Attribute):
                 return True
         return False
 

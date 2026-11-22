@@ -178,10 +178,10 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for Name node."""
         source = "def f(x: int): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert result == "int"
 
     def test_get_annotation_string_none(self):
@@ -193,10 +193,10 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for simple subscript."""
         source = "def f(x: list[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert "list" in result.lower()
         assert "int" in result.lower()
 
@@ -204,20 +204,20 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for tuple."""
         source = "def f(x: tuple[int, str]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert "tuple" in result.lower() or "int" in result.lower()
 
     def test_get_annotation_string_attribute(self):
         """Test annotation string for attribute."""
         source = "def f(x: typing.Optional[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert len(result) > 0
 
     def test_get_annotation_string_constant(self):
@@ -233,100 +233,100 @@ class TestAnnotationParsingEdgeCases:
         """Test detection of Dict[str, Any]."""
         source = "from typing import Dict, Any\ndef f(x: Dict[str, Any]): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is True
 
     def test_is_dict_str_any_lowercase(self):
         """Test detection of dict[str, any]."""
         source = "def f(x: dict[str, any]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is True
 
     def test_is_dict_str_any_invalid(self):
         """Test detection rejects wrong types."""
         source = "def f(x: dict[str, int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is False
 
     def test_is_bare_collection_dict(self):
         """Test detection of bare dict."""
         source = "def f(x: dict): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_list(self):
         """Test detection of bare list."""
         source = "def f(x: list): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_tuple(self):
         """Test detection of bare tuple."""
         source = "def f(x: tuple): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_parametrized(self):
         """Test bare collection rejects parametrized."""
         source = "def f(x: list[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is False
 
     def test_contains_any_present(self):
         """Test detection of Any."""
         source = "from typing import Any\ndef f(x: Any): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is True
 
     def test_contains_any_in_optional(self):
         """Test detection of Any in Optional."""
         source = "from typing import Optional, Any\ndef f(x: Optional[Any]): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is True
 
     def test_contains_any_absent(self):
         """Test detection rejects non-Any."""
         source = "def f(x: int): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is False
 
 
@@ -444,7 +444,7 @@ class TestLinterFileHandling:
             linter = DtoStrictLinter(config, baseline=baseline)
 
             result = linter.lint_file(bad_file)
-            filtered = [v for v in result if v.rule_id == "R002" and v.line == 1]
+            filtered = [violation for violation in result if violation.rule_id == "R002" and violation.line == 1]
             assert len(filtered) == 0
 
     def test_load_baseline_valid(self):
@@ -497,9 +497,9 @@ class TestLinterFileHandling:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R002":
-                    assert v.severity.name == "HIGH"
+            for violation in result:
+                if violation.rule_id == "R002":
+                    assert violation.severity.name == "HIGH"
 
     def test_get_exit_code_high_severity(self):
         """Test exit code 1 for high severity."""

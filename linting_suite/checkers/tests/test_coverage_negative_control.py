@@ -28,9 +28,9 @@ class ServiceClass:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Dict[str, Any]" in v.message for v in r001_violations)
+        assert any("Dict[str, Any]" in violation.message for violation in r001_violations)
 
     def test_r006_with_return_type_any(self, tmp_path):
         """Exercise R006 return type coverage with typing.Any."""
@@ -54,6 +54,6 @@ class ServiceClass:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
-        assert any("return type" in v.message.lower() for v in r006_violations)
+        assert any("return type" in violation.message.lower() for violation in r006_violations)

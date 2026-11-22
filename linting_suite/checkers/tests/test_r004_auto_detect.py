@@ -33,15 +33,15 @@ def another_wrapper(user_id: int):
     # Another wrapper pattern - should skip (no violation)
     return UserService.get_user(user_id)
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r004_violations = [v for v in violations if v.rule_id == "R004"]
+            r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
             assert len(r004_violations) == 0, (
                 "Class-method wrappers should be auto-detected as legitimate"
             )
@@ -60,15 +60,15 @@ def pure_utility(x: int):
     # This is a pure utility with business logic - needs tag
     return x * 2
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r004_violations = [v for v in violations if v.rule_id == "R004"]
+            r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
             assert len(r004_violations) >= 1, (
                 "Pure utility without tag should be flagged"
             )
@@ -86,15 +86,15 @@ def pure_utility(x: int):
 def my_function(x: int):  # facade - celery schedule
     return x * 2
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r004_violations = [v for v in violations if v.rule_id == "R004"]
+            r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
             assert len(r004_violations) == 0, "Exception tag should allow function"
         finally:
             path.unlink()
@@ -117,15 +117,15 @@ def get_user(user_id: int):
     # Wrapper with nested attribute access - auto-detected
     return _svc.user_service.get_user(user_id)
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r004_violations = [v for v in violations if v.rule_id == "R004"]
+            r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
             assert len(r004_violations) == 0, (
                 "Nested attribute method calls should be auto-detected"
             )

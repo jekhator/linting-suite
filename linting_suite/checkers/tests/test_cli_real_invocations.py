@@ -56,7 +56,7 @@ class TestCLIRealInvocations:
             assert "rule_id" in data[0]
         else:
             assert any(
-                v["rule_id"] in ["R001", "R006"] for v in data.get("violations", [])
+                violation["rule_id"] in ["R001", "R006"] for violation in data.get("violations", [])
             )
 
     def test_cli_lint_github_format(self, cli_project_dir):

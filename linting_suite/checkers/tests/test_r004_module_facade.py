@@ -16,7 +16,7 @@ class TestR004ModuleFacade:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r004_good_facade.py")
-        r004_violations = [v for v in violations if v.rule_id == "R004"]
+        r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
         assert len(r004_violations) == 0
 
     def test_r004_bad_no_tags(self, fixture_dir):
@@ -28,5 +28,5 @@ class TestR004ModuleFacade:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r004_bad_facade.py")
-        r004_violations = [v for v in violations if v.rule_id == "R004"]
+        r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
         assert len(r004_violations) >= 2

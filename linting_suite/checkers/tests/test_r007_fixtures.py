@@ -18,10 +18,10 @@ class TestR007Fixtures:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "test_r007_bad_fixtures.py")
-        r007_violations = [v for v in violations if v.rule_id == "R007"]
+        r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
         assert len(r007_violations) >= 1
-        assert any("fixture" in v.message.lower() for v in r007_violations)
-        assert any("conftest" in v.message.lower() for v in r007_violations)
+        assert any("fixture" in violation.message.lower() for violation in r007_violations)
+        assert any("conftest" in violation.message.lower() for violation in r007_violations)
 
     def test_r007_good_fixture_defined_in_conftest(self, fixture_dir):
         """
@@ -45,5 +45,5 @@ def sample_data():
 """)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(conftest_path)
-            r007_violations = [v for v in violations if v.rule_id == "R007"]
+            r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
             assert len(r007_violations) == 0

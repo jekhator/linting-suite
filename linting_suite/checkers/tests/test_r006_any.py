@@ -23,9 +23,9 @@ def process(data: Any) -> None:  # bad: Any in parameter
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
-        assert any("parameter" in v.message for v in r006_violations)
+        assert any("parameter" in violation.message for violation in r006_violations)
 
     def test_r006_any_in_return(self, tmp_path):
         """typing.Any in return type flagged."""
@@ -43,9 +43,9 @@ def get_config() -> Any:  # bad: Any in return
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
-        assert any("return" in v.message for v in r006_violations)
+        assert any("return" in violation.message for violation in r006_violations)
 
     def test_r006_optional_any(self, tmp_path):
         """typing.Optional[Any] flagged."""
@@ -63,7 +63,7 @@ def fetch(id: int) -> Optional[Any]:  # bad: Any in Optional
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) >= 1
 
     def test_r006_no_any(self, tmp_path):
@@ -82,7 +82,7 @@ def process(data: Dict[str, str]) -> None:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) == 0
 
     def test_r006_scoped_to_r006_paths(self, tmp_path):
@@ -101,5 +101,5 @@ def helper(x: Any) -> Any:  # allowed: not in r006_paths
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(other_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) == 0

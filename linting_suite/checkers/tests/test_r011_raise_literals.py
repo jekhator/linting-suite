@@ -18,7 +18,7 @@ class TestR011RaiseLiterals:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r011_raise_literal_message.py"
         )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 4, (
             f"Expected 4 R011 violations (plain literal, f-string, keyword arg literal, "
@@ -36,7 +36,7 @@ class TestR011RaiseLiterals:
         violations = linter.lint_file(
             fixture_dir / "good" / "r011_const_reference_raise.py"
         )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             f"Expected 0 R011 violations (all use const references), "
@@ -54,7 +54,7 @@ class TestR011RaiseLiterals:
         violations = linter.lint_file(
             fixture_dir / "good" / "test_r008_good_test_class.py"
         )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             "R011 should not flag violations in test files"
@@ -71,7 +71,7 @@ class TestR011RaiseLiterals:
         violations = linter.lint_file(
             fixture_dir / "bad" / "r011_raise_literal_message.py"
         )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) > 0
         message = r011_violations[0].message
@@ -97,7 +97,7 @@ def handle_error():
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should allow bare re-raise"
 
@@ -117,7 +117,7 @@ class Handler:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should allow raise with no arguments"
 
@@ -136,7 +136,7 @@ class Handler:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             "R011 should allow non-Call exception (direct re-raise)"
@@ -157,7 +157,7 @@ class Handler:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should respect noqa comments"
 
@@ -178,7 +178,7 @@ class Handler:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 1, (
             f"R011 should catch literal in second argument, got {len(r011_violations)}"
@@ -200,7 +200,7 @@ ERR_X = "some error"
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should exempt constants modules"
 
@@ -224,7 +224,7 @@ class Handler:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             "R011 should allow raise from with const reference"
@@ -248,7 +248,7 @@ class MyService:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             "R011 should allow bare re-raise in service files"
@@ -275,7 +275,7 @@ class MyService:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             "R011 should allow raising variables in service files"
@@ -296,7 +296,7 @@ class MyService:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 1, (
             f"R011 should catch keyword argument literals, got {len(r011_violations)}"

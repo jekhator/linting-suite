@@ -15,7 +15,7 @@ class TestR001DictStrAny:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r001_good_basic.py")
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) == 0
 
     def test_r001_bad_param_dict_str_any(self, fixture_dir):
@@ -26,9 +26,9 @@ class TestR001DictStrAny:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r001_bad_param.py")
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
-        assert any("Dict[str, Any]" in v.message for v in r001_violations)
+        assert any("Dict[str, Any]" in violation.message for violation in r001_violations)
 
     def test_r001_bad_return_dict_str_any(self, fixture_dir):
         """Bad: Dict[str, Any] in return type."""
@@ -38,5 +38,5 @@ class TestR001DictStrAny:
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r001_bad_return.py")
-        r001_violations = [v for v in violations if v.rule_id == "R001"]
+        r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
         assert len(r001_violations) >= 1
