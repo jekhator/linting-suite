@@ -286,11 +286,10 @@ strict-module linting_suite/module/ --format text
 dto-strict linting_suite/module/
 ```
 
-Run format and style checks:
+Run the lint check (ruff lint only; the formatter is never run, the layout is written by hand):
 
 ```bash
-ruff check linting_suite/module/
-ruff format --check linting_suite/module/
+ruff check linting_suite/
 ```
 
 Run LOC cap check:

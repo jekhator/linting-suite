@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Standards sweep (458)** - Source and tests conform to the running backend standards: no explanatory comments, docstring quotes alone on the first line, readable names, constants typed `Final` in docstring partitions, constants read whole through `const`, no literal outside constants in source modules, keyword and mapping values computed on their own lines, fixture docstrings that name their Test classes, and the hand layout (one line when it fits 120, otherwise packed entries, closing bracket alone, no trailing comma). No behaviour change: CLI output, exit codes, the rule registry and every package-root import are identical.
+- **`linting_suite.config.constants` is a package** - Same import path and the same 42 existing names; 225 names added, one module per concern so every file stays under the LOC cap.
+- **Module namespaces** - Modules no longer carry the constant names they used to pull in with `from ... import` (for example `linting_suite.module.cli.FORMAT_TEXT`); read constants from `linting_suite.config.constants`. Package-root exports are unchanged.
+- **Ruff** - Lint only, line length 120; the format check step is removed and `ruff format` is never run.
+
 ## [0.6.0] - 2026-11-22
 
 ### Fixed
