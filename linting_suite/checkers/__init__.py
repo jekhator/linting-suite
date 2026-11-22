@@ -18,20 +18,7 @@ from linting_suite.checkers.r014 import R014Checker
 from linting_suite.checkers.r015 import R015Checker
 
 __all__ = [
-    "BaseChecker",
-    "R001Checker",
-    "R002Checker",
-    "R003Checker",
-    "R004Checker",
-    "R005Checker",
-    "R006Checker",
-    "R007Checker",
-    "R008Checker",
-    "R009Checker",
-    "R010Checker",
-    "R011Checker",
-    "R012Checker",
-    "R013Checker",
-    "R014Checker",
-    "R015Checker",
+    "BaseChecker", "R001Checker", "R002Checker", "R003Checker", "R004Checker", "R005Checker", "R006Checker",
+    "R007Checker", "R008Checker", "R009Checker", "R010Checker", "R011Checker", "R012Checker", "R013Checker",
+    "R014Checker", "R015Checker"
 ]

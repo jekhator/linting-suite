@@ -164,12 +164,7 @@ class TestRunLocCap:
 
         (tmp_path / "file.py").write_text("a\n" * 700)
         baseline_text = str(baseline_file)
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=baseline_text,
-        )
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 0
 
     def test_run_loc_cap_baselined_file_grew(self, tmp_path, capsys):
@@ -179,12 +174,7 @@ class TestRunLocCap:
 
         (tmp_path / "file.py").write_text("a\n" * 750)
         baseline_text = str(baseline_file)
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=baseline_text,
-        )
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 1
         captured = capsys.readouterr()
         assert "grew by" in captured.out
@@ -204,12 +194,7 @@ class TestRunLocCap:
 
         (tmp_path / "file.py").write_text("a\n" * 600)
         baseline_text = str(baseline_file)
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=baseline_text,
-        )
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 0
         captured = capsys.readouterr()
         assert "improved" in captured.out

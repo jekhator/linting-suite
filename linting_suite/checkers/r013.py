@@ -43,9 +43,7 @@ class R013Checker(BaseChecker):
         self._check_signature(node)
         self.generic_visit(node)
 
-    def _check_signature(
-        self, node: ast.FunctionDef | ast.AsyncFunctionDef
-    ) -> None:
+    def _check_signature(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
         """Check signature formatting per P14 calibration."""
         params_after_self = self._get_params_after_self(node.args)
 
@@ -86,9 +84,7 @@ class R013Checker(BaseChecker):
             or method_name.startswith(const.R013_HANDLER_PREFIX_WRAP)
         )
 
-    def _check_handler_signature(
-        self, node: ast.FunctionDef | ast.AsyncFunctionDef, params: list[ast.arg]
-    ) -> None:
+    def _check_handler_signature(self, node: ast.FunctionDef | ast.AsyncFunctionDef, params: list[ast.arg]) -> None:
         """Check handler signature for proper grouping (2-5 per line)."""
         param_lines: dict[int, list[str]] = {}
         for param in params:
@@ -106,11 +102,7 @@ class R013Checker(BaseChecker):
                 message = const.MSG_R013_HANDLER_LINE.format(count=param_count)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R013,
-                        severity=RuleSeverity.INFO,
-                        file=file,
-                        line=line_num,
-                        col=0,
-                        message=message,
+                        rule_id=const.RULE_ID_R013, severity=RuleSeverity.INFO, file=file,
+                        line=line_num, col=0, message=message
                     )
                 )

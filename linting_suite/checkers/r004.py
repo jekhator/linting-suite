@@ -16,9 +16,7 @@ class R004Checker(BaseChecker):
     def __init__(self, file_path: Path, source: str, config: Config):
         super().__init__(file_path, source, config)
         self.in_service_file = False
-        self.in_service_file = PathClassifier.is_service_path(
-            file_path, config.service_paths
-        )
+        self.in_service_file = PathClassifier.is_service_path(file_path, config.service_paths)
 
     def visit_Module(self, node: ast.Module) -> None:
         """Visit module to find top-level function defs."""
@@ -29,19 +27,13 @@ class R004Checker(BaseChecker):
             if isinstance(item, ast.FunctionDef):
                 if self.is_suppressed(item, const.RULE_ID_R004):
                     continue
-                if not self._has_exception_tag(
-                    item
-                ) and not self._is_class_method_wrapper(item):
+                if not self._has_exception_tag(item) and not self._is_class_method_wrapper(item):
                     file = str(self.file_path)
                     message = const.MSG_R004_NO_TAG.format(name=item.name)
                     self.violations.append(
                         Violation(
-                            rule_id=const.RULE_ID_R004,
-                            severity=RuleSeverity.HIGH,
-                            file=file,
-                            line=item.lineno,
-                            col=item.col_offset,
-                            message=message,
+                            rule_id=const.RULE_ID_R004, severity=RuleSeverity.HIGH, file=file,
+                            line=item.lineno, col=item.col_offset, message=message
                         )
                     )
 

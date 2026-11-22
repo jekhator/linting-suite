@@ -26,11 +26,7 @@ class R008Checker(BaseChecker):
                     message = const.MSG_R008_TEST_FUNCTION.format(name=item.name)
                     self.violations.append(
                         Violation(
-                            rule_id=const.RULE_ID_R008,
-                            severity=RuleSeverity.MEDIUM,
-                            file=file,
-                            line=item.lineno,
-                            col=item.col_offset,
-                            message=message,
+                            rule_id=const.RULE_ID_R008, severity=RuleSeverity.MEDIUM, file=file,
+                            line=item.lineno, col=item.col_offset, message=message
                         )
                     )

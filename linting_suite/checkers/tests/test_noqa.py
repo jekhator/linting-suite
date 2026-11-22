@@ -43,9 +43,7 @@ class TestNoqaCommentDetection:
 
     def test_noqa_comma_separated_rules(self):
         """# noqa: dto-strict-R001, dto-strict-R002 should suppress those rules only."""
-        source = (
-            "def foo(x: Dict[str, Any]): pass  # noqa: dto-strict-R001, dto-strict-R002"
-        )
+        source = "def foo(x: Dict[str, Any]): pass  # noqa: dto-strict-R001, dto-strict-R002"
         lines = source.splitlines()
         tree = ast.parse(source)
         function_node = tree.body[0]

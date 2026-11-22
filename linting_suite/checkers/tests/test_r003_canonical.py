@@ -19,10 +19,7 @@ class MyDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical")
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -41,10 +38,7 @@ class MyDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical")
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -62,10 +56,7 @@ class MyDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="legacy",
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="legacy")
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -84,10 +75,7 @@ class MyDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="legacy",
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="legacy")
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]

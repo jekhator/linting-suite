@@ -44,12 +44,8 @@ class R011Checker(BaseChecker):
             file = str(self.file_path)
             self.violations.append(
                 Violation(
-                    rule_id=const.RULE_ID_R011,
-                    severity=RuleSeverity.HIGH,
-                    file=file,
-                    line=node.lineno,
-                    col=node.col_offset,
-                    message=const.MSG_R011_RAISE_LITERAL,
+                    rule_id=const.RULE_ID_R011, severity=RuleSeverity.HIGH, file=file,
+                    line=node.lineno, col=node.col_offset, message=const.MSG_R011_RAISE_LITERAL
                 )
             )
 

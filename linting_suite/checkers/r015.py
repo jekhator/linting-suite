@@ -59,9 +59,7 @@ class R015Checker(BaseChecker):
             if handler.body:
                 self._check_leg_structure(handler.body, handler.lineno, const.LEG_EXCEPT)
 
-    def _check_leg_structure(
-        self, statements: list[ast.stmt], start_line: int | None, leg_type: str
-    ) -> None:
+    def _check_leg_structure(self, statements: list[ast.stmt], start_line: int | None, leg_type: str) -> None:
         """Check per-leg structure: group separation and timing-capture contiguity."""
         if not statements or start_line is None:
             return
@@ -70,9 +68,7 @@ class R015Checker(BaseChecker):
 
         self._check_group_separation(statements, leg_type)
 
-    def _check_group_separation(
-        self, statements: list[ast.stmt], leg_type: str
-    ) -> None:
+    def _check_group_separation(self, statements: list[ast.stmt], leg_type: str) -> None:
         """
         Check that statement groups are separated by EXACTLY one blank line.
 
@@ -92,12 +88,8 @@ class R015Checker(BaseChecker):
                 message = const.MSG_R015_GROUPS.format(leg=leg)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R015,
-                        severity=RuleSeverity.INFO,
-                        file=file,
-                        line=next_statement.lineno,
-                        col=0,
-                        message=message,
+                        rule_id=const.RULE_ID_R015, severity=RuleSeverity.INFO, file=file,
+                        line=next_statement.lineno, col=0, message=message
                     )
                 )
 
@@ -114,12 +106,8 @@ class R015Checker(BaseChecker):
                         file = str(self.file_path)
                         self.violations.append(
                             Violation(
-                                rule_id=const.RULE_ID_R015,
-                                severity=RuleSeverity.INFO,
-                                file=file,
-                                line=next_statement.lineno,
-                                col=0,
-                                message=const.MSG_R015_TIMING,
+                                rule_id=const.RULE_ID_R015, severity=RuleSeverity.INFO, file=file,
+                                line=next_statement.lineno, col=0, message=const.MSG_R015_TIMING
                             )
                         )
 

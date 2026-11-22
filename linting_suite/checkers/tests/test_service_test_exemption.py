@@ -19,10 +19,7 @@ class TestServiceTestExemption:
         - @pytest.fixture with type[Any] (would trigger R006 in production code)
         are NOT flagged because the file is a test file.
         """
-        config = Config(
-            service_paths=["**/services/*.py"],
-            r006_paths=["**/services/*.py"],
-        )
+        config = Config(service_paths=["**/services/*.py"], r006_paths=["**/services/*.py"])
         linter = DtoStrictLinter(config)
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -50,15 +47,9 @@ def helper_function():
             r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
             r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
 
-            assert len(r001_violations) == 0, (
-                f"R001 should not trigger in test files: {r001_violations}"
-            )
-            assert len(r004_violations) == 0, (
-                f"R004 should not trigger in test files: {r004_violations}"
-            )
-            assert len(r006_violations) == 0, (
-                f"R006 should not trigger in test files: {r006_violations}"
-            )
+            assert len(r001_violations) == 0, f"R001 should not trigger in test files: {r001_violations}"
+            assert len(r004_violations) == 0, f"R004 should not trigger in test files: {r004_violations}"
+            assert len(r006_violations) == 0, f"R006 should not trigger in test files: {r006_violations}"
 
     def test_production_service_file_still_flagged_for_r001_r004_r006(self):
         """
@@ -66,10 +57,7 @@ def helper_function():
 
         This ensures the exemption only applies to test files, not all service files.
         """
-        config = Config(
-            service_paths=["**/services/*.py"],
-            r006_paths=["**/services/*.py"],
-        )
+        config = Config(service_paths=["**/services/*.py"], r006_paths=["**/services/*.py"])
         linter = DtoStrictLinter(config)
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -90,9 +78,5 @@ def process_data(data: dict[str, Any]) -> dict[str, Any]:
             r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
             r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
 
-            assert len(r001_violations) >= 1, (
-                "R001 should trigger for production service code with Dict[str, Any]"
-            )
-            assert len(r006_violations) >= 1, (
-                "R006 should trigger for production service code with Any"
-            )
+            assert len(r001_violations) >= 1, "R001 should trigger for production service code with Dict[str, Any]"
+            assert len(r006_violations) >= 1, "R006 should trigger for production service code with Any"

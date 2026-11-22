@@ -31,9 +31,7 @@ from linting_suite.rules import RuleSeverity, Violation
 class DtoStrictLinter:
     """AST-based linter for DTO discipline."""
 
-    def __init__(
-        self, config: Config, baseline: dict[tuple[str, int, str], str] | None = None
-    ):
+    def __init__(self, config: Config, baseline: dict[tuple[str, int, str], str] | None = None):
         self.config = config
         self.violations: list[Violation] = []
         self.baseline = baseline or {}
@@ -56,21 +54,8 @@ class DtoStrictLinter:
         violations = []
 
         for checker_cls in [
-            R001Checker,
-            R002Checker,
-            R003Checker,
-            R004Checker,
-            R005Checker,
-            R006Checker,
-            R007Checker,
-            R008Checker,
-            R009Checker,
-            R010Checker,
-            R011Checker,
-            R012Checker,
-            R013Checker,
-            R014Checker,
-            R015Checker,
+            R001Checker, R002Checker, R003Checker, R004Checker, R005Checker, R006Checker, R007Checker, R008Checker,
+            R009Checker, R010Checker, R011Checker, R012Checker, R013Checker, R014Checker, R015Checker
         ]:
             checker = checker_cls(file_path, source, self.config)
             checker.visit(tree)
@@ -110,12 +95,8 @@ class DtoStrictLinter:
                 new_severity = self.config.severity_overrides[violation.rule_id].upper()
                 if new_severity in const.VALID_SEVERITY_LEVELS:
                     violation = Violation(
-                        rule_id=violation.rule_id,
-                        severity=RuleSeverity[new_severity],
-                        file=violation.file,
-                        line=violation.line,
-                        col=violation.col,
-                        message=violation.message,
+                        rule_id=violation.rule_id, severity=RuleSeverity[new_severity], file=violation.file,
+                        line=violation.line, col=violation.col, message=violation.message
                     )
             overridden.append(violation)
 
@@ -142,10 +123,8 @@ class DtoStrictLinter:
             message_hash = self._hash_message(violation.message)
             baseline_data.append(
                 {
-                    const.BASELINE_KEY_FILE: violation.file,
-                    const.BASELINE_KEY_LINE: violation.line,
-                    const.BASELINE_KEY_RULE_ID: violation.rule_id,
-                    const.BASELINE_KEY_MESSAGE_HASH: message_hash,
+                    const.BASELINE_KEY_FILE: violation.file, const.BASELINE_KEY_LINE: violation.line,
+                    const.BASELINE_KEY_RULE_ID: violation.rule_id, const.BASELINE_KEY_MESSAGE_HASH: message_hash
                 }
             )
         return baseline_data
@@ -157,13 +136,9 @@ class DtoStrictLinter:
             with open(baseline_path, const.FILE_MODE_READ) as handle:
                 data = json.load(handle)
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
-            raise objs.BaselineLoadError(
-                const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
-            ) from error
+            raise objs.BaselineLoadError(const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)) from error
         except OSError as error:
-            raise objs.BaselineLoadError(
-                const.ERR_BASELINE_MISSING.format(path=baseline_path)
-            ) from error
+            raise objs.BaselineLoadError(const.ERR_BASELINE_MISSING.format(path=baseline_path)) from error
 
         if not isinstance(data, list):
             raise objs.BaselineLoadError(const.ERR_BASELINE_NOT_LIST.format(path=baseline_path))
@@ -172,24 +147,20 @@ class DtoStrictLinter:
         for index, entry in enumerate(data):
             if not isinstance(entry, dict):
                 raise objs.BaselineLoadError(
-                    const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(
-                        index=index, path=baseline_path
-                    )
+                    const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(index=index, path=baseline_path)
                 )
             for key in const.REQUIRED_BASELINE_KEYS:
                 if key not in entry:
                     raise objs.BaselineLoadError(
-                        const.ERR_BASELINE_ENTRY_SHAPE.format(
-                            index=index, key=key, path=baseline_path
-                        )
+                        const.ERR_BASELINE_ENTRY_SHAPE.format(index=index, key=key, path=baseline_path)
                     )
-            baseline_key = (entry[const.BASELINE_KEY_FILE], entry[const.BASELINE_KEY_LINE], entry[const.BASELINE_KEY_RULE_ID])
+            baseline_key = (
+                entry[const.BASELINE_KEY_FILE], entry[const.BASELINE_KEY_LINE], entry[const.BASELINE_KEY_RULE_ID]
+            )
             baseline[baseline_key] = entry[const.BASELINE_KEY_MESSAGE_HASH]
         return baseline
 
-    def format_violations(
-        self, violations: list[Violation], format_type: str = const.FORMAT_TEXT
-    ) -> str:
+    def format_violations(self, violations: list[Violation], format_type: str = const.FORMAT_TEXT) -> str:
         """Format violations for output."""
         if format_type == const.FORMAT_GITHUB:
             return const.LINE_SEPARATOR.join(violation.format_github() for violation in violations)
@@ -199,14 +170,11 @@ class DtoStrictLinter:
                     {
                         const.VIOLATION_KEY_RULE_ID: violation.rule_id,
                         const.VIOLATION_KEY_SEVERITY: violation.severity.value,
-                        const.VIOLATION_KEY_FILE: violation.file,
-                        const.VIOLATION_KEY_LINE: violation.line,
-                        const.VIOLATION_KEY_COL: violation.col,
-                        const.VIOLATION_KEY_MESSAGE: violation.message,
-                    }
-                    for violation in violations
+                        const.VIOLATION_KEY_FILE: violation.file, const.VIOLATION_KEY_LINE: violation.line,
+                        const.VIOLATION_KEY_COL: violation.col, const.VIOLATION_KEY_MESSAGE: violation.message
+                    } for violation in violations
                 ],
-                indent=const.JSON_INDENT,
+                indent=const.JSON_INDENT
             )
         else:
             return const.LINE_SEPARATOR.join(violation.format_text() for violation in violations)

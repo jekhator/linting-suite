@@ -21,9 +21,7 @@ class R002Checker(BaseChecker):
         self.current_class: ast.ClassDef | None = None
         self.function_comments: dict[int, str | None] = {}
         self.dict_parents: dict[int, ast.AST] = {}
-        self.in_service_file = PathClassifier.is_service_path(
-            file_path, config.service_paths
-        )
+        self.in_service_file = PathClassifier.is_service_path(file_path, config.service_paths)
 
     def visit_ClassDef(self, node: ast.ClassDef) -> None:
         """Track class definitions to detect to_* serializer methods."""
@@ -88,9 +86,7 @@ class R002Checker(BaseChecker):
         if not self._is_class_decorated_with_dataclass(self.current_class):
             return False
 
-        if self.current_function is None or not self.current_function.name.startswith(
-            const.SERIALIZER_PREFIX
-        ):
+        if self.current_function is None or not self.current_function.name.startswith(const.SERIALIZER_PREFIX):
             return False
 
         for statement in ast.walk(self.current_function):
@@ -119,16 +115,9 @@ class R002Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        string_keys = sum(
-            1
-            for key in node.keys
-            if isinstance(key, ast.Constant) and isinstance(key.value, str)
-        )
+        string_keys = sum(1 for key in node.keys if isinstance(key, ast.Constant) and isinstance(key.value, str))
 
-        if (
-            string_keys >= self.config.min_dict_keys
-            and len(node.keys) >= self.config.min_dict_keys
-        ):
+        if string_keys >= self.config.min_dict_keys and len(node.keys) >= self.config.min_dict_keys:
             comment = self.get_comment_text(node.lineno)
             if not comment and self.current_function:
                 comment = self.function_comments.get(id(self.current_function)) or ""
@@ -150,12 +139,8 @@ class R002Checker(BaseChecker):
                         file = str(self.file_path)
                         self.violations.append(
                             Violation(
-                                rule_id=const.RULE_ID_R002,
-                                severity=RuleSeverity.MEDIUM,
-                                file=file,
-                                line=node.lineno,
-                                col=node.col_offset,
-                                message=const.MSG_R002_MISSING_JUSTIFICATION,
+                                rule_id=const.RULE_ID_R002, severity=RuleSeverity.MEDIUM, file=file,
+                                line=node.lineno, col=node.col_offset, message=const.MSG_R002_MISSING_JUSTIFICATION
                             )
                         )
                         self.generic_visit(node)
@@ -168,12 +153,8 @@ class R002Checker(BaseChecker):
                         message = const.MSG_R002_TAG_LIMIT.format(limit=self.config.max_exception_tags_per_file)
                         self.violations.append(
                             Violation(
-                                rule_id=const.RULE_ID_R002,
-                                severity=RuleSeverity.MEDIUM,
-                                file=file,
-                                line=node.lineno,
-                                col=node.col_offset,
-                                message=message,
+                                rule_id=const.RULE_ID_R002, severity=RuleSeverity.MEDIUM, file=file,
+                                line=node.lineno, col=node.col_offset, message=message
                             )
                         )
             else:
@@ -181,12 +162,8 @@ class R002Checker(BaseChecker):
                 message = const.MSG_R002_INLINE_DICT.format(count=string_keys)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R002,
-                        severity=RuleSeverity.MEDIUM,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R002, severity=RuleSeverity.MEDIUM, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
 

@@ -37,12 +37,8 @@ class R009Checker(BaseChecker):
                 message = const.MSG_R009_MODULE_FUNCTION.format(name=item.name, allowed=allowed)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R009,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=item.lineno,
-                        col=item.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R009, severity=RuleSeverity.HIGH, file=file,
+                        line=item.lineno, col=item.col_offset, message=message
                     )
                 )
 

@@ -12,10 +12,7 @@ class TestR007Fixtures:
 
     def test_r007_bad_fixture_in_test_file(self, fixture_dir):
         """Bad: pytest fixture defined in non-conftest test file."""
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "test_r007_bad_fixtures.py")
         r007_violations = [violation for violation in violations if violation.rule_id == "R007"]
@@ -30,10 +27,7 @@ class TestR007Fixtures:
         This test verifies that test files with conftest.py don't trigger R007.
         The conftest.py file itself can contain fixtures.
         """
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         with tempfile.TemporaryDirectory() as tmpdir:
             conftest_path = Path(tmpdir) / "conftest.py"
             conftest_path.write_text("""

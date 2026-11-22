@@ -27,12 +27,8 @@ class R006Checker(BaseChecker):
                 message = const.MSG_R006_PARAMETER.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R006,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R006, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -43,12 +39,8 @@ class R006Checker(BaseChecker):
                 message = const.MSG_R006_VARARGS.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R006,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R006, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -59,12 +51,8 @@ class R006Checker(BaseChecker):
                 message = const.MSG_R006_KWARGS.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R006,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R006, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -74,12 +62,8 @@ class R006Checker(BaseChecker):
             message = const.MSG_R006_RETURN.format(name=node.name)
             self.violations.append(
                 Violation(
-                    rule_id=const.RULE_ID_R006,
-                    severity=RuleSeverity.HIGH,
-                    file=file,
-                    line=node.lineno,
-                    col=node.col_offset,
-                    message=message,
+                    rule_id=const.RULE_ID_R006, severity=RuleSeverity.HIGH, file=file,
+                    line=node.lineno, col=node.col_offset, message=message
                 )
             )
 

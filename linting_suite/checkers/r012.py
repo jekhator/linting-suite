@@ -45,12 +45,8 @@ class R012Checker(BaseChecker):
                 file = str(self.file_path)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R012,
-                        severity=RuleSeverity.INFO,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=const.MSG_R012_SINGLE_ARGUMENT,
+                        rule_id=const.RULE_ID_R012, severity=RuleSeverity.INFO, file=file,
+                        line=node.lineno, col=node.col_offset, message=const.MSG_R012_SINGLE_ARGUMENT
                     )
                 )
         except Exception:

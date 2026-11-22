@@ -22,9 +22,7 @@ class TestLocCapTestExemption:
         """Files under tests/ directory are exempt."""
         files = LocCap.find_python_files(str(temp_project_with_test_files))
         for path in files.keys():
-            assert "/tests/" not in path and not path.startswith("tests/"), (
-                "Files under tests/ should be exempt"
-            )
+            assert "/tests/" not in path and not path.startswith("tests/"), "Files under tests/ should be exempt"
 
     def test_loc_cap_counts_source_files(self, temp_project_with_test_files):
         """Source files that are not test files are counted."""
@@ -33,7 +31,5 @@ class TestLocCapTestExemption:
         for path, loc in files.items():
             if "src/module.py" in path or "src" + chr(92) + "module.py" in path:
                 found_src = True
-                assert loc == 500, (
-                    "Source file should be counted with correct line count"
-                )
+                assert loc == 500, "Source file should be counted with correct line count"
         assert found_src, "Source file should be present in results"

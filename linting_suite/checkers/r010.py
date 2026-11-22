@@ -29,12 +29,8 @@ class R010Checker(BaseChecker):
                 message = const.MSG_R010_LEGACY_IMPORT.format(name=imported_name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R010,
-                        severity=RuleSeverity.MEDIUM,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R010, severity=RuleSeverity.MEDIUM, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
 

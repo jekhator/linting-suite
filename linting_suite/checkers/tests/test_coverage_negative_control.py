@@ -22,10 +22,7 @@ class ServiceClass:
         test_file = tmp_path / "service.py"
         test_file.write_text(code)
 
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -47,11 +44,7 @@ class ServiceClass:
         test_file = tmp_path / "service.py"
         test_file.write_text(code)
 
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            r006_paths=["**/*.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], r006_paths=["**/*.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
         r006_violations = [violation for violation in violations if violation.rule_id == "R006"]

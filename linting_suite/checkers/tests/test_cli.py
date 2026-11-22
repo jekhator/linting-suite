@@ -21,11 +21,7 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", str(fixture_file), "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", str(fixture_file), "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code == 0
@@ -42,11 +38,7 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", str(fixture_file), "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", str(fixture_file), "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code > 0
@@ -67,16 +59,8 @@ service_paths = ["**/*.py"]
         )
 
         monkeypatch.setattr(
-            sys,
-            "argv",
-            [
-                "dto-strict",
-                str(fixture_file),
-                "--format",
-                "github",
-                "--config",
-                str(config_file),
-            ],
+            sys, "argv",
+            ["dto-strict", str(fixture_file), "--format", "github", "--config", str(config_file)]
         )
 
         exit_code = main()
@@ -97,11 +81,7 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", nonexistent_path, "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", nonexistent_path, "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code != 0

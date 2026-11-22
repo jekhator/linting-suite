@@ -43,9 +43,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_em_dash_explanation(self):
         """Test noqa comment with em-dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 — explanation here",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 — explanation here"]
         node = Mock()
         node.lineno = 1
 
@@ -54,9 +52,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_en_dash_explanation(self):
         """Test noqa comment with en-dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 – explanation",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 – explanation"]
         node = Mock()
         node.lineno = 1
 
@@ -65,9 +61,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_regular_dash_explanation(self):
         """Test noqa comment with regular dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 - explanation",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 - explanation"]
         node = Mock()
         node.lineno = 1
 
@@ -76,9 +70,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_with_multiple_spaces(self):
         """Test noqa comment with multiple spaces."""
-        source = [
-            "x = 1  #    noqa:    strict-module-R001",
-        ]
+        source = ["x = 1  #    noqa:    strict-module-R001"]
         node = Mock()
         node.lineno = 1
 
@@ -87,9 +79,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_bare_noqa_suppresses_all(self):
         """Test bare noqa suppresses all rules."""
-        source = [
-            "x = 1  # noqa",
-        ]
+        source = ["x = 1  # noqa"]
         node = Mock()
         node.lineno = 1
 
@@ -124,9 +114,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_dto_strict_backward_compat(self):
         """Test backward-compat dto-strict tag."""
-        source = [
-            "x = 1  # noqa: dto-strict",
-        ]
+        source = ["x = 1  # noqa: dto-strict"]
         node = Mock()
         node.lineno = 1
 
@@ -135,9 +123,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_dto_strict_specific_backward_compat(self):
         """Test backward-compat dto-strict-R001 tag."""
-        source = [
-            "x = 1  # noqa: dto-strict-R001",
-        ]
+        source = ["x = 1  # noqa: dto-strict-R001"]
         node = Mock()
         node.lineno = 1
 
@@ -146,9 +132,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_comma_separated_mixed(self):
         """Test comma-separated list with mixed old/new syntax."""
-        source = [
-            "x = 1  # noqa: dto-strict-R001,strict-module-R002",
-        ]
+        source = ["x = 1  # noqa: dto-strict-R001,strict-module-R002"]
         node = Mock()
         node.lineno = 1
 
@@ -158,9 +142,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_no_comment(self):
         """Test line without comment."""
-        source = [
-            "x = 1",
-        ]
+        source = ["x = 1"]
         node = Mock()
         node.lineno = 1
 
@@ -435,9 +417,7 @@ class TestLinterFileHandling:
             bad_file = Path(tmpdir) / "bad.py"
             bad_file.write_text("x = {1: 2, 3: 4, 5: 6}")
 
-            baseline = {
-                (str(bad_file), 1, "R002"): "abc123",
-            }
+            baseline = {(str(bad_file), 1, "R002"): "abc123"}
             linter = DtoStrictLinter(config, baseline=baseline)
 
             result = linter.lint_file(bad_file)
@@ -449,16 +429,7 @@ class TestLinterFileHandling:
         with tempfile.TemporaryDirectory() as tmpdir:
             baseline_file = Path(tmpdir) / "baseline.json"
             baseline_file.write_text(
-                json.dumps(
-                    [
-                        {
-                            "file": "test.py",
-                            "line": 1,
-                            "rule_id": "R001",
-                            "message_hash": "abc123",
-                        }
-                    ]
-                )
+                json.dumps([{"file": "test.py", "line": 1, "rule_id": "R001", "message_hash": "abc123"}])
             )
 
             result = DtoStrictLinter.load_baseline(baseline_file)
@@ -472,9 +443,7 @@ class TestLinterFileHandling:
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_file)
-            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_file
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_file)
 
     def test_load_baseline_nonexistent(self):
         """Test loading nonexistent baseline file raises error."""
@@ -505,9 +474,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 1
@@ -519,9 +486,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R002", RuleSeverity.MEDIUM, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R002", RuleSeverity.MEDIUM, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 2
@@ -533,9 +498,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R005", RuleSeverity.LOW, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R005", RuleSeverity.LOW, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 3
@@ -555,9 +518,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "text")
         assert "test.py" in output
@@ -571,9 +532,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "json")
         data = json.loads(output)
@@ -590,9 +549,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "github")
         assert "::error" in output

@@ -13,9 +13,7 @@ class R001Checker(BaseChecker):
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """Visit function definitions."""
-        if not PathClassifier.is_service_path(
-            self.file_path, self.config.service_paths
-        ):
+        if not PathClassifier.is_service_path(self.file_path, self.config.service_paths):
             return
 
         if self.is_suppressed(node, const.RULE_ID_R001):
@@ -28,29 +26,18 @@ class R001Checker(BaseChecker):
                     message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                     self.violations.append(
                         Violation(
-                            rule_id=const.RULE_ID_R001,
-                            severity=RuleSeverity.HIGH,
-                            file=file,
-                            line=node.lineno,
-                            col=node.col_offset,
-                            message=message,
+                            rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                            line=node.lineno, col=node.col_offset, message=message
                         )
                     )
                     return
-                elif (
-                    self.config.strict_collections
-                    and AnnotationInspector.is_bare_collection(argument.annotation)
-                ):
+                elif self.config.strict_collections and AnnotationInspector.is_bare_collection(argument.annotation):
                     file = str(self.file_path)
                     message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                     self.violations.append(
                         Violation(
-                            rule_id=const.RULE_ID_R001,
-                            severity=RuleSeverity.HIGH,
-                            file=file,
-                            line=node.lineno,
-                            col=node.col_offset,
-                            message=message,
+                            rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                            line=node.lineno, col=node.col_offset, message=message
                         )
                     )
                     return
@@ -61,12 +48,8 @@ class R001Checker(BaseChecker):
                 message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -78,12 +61,8 @@ class R001Checker(BaseChecker):
                 message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -94,12 +73,8 @@ class R001Checker(BaseChecker):
                 message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -111,12 +86,8 @@ class R001Checker(BaseChecker):
                 message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
                 return
@@ -127,28 +98,17 @@ class R001Checker(BaseChecker):
                 message = const.MSG_R001_DICT_STR_ANY.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
-            elif (
-                self.config.strict_collections
-                and AnnotationInspector.is_bare_collection(node.returns)
-            ):
+            elif self.config.strict_collections and AnnotationInspector.is_bare_collection(node.returns):
                 file = str(self.file_path)
                 message = const.MSG_R001_BARE_COLLECTION.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R001,
-                        severity=RuleSeverity.HIGH,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R001, severity=RuleSeverity.HIGH, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
 

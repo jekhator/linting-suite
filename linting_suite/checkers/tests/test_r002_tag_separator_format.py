@@ -16,9 +16,8 @@ def process_data():
 """)
 
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(code_file)
@@ -35,8 +34,7 @@ def process_data():
     def test_tag_separator_uses_colon_not_em_dash(self, tmp_path):
         """Test that tag separator format shows colon, not em dash."""
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         assert all("-" in tag and "—" not in tag for tag in config.exception_tags)

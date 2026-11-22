@@ -9,11 +9,7 @@ class TestR010LegacyTypingABC:
 
     def test_r010_detects_legacy_typing_imports(self, fixture_dir):
         """R010 should flag imports of typing.* ABCs."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r010_legacy_typing_abc.py")
         r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
@@ -25,15 +21,9 @@ class TestR010LegacyTypingABC:
 
     def test_r010_allows_collections_abc_imports(self, fixture_dir):
         """R010 should not flag collections.abc imports."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "r010_modern_abc_imports.py"
-        )
+        violations = linter.lint_file(fixture_dir / "good" / "r010_modern_abc_imports.py")
         r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
         assert len(r010_violations) == 0, (
@@ -43,28 +33,16 @@ class TestR010LegacyTypingABC:
 
     def test_r010_allows_typing_non_abc_imports(self, fixture_dir):
         """R010 should allow typing imports that are not ABCs (Any, TypeVar, etc.)."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "r010_modern_abc_imports.py"
-        )
+        violations = linter.lint_file(fixture_dir / "good" / "r010_modern_abc_imports.py")
         r010_violations = [violation for violation in violations if violation.rule_id == "R010"]
 
-        assert len(r010_violations) == 0, (
-            "R010 should not flag typing.Any, typing.TypeVar, etc."
-        )
+        assert len(r010_violations) == 0, "R010 should not flag typing.Any, typing.TypeVar, etc."
 
     def test_r010_message_suggests_collections_abc(self, fixture_dir):
         """R010 violation message should suggest using collections.abc."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r010_legacy_typing_abc.py")
         r010_violations = [violation for violation in violations if violation.rule_id == "R010"]

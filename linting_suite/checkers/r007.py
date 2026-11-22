@@ -30,12 +30,8 @@ class R007Checker(BaseChecker):
                 message = const.MSG_R007_FIXTURE.format(name=node.name)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R007,
-                        severity=RuleSeverity.MEDIUM,
-                        file=file,
-                        line=node.lineno,
-                        col=node.col_offset,
-                        message=message,
+                        rule_id=const.RULE_ID_R007, severity=RuleSeverity.MEDIUM, file=file,
+                        line=node.lineno, col=node.col_offset, message=message
                     )
                 )
 

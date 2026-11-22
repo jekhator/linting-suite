@@ -18,9 +18,8 @@ def process():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
@@ -39,9 +38,8 @@ def process():  # facade - celery schedule: transient event payload
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
@@ -67,9 +65,7 @@ def process3():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            max_exception_tags_per_file=2,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"], max_exception_tags_per_file=2
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
@@ -87,9 +83,8 @@ def process():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=False,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=False
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)

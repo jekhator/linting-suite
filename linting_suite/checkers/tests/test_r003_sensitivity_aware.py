@@ -19,11 +19,7 @@ class PlainDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -43,11 +39,7 @@ class SensitiveDTO(SensitiveRepr):
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -67,11 +59,7 @@ class SensitiveDTO:
     ssn: str = field(metadata={"sensitivity": Sensitivity.PII})
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
@@ -90,10 +78,8 @@ class AllowlistedDTO:
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_allowlist=["AllowlistedDTO"],
+            dto_paths=["**/*.py"], r003_mode="canonical",
+            r003_strict_repr=True, r003_sensitivity_allowlist=["AllowlistedDTO"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
@@ -113,10 +99,8 @@ class FullPathAllowlistedDTO:
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_allowlist=["dtos.FullPathAllowlistedDTO"],
+            dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True,
+            r003_sensitivity_allowlist=["dtos.FullPathAllowlistedDTO"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
@@ -139,10 +123,8 @@ class SensitiveDTO(CustomSensitiveBase):
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_bases=["SensitiveRepr", "CustomSensitiveBase"],
+            dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True,
+            r003_sensitivity_bases=["SensitiveRepr", "CustomSensitiveBase"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)

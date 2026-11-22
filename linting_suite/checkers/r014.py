@@ -100,29 +100,19 @@ class R014Checker(BaseChecker):
                 message = const.MSG_R014_PACK.format(count=count)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R014,
-                        severity=RuleSeverity.INFO,
-                        file=file,
-                        line=line_num,
-                        col=0,
-                        message=message,
+                        rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
+                        line=line_num, col=0, message=message
                     )
                 )
 
-    def _check_log_event_full_explode(
-        self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call
-    ) -> None:
+    def _check_log_event_full_explode(self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call) -> None:
         """Check 2-3 kwargs: must FULL-EXPLODE one-per-line (constant on its own line)."""
         for line_num, kwarg_names in sorted_lines:
             if len(kwarg_names) != 1:
                 file = str(self.file_path)
                 self.violations.append(
                     Violation(
-                        rule_id=const.RULE_ID_R014,
-                        severity=RuleSeverity.INFO,
-                        file=file,
-                        line=line_num,
-                        col=0,
-                        message=const.MSG_R014_EXPLODE,
+                        rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
+                        line=line_num, col=0, message=const.MSG_R014_EXPLODE
                     )
                 )

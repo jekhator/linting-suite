@@ -57,7 +57,7 @@ class LocCap:
     @staticmethod
     def find_python_files(
         root_path: str,
-        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS,
+        exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS
     ) -> dict[str, int]:
         """Find all Python files under root_path, exempting test files and excluded patterns."""
         current_locs: dict[str, int] = {}
@@ -83,7 +83,7 @@ class LocCap:
     def generate_baseline(
         root_path: str,
         exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS,
-        floor: int = 0,
+        floor: int = 0
     ) -> str:
         """Generate baseline output in path:loc format, sorted by LOC descending."""
         files = LocCap.find_python_files(root_path, exclude_patterns)
@@ -96,12 +96,10 @@ class LocCap:
 
     @staticmethod
     def run_loc_cap(
-        path: str,
-        hard_cap: int = const.DEFAULT_LOC_HARD_CAP,
-        soft_target: int = const.DEFAULT_LOC_SOFT_TARGET,
-        baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE,
+        path: str, hard_cap: int = const.DEFAULT_LOC_HARD_CAP,
+        soft_target: int = const.DEFAULT_LOC_SOFT_TARGET, baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE,
         exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS,
-        generate: bool = False,
+        generate: bool = False
     ) -> int:
         """Run LOC cap checker with hard/soft caps and baseline ratchet enforcement."""
         if generate:
@@ -138,13 +136,13 @@ class LocCap:
                 if current_loc <= hard_cap:
                     delta = baseline_loc - current_loc
                     improvements.append(
-                        const.MSG_LOC_IMPROVED.format(loc=current_loc, path=baseline_path, baseline=baseline_loc, delta=delta)
+                        const.MSG_LOC_IMPROVED.format(
+                            loc=current_loc, path=baseline_path, baseline=baseline_loc, delta=delta
+                        )
                     )
 
         if soft_warnings:
-            print(
-                const.MSG_LOC_SOFT_HEADER.format(soft_target=soft_target)
-            )
+            print(const.MSG_LOC_SOFT_HEADER.format(soft_target=soft_target))
             print(const.LINE_SEPARATOR.join(soft_warnings))
             print()
 
@@ -154,23 +152,13 @@ class LocCap:
             print()
 
         if hard_violations:
-            print(
-                const.MSG_LOC_HARD_HEADER.format(hard_cap=hard_cap)
-            )
+            print(const.MSG_LOC_HARD_HEADER.format(hard_cap=hard_cap))
             print(const.LINE_SEPARATOR.join(hard_violations))
             print()
-            print(
-                const.MSG_LOC_RATIONALE
-            )
-            print(
-                const.MSG_LOC_TESTS
-            )
-            print(
-                const.MSG_LOC_REFACTOR
-            )
+            print(const.MSG_LOC_RATIONALE)
+            print(const.MSG_LOC_TESTS)
+            print(const.MSG_LOC_REFACTOR)
             return const.EXIT_CODE_HIGH_VIOLATION
 
-        print(
-            const.MSG_LOC_WITHIN_CAP.format(hard_cap=hard_cap)
-        )
+        print(const.MSG_LOC_WITHIN_CAP.format(hard_cap=hard_cap))
         return const.EXIT_CODE_SUCCESS

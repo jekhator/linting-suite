@@ -38,19 +38,13 @@ class R003Checker(BaseChecker):
                 if self.config.r003_mode == const.R003_MODE_CANONICAL:
                     if self.config.r003_strict_repr:
                         has_repr_false = kwargs.get(const.DATACLASS_KWARG_REPR) == const.LITERAL_FALSE
-                        if has_repr_false and not self._is_sensitivity_aware_repr_false(
-                            node
-                        ):
+                        if has_repr_false and not self._is_sensitivity_aware_repr_false(node):
                             file = str(self.file_path)
                             message = const.MSG_R003_REPR_FALSE.format(name=node.name)
                             self.violations.append(
                                 Violation(
-                                    rule_id=const.RULE_ID_R003,
-                                    severity=RuleSeverity.MEDIUM,
-                                    file=file,
-                                    line=node.lineno,
-                                    col=node.col_offset,
-                                    message=message,
+                                    rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                    line=node.lineno, col=node.col_offset, message=message
                                 )
                             )
                     else:
@@ -69,12 +63,8 @@ class R003Checker(BaseChecker):
                             message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                             self.violations.append(
                                 Violation(
-                                    rule_id=const.RULE_ID_R003,
-                                    severity=RuleSeverity.MEDIUM,
-                                    file=file,
-                                    line=node.lineno,
-                                    col=node.col_offset,
-                                    message=message,
+                                    rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                    line=node.lineno, col=node.col_offset, message=message
                                 )
                             )
                 else:
@@ -96,12 +86,8 @@ class R003Checker(BaseChecker):
                         message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                         self.violations.append(
                             Violation(
-                                rule_id=const.RULE_ID_R003,
-                                severity=RuleSeverity.MEDIUM,
-                                file=file,
-                                line=node.lineno,
-                                col=node.col_offset,
-                                message=message,
+                                rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                line=node.lineno, col=node.col_offset, message=message
                             )
                         )
 
@@ -112,21 +98,15 @@ class R003Checker(BaseChecker):
         full_class_path = const.TEMPLATE_CLASS_PATH.format(module=self.file_path.stem, name=node.name)
 
         if node.name in self.config.r003_sensitivity_allowlist:
-            has_sensitivity = self._has_sensitivity_base(
-                node
-            ) or self._has_sensitivity_field_metadata(node)
+            has_sensitivity = self._has_sensitivity_base(node) or self._has_sensitivity_field_metadata(node)
             if not has_sensitivity:
                 logger.info(const.ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=node.name))
             return True
 
         if full_class_path in self.config.r003_sensitivity_allowlist:
-            has_sensitivity = self._has_sensitivity_base(
-                node
-            ) or self._has_sensitivity_field_metadata(node)
+            has_sensitivity = self._has_sensitivity_base(node) or self._has_sensitivity_field_metadata(node)
             if not has_sensitivity:
-                logger.info(
-                    const.ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=full_class_path)
-                )
+                logger.info(const.ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=full_class_path))
             return True
 
         if self._has_sensitivity_base(node):
@@ -160,9 +140,7 @@ class R003Checker(BaseChecker):
                         if item.value.func.id == const.FUNCTION_FIELD:
                             for keyword in item.value.keywords:
                                 if keyword.arg == const.FIELD_KWARG_METADATA:
-                                    if self._metadata_contains_sensitivity_key(
-                                        keyword.value
-                                    ):
+                                    if self._metadata_contains_sensitivity_key(keyword.value):
                                         return True
 
         return False

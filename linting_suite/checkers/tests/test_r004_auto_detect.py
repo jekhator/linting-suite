@@ -13,9 +13,8 @@ class TestR004AutoDetect:
     def test_r004_auto_detect_class_method_wrapper(self):
         """R004: Auto-detect class-method delegation pattern (no tag needed)."""
         config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            exception_tags=["facade - celery schedule", "FRAMEWORK"],
+            service_paths=["**/*.py"], dto_paths=["**/dtos.py"],
+            exception_tags=["facade - celery schedule", "FRAMEWORK"]
         )
         source = """
 class UserService:
@@ -42,18 +41,15 @@ def another_wrapper(user_id: int):
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
-            assert len(r004_violations) == 0, (
-                "Class-method wrappers should be auto-detected as legitimate"
-            )
+            assert len(r004_violations) == 0, "Class-method wrappers should be auto-detected as legitimate"
         finally:
             path.unlink()
 
     def test_r004_pure_utility_function_needs_tag(self):
         """R004: Pure utility function (no class-method calls) should have tag."""
         config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            exception_tags=["facade - celery schedule", "FRAMEWORK"],
+            service_paths=["**/*.py"], dto_paths=["**/dtos.py"],
+            exception_tags=["facade - celery schedule", "FRAMEWORK"]
         )
         source = """
 def pure_utility(x: int):
@@ -69,18 +65,15 @@ def pure_utility(x: int):
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
-            assert len(r004_violations) >= 1, (
-                "Pure utility without tag should be flagged"
-            )
+            assert len(r004_violations) >= 1, "Pure utility without tag should be flagged"
         finally:
             path.unlink()
 
     def test_r004_exception_tag_still_works(self):
         """R004: Exception tag still works as override."""
         config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            exception_tags=["facade - celery schedule", "FRAMEWORK"],
+            service_paths=["**/*.py"], dto_paths=["**/dtos.py"],
+            exception_tags=["facade - celery schedule", "FRAMEWORK"]
         )
         source = """
 def my_function(x: int):  # facade - celery schedule
@@ -102,9 +95,8 @@ def my_function(x: int):  # facade - celery schedule
     def test_r004_nested_attribute_access(self):
         """R004: Auto-detect nested attribute access (obj.service.method())."""
         config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            exception_tags=["facade - celery schedule", "FRAMEWORK"],
+            service_paths=["**/*.py"], dto_paths=["**/dtos.py"],
+            exception_tags=["facade - celery schedule", "FRAMEWORK"]
         )
         source = """
 class Services:
@@ -126,8 +118,6 @@ def get_user(user_id: int):
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
-            assert len(r004_violations) == 0, (
-                "Nested attribute method calls should be auto-detected"
-            )
+            assert len(r004_violations) == 0, "Nested attribute method calls should be auto-detected"
         finally:
             path.unlink()

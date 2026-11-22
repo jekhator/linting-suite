@@ -36,12 +36,8 @@ class R005Checker(BaseChecker):
             message = const.MSG_R005_NO_FROM_DICT.format(name=node.name)
             self.violations.append(
                 Violation(
-                    rule_id=const.RULE_ID_R005,
-                    severity=RuleSeverity.LOW,
-                    file=file,
-                    line=node.lineno,
-                    col=node.col_offset,
-                    message=message,
+                    rule_id=const.RULE_ID_R005, severity=RuleSeverity.LOW, file=file,
+                    line=node.lineno, col=node.col_offset, message=message
                 )
             )
 

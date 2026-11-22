@@ -44,18 +44,8 @@ def bad_function(x: Dict[str, Any]):
     def test_baseline_load(self):
         """Baseline: Load baseline JSON file."""
         baseline_json = [
-            {
-                "file": "test.py",
-                "line": 10,
-                "rule_id": "R001",
-                "message_hash": "abc123",
-            },
-            {
-                "file": "test.py",
-                "line": 20,
-                "rule_id": "R002",
-                "message_hash": "def456",
-            },
+            {"file": "test.py", "line": 10, "rule_id": "R001", "message_hash": "abc123"},
+            {"file": "test.py", "line": 20, "rule_id": "R002", "message_hash": "def456"}
         ]
 
         with TemporaryDirectory() as tmpdir:
@@ -91,9 +81,7 @@ def bad_function(x: Dict[str, Any]):
             linter_with_baseline = DtoStrictLinter(config, baseline=baseline)
             violations_filtered = linter_with_baseline.lint_file(path)
 
-            assert len(violations_filtered) == 0, (
-                f"Baseline violations should be filtered. Got {violations_filtered}"
-            )
+            assert len(violations_filtered) == 0, f"Baseline violations should be filtered. Got {violations_filtered}"
 
     def test_baseline_ratchet_new_violations(self):
         """Baseline ratchet: New violations (not in baseline) trigger exit 1."""
@@ -148,9 +136,7 @@ def bad_function_2(x: Dict[str, Any]):
         assert hash1 == hash2, "Hash should be deterministic"
 
         hash_different = DtoStrictLinter._hash_message("Different message")
-        assert hash1 != hash_different, (
-            "Different messages should have different hashes"
-        )
+        assert hash1 != hash_different, "Different messages should have different hashes"
 
     def test_baseline_invalid_json_raises_error(self):
         """Baseline: Load raises BaselineLoadError on invalid JSON."""
@@ -159,9 +145,7 @@ def bad_function_2(x: Dict[str, Any]):
             baseline_path.write_text("{ invalid json }")
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
 
     def test_baseline_not_list_raises_error(self):
         """Baseline: Load raises BaselineLoadError if top level not a list."""
@@ -176,14 +160,7 @@ def bad_function_2(x: Dict[str, Any]):
     def test_baseline_entry_missing_key_raises_error(self, missing_key):
         """Baseline: Load raises BaselineLoadError if entry missing required key."""
         with TemporaryDirectory() as tmpdir:
-            baseline_json = [
-                {
-                    "file": "test.py",
-                    "line": 10,
-                    "rule_id": "R001",
-                    "message_hash": "abc123",
-                }
-            ]
+            baseline_json = [{"file": "test.py", "line": 10, "rule_id": "R001", "message_hash": "abc123"}]
             del baseline_json[0][missing_key]
 
             baseline_path = Path(tmpdir) / "baseline.json"
@@ -204,9 +181,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(
-                index=0, path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(index=0, path=baseline_path)
 
     def test_baseline_undecodable_bytes_raises_error(self):
         """Baseline: Load raises BaselineLoadError on undecodable (non-UTF-8) bytes."""
@@ -216,9 +191,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
 
     def test_baseline_generate_then_load_round_trip(self):
         """Baseline: Generate-then-load round-trip preserves violations."""

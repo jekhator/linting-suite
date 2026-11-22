@@ -9,10 +9,7 @@ class TestR001DictStrAny:
 
     def test_r001_good_no_dict_str_any(self, fixture_dir):
         """Good: no Dict[str, Any] in signatures."""
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "good" / "r001_good_basic.py")
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -20,10 +17,7 @@ class TestR001DictStrAny:
 
     def test_r001_bad_param_dict_str_any(self, fixture_dir):
         """Bad: Dict[str, Any] in parameter."""
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r001_bad_param.py")
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -32,10 +26,7 @@ class TestR001DictStrAny:
 
     def test_r001_bad_return_dict_str_any(self, fixture_dir):
         """Bad: Dict[str, Any] in return type."""
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "r001_bad_return.py")
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]

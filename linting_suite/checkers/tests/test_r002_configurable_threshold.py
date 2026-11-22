@@ -25,16 +25,11 @@ def build_response():
             path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=2,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=2)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
-            assert len(r002_violations) >= 1, (
-                "2 keys should trigger with min_dict_keys=2"
-            )
+            assert len(r002_violations) >= 1, "2 keys should trigger with min_dict_keys=2"
         finally:
             path.unlink()
 
@@ -53,10 +48,7 @@ def build_response():
             path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=3,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=3)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
@@ -81,10 +73,7 @@ def build_response():
             path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=5,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=5)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
@@ -110,15 +99,10 @@ def build_response():
             path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=5,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=5)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
-            assert len(r002_violations) >= 1, (
-                "5+ keys should trigger with min_dict_keys=5"
-            )
+            assert len(r002_violations) >= 1, "5+ keys should trigger with min_dict_keys=5"
         finally:
             path.unlink()

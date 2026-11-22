@@ -26,17 +26,11 @@ class UserDTO:
             path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=True,
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
-            assert len(r003_violations) >= 1, (
-                "repr=False should be flagged in strict mode"
-            )
+            assert len(r003_violations) >= 1, "repr=False should be flagged in strict mode"
         finally:
             path.unlink()
 
@@ -56,17 +50,11 @@ class UserDTO:
             path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=True,
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "repr=False absent should be OK in strict mode"
-            )
+            assert len(r003_violations) == 0, "repr=False absent should be OK in strict mode"
         finally:
             path.unlink()
 
@@ -86,17 +74,11 @@ class UserDTO:
             path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "repr=False should be ignored in relaxed mode"
-            )
+            assert len(r003_violations) == 0, "repr=False should be ignored in relaxed mode"
         finally:
             path.unlink()
 
@@ -116,17 +98,11 @@ class UserDTO:
             path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
-            assert len(r003_violations) >= 1, (
-                "Missing frozen+slots should still be flagged in relaxed mode"
-            )
+            assert len(r003_violations) >= 1, "Missing frozen+slots should still be flagged in relaxed mode"
         finally:
             path.unlink()
 
@@ -146,16 +122,10 @@ class UserDTO:
             path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
             r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "frozen+slots should be sufficient in relaxed mode"
-            )
+            assert len(r003_violations) == 0, "frozen+slots should be sufficient in relaxed mode"
         finally:
             path.unlink()

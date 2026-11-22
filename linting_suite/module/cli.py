@@ -13,56 +13,37 @@ from linting_suite.loc_cap import LocCap
 
 def handle_loc_cap(args: list[str]) -> int:
     """Handle loc-cap subcommand (invoked when sys.argv[1] == 'loc-cap')."""
-    parser = argparse.ArgumentParser(
-        prog=const.CLI_PROG_LOC_CAP,
-        description=const.CLI_DESCRIPTION_LOC_CAP,
-    )
-    parser.add_argument(const.CLI_ARG_PATH, help=const.CLI_HELP_LOC_PATH)
+    parser = argparse.ArgumentParser(prog=const.CLI_PROG_LOC_CAP, description=const.CLI_DESCRIPTION_LOC_CAP)
     parser.add_argument(
-        const.CLI_FLAG_CONFIG,
-        default=const.DEFAULT_CONFIG_FILE,
-        help=const.CLI_HELP_CONFIG,
+        const.CLI_ARG_PATH, help=const.CLI_HELP_LOC_PATH
     )
     parser.add_argument(
-        const.CLI_FLAG_HARD_CAP,
-        type=int,
-        help=const.CLI_HELP_HARD_CAP,
+        const.CLI_FLAG_CONFIG, default=const.DEFAULT_CONFIG_FILE, help=const.CLI_HELP_CONFIG
     )
     parser.add_argument(
-        const.CLI_FLAG_SOFT_TARGET,
-        type=int,
-        help=const.CLI_HELP_SOFT_TARGET,
+        const.CLI_FLAG_HARD_CAP, type=int, help=const.CLI_HELP_HARD_CAP
     )
     parser.add_argument(
-        const.CLI_FLAG_BASELINE,
-        help=const.CLI_HELP_LOC_BASELINE,
+        const.CLI_FLAG_SOFT_TARGET, type=int, help=const.CLI_HELP_SOFT_TARGET
     )
     parser.add_argument(
-        const.CLI_FLAG_GENERATE_BASELINE,
-        action=const.CLI_ACTION_STORE_TRUE,
-        help=const.CLI_HELP_LOC_GENERATE_BASELINE,
+        const.CLI_FLAG_BASELINE, help=const.CLI_HELP_LOC_BASELINE
+    )
+    parser.add_argument(
+        const.CLI_FLAG_GENERATE_BASELINE, action=const.CLI_ACTION_STORE_TRUE, help=const.CLI_HELP_LOC_GENERATE_BASELINE
     )
 
     parsed = parser.parse_args(args[const.CLI_ARGUMENTS_OFFSET:])
 
     config_path = Path(parsed.config)
     config = Config.from_pyproject(config_path)
-    hard_cap = (
-        parsed.hard_cap if parsed.hard_cap is not None else config.loc_cap.hard_cap
-    )
-    soft_target = (
-        parsed.soft_target
-        if parsed.soft_target is not None
-        else config.loc_cap.soft_target
-    )
+    hard_cap = parsed.hard_cap if parsed.hard_cap is not None else config.loc_cap.hard_cap
+    soft_target = parsed.soft_target if parsed.soft_target is not None else config.loc_cap.soft_target
     baseline_file = parsed.baseline if parsed.baseline else config.loc_cap.baseline_file
 
     return LocCap.run_loc_cap(
-        path=parsed.path,
-        hard_cap=hard_cap,
-        soft_target=soft_target,
-        baseline_file=baseline_file,
-        generate=parsed.generate_baseline,
+        path=parsed.path, hard_cap=hard_cap, soft_target=soft_target,
+        baseline_file=baseline_file, generate=parsed.generate_baseline
     )
 
 
@@ -71,30 +52,21 @@ def main() -> int:
     if len(sys.argv) > 1 and sys.argv[1] == const.CLI_SUBCOMMAND_LOC_CAP:
         return handle_loc_cap(sys.argv)
 
-    parser = argparse.ArgumentParser(
-        description=const.CLI_DESCRIPTION
-    )
-    parser.add_argument(const.CLI_ARG_PATH, nargs=const.CLI_NARGS_ANY, help=const.CLI_HELP_PATH)
+    parser = argparse.ArgumentParser(description=const.CLI_DESCRIPTION)
     parser.add_argument(
-        const.CLI_FLAG_CONFIG,
-        default=const.DEFAULT_CONFIG_FILE,
-        help=const.CLI_HELP_CONFIG,
+        const.CLI_ARG_PATH, nargs=const.CLI_NARGS_ANY, help=const.CLI_HELP_PATH
     )
     parser.add_argument(
-        const.CLI_FLAG_FORMAT,
-        choices=const.VALID_FORMATS,
-        default=const.FORMAT_TEXT,
-        help=const.CLI_HELP_FORMAT,
+        const.CLI_FLAG_CONFIG, default=const.DEFAULT_CONFIG_FILE, help=const.CLI_HELP_CONFIG
     )
     parser.add_argument(
-        const.CLI_FLAG_GENERATE_BASELINE,
-        action=const.CLI_ACTION_STORE_TRUE,
-        help=const.CLI_HELP_GENERATE_BASELINE,
+        const.CLI_FLAG_FORMAT, choices=const.VALID_FORMATS, default=const.FORMAT_TEXT, help=const.CLI_HELP_FORMAT
     )
     parser.add_argument(
-        const.CLI_FLAG_BASELINE,
-        type=Path,
-        help=const.CLI_HELP_BASELINE,
+        const.CLI_FLAG_GENERATE_BASELINE, action=const.CLI_ACTION_STORE_TRUE, help=const.CLI_HELP_GENERATE_BASELINE
+    )
+    parser.add_argument(
+        const.CLI_FLAG_BASELINE, type=Path, help=const.CLI_HELP_BASELINE
     )
 
     args = parser.parse_args()
@@ -118,10 +90,7 @@ def main() -> int:
         return const.EXIT_CODE_SUCCESS
 
     if not args.path:
-        print(
-            const.ERR_PATH_REQUIRED,
-            file=sys.stderr,
-        )
+        print(const.ERR_PATH_REQUIRED, file=sys.stderr)
         return const.EXIT_CODE_HIGH_VIOLATION
 
     for path_str in args.path:
@@ -135,10 +104,7 @@ def main() -> int:
         try:
             baseline = DtoStrictLinter.load_baseline(args.baseline)
             baseline_count = len(baseline)
-            print(
-                const.MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline),
-                file=sys.stderr,
-            )
+            print(const.MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline), file=sys.stderr)
         except BaselineLoadError as error:
             print(str(error), file=sys.stderr)
             return const.EXIT_CODE_HIGH_VIOLATION

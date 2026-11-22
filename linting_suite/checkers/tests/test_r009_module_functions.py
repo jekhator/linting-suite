@@ -9,15 +9,9 @@ class TestR009ModuleLevelFunctions:
 
     def test_r009_detects_module_level_function(self, fixture_dir):
         """R009 should flag module-level functions in service paths."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "bad" / "r009_module_function_outside_entry_point.py"
-        )
+        violations = linter.lint_file(fixture_dir / "bad" / "r009_module_function_outside_entry_point.py")
         r009_violations = [violation for violation in violations if violation.rule_id == "R009"]
 
         assert len(r009_violations) == 2, (
@@ -27,15 +21,9 @@ class TestR009ModuleLevelFunctions:
 
     def test_r009_allows_entry_points(self, fixture_dir):
         """R009 should allow main, handle_*, and related entry points."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "r009_allowed_entry_points.py"
-        )
+        violations = linter.lint_file(fixture_dir / "good" / "r009_allowed_entry_points.py")
         r009_violations = [violation for violation in violations if violation.rule_id == "R009"]
 
         assert len(r009_violations) == 0, (
@@ -45,26 +33,16 @@ class TestR009ModuleLevelFunctions:
 
     def test_r009_exempts_test_files(self, fixture_dir):
         """R009 should not flag functions in test files."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "test_r008_good_test_class.py"
-        )
+        violations = linter.lint_file(fixture_dir / "good" / "test_r008_good_test_class.py")
         r009_violations = [violation for violation in violations if violation.rule_id == "R009"]
 
         assert len(r009_violations) == 0, "R009 should not flag functions in test files"
 
     def test_r009_exempts_fixtures(self, fixture_dir):
         """R009 should not flag pytest fixtures."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(fixture_dir / "bad" / "test_r007_bad_fixtures.py")
         r009_violations = [violation for violation in violations if violation.rule_id == "R009"]
@@ -73,15 +51,9 @@ class TestR009ModuleLevelFunctions:
 
     def test_r009_message_suggests_allowed_entry_points(self, fixture_dir):
         """R009 violation message should list allowed entry points."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "bad" / "r009_module_function_outside_entry_point.py"
-        )
+        violations = linter.lint_file(fixture_dir / "bad" / "r009_module_function_outside_entry_point.py")
         r009_violations = [violation for violation in violations if violation.rule_id == "R009"]
 
         assert len(r009_violations) > 0

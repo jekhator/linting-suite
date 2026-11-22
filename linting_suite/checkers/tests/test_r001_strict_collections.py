@@ -16,10 +16,7 @@ def process_data(config: dict) -> None:  # bad: bare dict
     pass
 """
         )
-        config = Config(
-            service_paths=["**/*.py"],
-            strict_collections=True,
-        )
+        config = Config(service_paths=["**/*.py"], strict_collections=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -35,10 +32,7 @@ def get_items() -> list:  # bad: bare list
     return []
 """
         )
-        config = Config(
-            service_paths=["**/*.py"],
-            strict_collections=True,
-        )
+        config = Config(service_paths=["**/*.py"], strict_collections=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -53,10 +47,7 @@ def unpack_data() -> tuple:  # bad: bare tuple
     return ()
 """
         )
-        config = Config(
-            service_paths=["**/*.py"],
-            strict_collections=True,
-        )
+        config = Config(service_paths=["**/*.py"], strict_collections=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -71,10 +62,7 @@ def process_data(config: dict) -> None:  # allowed when strict_collections=False
     pass
 """
         )
-        config = Config(
-            service_paths=["**/*.py"],
-            strict_collections=False,
-        )
+        config = Config(service_paths=["**/*.py"], strict_collections=False)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]
@@ -89,10 +77,7 @@ def process_data(config: dict[str, str]) -> list[int] -> None:
     pass
 """
         )
-        config = Config(
-            service_paths=["**/*.py"],
-            strict_collections=True,
-        )
+        config = Config(service_paths=["**/*.py"], strict_collections=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
         r001_violations = [violation for violation in violations if violation.rule_id == "R001"]

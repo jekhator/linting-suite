@@ -66,9 +66,7 @@ class TestSeverityOverridesFix:
 
     def test_severity_override_to_medium(self):
         """Severity override to MEDIUM should work."""
-        config = Config(
-            severity_overrides={"R001": "MEDIUM"}, service_paths=["**/*.py"]
-        )
+        config = Config(severity_overrides={"R001": "MEDIUM"}, service_paths=["**/*.py"])
 
         with tempfile.TemporaryDirectory() as tmpdir:
             bad_file = Path(tmpdir) / "bad.py"
@@ -95,12 +93,7 @@ class TestInfoSeverityLevel:
     def test_info_severity_exit_code_zero(self):
         """Violations with only INFO severity should exit 0."""
         info_violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Test info violation",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Test info violation"
         )
 
         config = Config()
@@ -131,22 +124,8 @@ class TestInfoSeverityLevel:
     def test_info_not_blocking_with_other_violations(self):
         """When INFO and LOW are present, should exit 3 (LOW blocking)."""
         violations = [
-            Violation(
-                rule_id="R011",
-                severity=RuleSeverity.INFO,
-                file="test.py",
-                line=1,
-                col=0,
-                message="Info",
-            ),
-            Violation(
-                rule_id="R005",
-                severity=RuleSeverity.LOW,
-                file="test.py",
-                line=2,
-                col=0,
-                message="Low",
-            ),
+            Violation(rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Info"),
+            Violation(rule_id="R005", severity=RuleSeverity.LOW, file="test.py", line=2, col=0, message="Low")
         ]
 
         config = Config()
@@ -158,22 +137,8 @@ class TestInfoSeverityLevel:
     def test_high_overrides_info(self):
         """HIGH severity should block even with INFO present."""
         violations = [
-            Violation(
-                rule_id="R011",
-                severity=RuleSeverity.INFO,
-                file="test.py",
-                line=1,
-                col=0,
-                message="Info",
-            ),
-            Violation(
-                rule_id="R001",
-                severity=RuleSeverity.HIGH,
-                file="test.py",
-                line=2,
-                col=0,
-                message="High",
-            ),
+            Violation(rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Info"),
+            Violation(rule_id="R001", severity=RuleSeverity.HIGH, file="test.py", line=2, col=0, message="High")
         ]
 
         config = Config()
@@ -279,12 +244,8 @@ class TestInfoSeverityFormatting:
     def test_format_text_info(self):
         """INFO violations should format correctly as text."""
         violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="String literal at raise site",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py",
+            line=1, col=0, message="String literal at raise site"
         )
 
         output = violation.format_text()
@@ -294,12 +255,8 @@ class TestInfoSeverityFormatting:
     def test_format_github_info(self):
         """INFO violations should use 'notice' level in GitHub format."""
         violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="String literal at raise site",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py",
+            line=1, col=0, message="String literal at raise site"
         )
 
         output = violation.format_github()
@@ -309,12 +266,7 @@ class TestInfoSeverityFormatting:
     def test_format_github_high_is_error(self):
         """HIGH violations should use 'error' level in GitHub format."""
         violation = Violation(
-            rule_id="R001",
-            severity=RuleSeverity.HIGH,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Dict[str, Any]",
+            rule_id="R001", severity=RuleSeverity.HIGH, file="test.py", line=1, col=0, message="Dict[str, Any]"
         )
 
         output = violation.format_github()
@@ -323,12 +275,7 @@ class TestInfoSeverityFormatting:
     def test_format_github_medium_is_warning(self):
         """MEDIUM violations should use 'warning' level in GitHub format."""
         violation = Violation(
-            rule_id="R002",
-            severity=RuleSeverity.MEDIUM,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Inline dict",
+            rule_id="R002", severity=RuleSeverity.MEDIUM, file="test.py", line=1, col=0, message="Inline dict"
         )
 
         output = violation.format_github()
