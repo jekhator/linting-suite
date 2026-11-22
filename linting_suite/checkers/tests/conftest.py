@@ -7,13 +7,24 @@ import pytest
 
 @pytest.fixture
 def fixture_dir():
-    """Get fixtures directory."""
+    """
+    Get fixtures directory.
+
+    Used by: TestCli, TestR001DictStrAny, TestR001VarArgKwarg, TestR002InlineDict, TestR002MultipleDataclassRegression,
+    TestR002SerializerExemption, TestR002TagJustification, TestR003DataclassTrio, TestR004ModuleFacade,
+    TestR005ValidatorPattern, TestR006VarArgKwarg, TestR007FixtureDecorators, TestR007Fixtures, TestR008TestFunctions,
+    TestR009ModuleLevelFunctions, TestR010LegacyTypingABC, TestR011RaiseLiterals.
+    """
     return Path(__file__).parent / "fixtures"
 
 
 @pytest.fixture
 def config():
-    """Get default config."""
+    """
+    Get default config.
+
+    Used by: no Test class yet (kept provisioned).
+    """
     from linting_suite.config._config import Config
 
     return Config()
@@ -21,7 +32,11 @@ def config():
 
 @pytest.fixture
 def temp_project(tmp_path):
-    """Create a temporary project directory with Python files."""
+    """
+    Create a temporary project directory with Python files.
+
+    Used by: no Test class yet (kept provisioned).
+    """
     project_root = tmp_path / "project"
     project_root.mkdir()
 
@@ -34,7 +49,11 @@ def temp_project(tmp_path):
 
 @pytest.fixture
 def project_dir(tmp_path):
-    """Create a temporary project with test files for CLI testing."""
+    """
+    Create a temporary project with test files for CLI testing.
+
+    Used by: TestCLILocCap, TestCLIRealInvocations (through the cli_project_dir fixture).
+    """
     project_root = tmp_path / "cli_project"
 
     bad_service_file = project_root / "apps" / "services" / "bad.py"
@@ -83,13 +102,21 @@ service_paths = ["apps/*/services/*.py"]
 
 @pytest.fixture
 def cli_project_dir(project_dir):
-    """CLI project directory fixture."""
+    """
+    CLI project directory fixture.
+
+    Used by: TestCLILocCap, TestCLIRealInvocations.
+    """
     return project_dir
 
 
 @pytest.fixture
 def temp_project_with_test_files(tmp_path):
-    """Create a temporary project structure with test and source files."""
+    """
+    Create a temporary project structure with test and source files.
+
+    Used by: TestLocCapTestExemption.
+    """
     root = tmp_path
 
     src_file = root / "src" / "module.py"
