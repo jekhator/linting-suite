@@ -93,7 +93,7 @@ class DtoStrictLinter:
         if path.is_file():
             all_violations.extend(self.lint_file(path))
         elif path.is_dir():
-            for py_file in path.rglob("*.py"):
+            for py_file in path.rglob(const.PY_GLOB):
                 all_violations.extend(self.lint_file(py_file))
 
         filtered = []
@@ -133,7 +133,7 @@ class DtoStrictLinter:
     @staticmethod
     def _hash_message(message: str) -> str:
         """Hash violation message for baseline comparison."""
-        return hashlib.sha256(message.encode()).hexdigest()[:16]
+        return hashlib.sha256(message.encode()).hexdigest()[:const.MESSAGE_HASH_LENGTH]
 
     def generate_baseline(self, violations: list[Violation]) -> list[dict]:
         """Generate baseline JSON from violations."""
@@ -141,10 +141,10 @@ class DtoStrictLinter:
         for violation in violations:
             baseline_data.append(
                 {
-                    "file": violation.file,
-                    "line": violation.line,
-                    "rule_id": violation.rule_id,
-                    "message_hash": self._hash_message(violation.message),
+                    const.BASELINE_KEY_FILE: violation.file,
+                    const.BASELINE_KEY_LINE: violation.line,
+                    const.BASELINE_KEY_RULE_ID: violation.rule_id,
+                    const.BASELINE_KEY_MESSAGE_HASH: self._hash_message(violation.message),
                 }
             )
         return baseline_data
@@ -153,7 +153,7 @@ class DtoStrictLinter:
     def load_baseline(baseline_path: Path) -> dict[tuple[str, int, str], str]:
         """Load baseline JSON file."""
         try:
-            with open(baseline_path, "r") as handle:
+            with open(baseline_path, const.FILE_MODE_READ) as handle:
                 data = json.load(handle)
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
             raise objs.BaselineLoadError(
@@ -182,8 +182,8 @@ class DtoStrictLinter:
                             index=index, key=key, path=baseline_path
                         )
                     )
-            baseline_key = (entry["file"], entry["line"], entry["rule_id"])
-            baseline[baseline_key] = entry["message_hash"]
+            baseline_key = (entry[const.BASELINE_KEY_FILE], entry[const.BASELINE_KEY_LINE], entry[const.BASELINE_KEY_RULE_ID])
+            baseline[baseline_key] = entry[const.BASELINE_KEY_MESSAGE_HASH]
         return baseline
 
     def format_violations(
@@ -191,24 +191,24 @@ class DtoStrictLinter:
     ) -> str:
         """Format violations for output."""
         if format_type == const.FORMAT_GITHUB:
-            return "\n".join(violation.format_github() for violation in violations)
+            return const.LINE_SEPARATOR.join(violation.format_github() for violation in violations)
         elif format_type == const.FORMAT_JSON:
             return json.dumps(
                 [
                     {
-                        "rule_id": violation.rule_id,
-                        "severity": violation.severity.value,
-                        "file": violation.file,
-                        "line": violation.line,
-                        "col": violation.col,
-                        "message": violation.message,
+                        const.VIOLATION_KEY_RULE_ID: violation.rule_id,
+                        const.VIOLATION_KEY_SEVERITY: violation.severity.value,
+                        const.VIOLATION_KEY_FILE: violation.file,
+                        const.VIOLATION_KEY_LINE: violation.line,
+                        const.VIOLATION_KEY_COL: violation.col,
+                        const.VIOLATION_KEY_MESSAGE: violation.message,
                     }
                     for violation in violations
                 ],
-                indent=2,
+                indent=const.JSON_INDENT,
             )
         else:
-            return "\n".join(violation.format_text() for violation in violations)
+            return const.LINE_SEPARATOR.join(violation.format_text() for violation in violations)
 
     def get_exit_code(self, violations: list[Violation]) -> int:
         """Determine exit code based on violation severities."""

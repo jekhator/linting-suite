@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
@@ -24,7 +25,7 @@ class R015Checker(BaseChecker):
 
     def visit_Try(self, node: ast.Try) -> None:
         """Visit try statements to check wrap-path blank-line rhythm."""
-        if self.is_suppressed(node, "R015"):
+        if self.is_suppressed(node, const.RULE_ID_R015):
             self.generic_visit(node)
             return
 
@@ -52,11 +53,11 @@ class R015Checker(BaseChecker):
     def _check_wrap_function_structure(self, node: ast.Try) -> None:
         """Check per-leg blank-line structure."""
         if node.body:
-            self._check_leg_structure(node.body, node.lineno, "try")
+            self._check_leg_structure(node.body, node.lineno, const.LEG_TRY)
 
         for handler in node.handlers:
             if handler.body:
-                self._check_leg_structure(handler.body, handler.lineno, "except")
+                self._check_leg_structure(handler.body, handler.lineno, const.LEG_EXCEPT)
 
     def _check_leg_structure(
         self, statements: list[ast.stmt], start_line: int | None, leg_type: str
@@ -85,15 +86,15 @@ class R015Checker(BaseChecker):
                 continue
 
             gap = next_statement.lineno - current.end_lineno
-            if gap > 2:
+            if gap > const.R015_MAX_GROUP_GAP:
                 self.violations.append(
                     Violation(
-                        rule_id="R015",
+                        rule_id=const.RULE_ID_R015,
                         severity=RuleSeverity.INFO,
                         file=str(self.file_path),
                         line=next_statement.lineno,
                         col=0,
-                        message=f"{leg_type.capitalize()} leg: statement groups must be separated by EXACTLY one blank line.",
+                        message=const.MSG_R015_GROUPS.format(leg=leg_type.capitalize()),
                     )
                 )
 
@@ -109,12 +110,12 @@ class R015Checker(BaseChecker):
                     if gap > 1:
                         self.violations.append(
                             Violation(
-                                rule_id="R015",
+                                rule_id=const.RULE_ID_R015,
                                 severity=RuleSeverity.INFO,
                                 file=str(self.file_path),
                                 line=next_statement.lineno,
                                 col=0,
-                                message="Timing-capture pair (perf_counter + latency calc) must be contiguous (no blank lines within).",
+                                message=const.MSG_R015_TIMING,
                             )
                         )
 
@@ -129,7 +130,7 @@ class R015Checker(BaseChecker):
         if not isinstance(statement, ast.Assign):
             return False
         for target in statement.targets:
-            if isinstance(target, ast.Name) and "latency" in target.id:
+            if isinstance(target, ast.Name) and const.TIMING_TARGET_MARKER in target.id:
                 return self._contains_round(statement.value)
         return False
 
@@ -138,10 +139,10 @@ class R015Checker(BaseChecker):
         for child in ast.walk(node):
             if isinstance(child, ast.Call):
                 if isinstance(child.func, ast.Attribute):
-                    if child.func.attr == "perf_counter":
+                    if child.func.attr == const.TIMING_CLOCK_NAME:
                         return True
                 elif isinstance(child.func, ast.Name):
-                    if child.func.id == "perf_counter":
+                    if child.func.id == const.TIMING_CLOCK_NAME:
                         return True
         return False
 
@@ -150,6 +151,6 @@ class R015Checker(BaseChecker):
         for child in ast.walk(node):
             if isinstance(child, ast.Call):
                 if isinstance(child.func, ast.Name):
-                    if child.func.id == "round":
+                    if child.func.id == const.FUNCTION_ROUND:
                         return True
         return False

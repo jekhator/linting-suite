@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import AnnotationInspector, PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
@@ -16,7 +17,7 @@ class R006Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R006"):
+        if self.is_suppressed(node, const.RULE_ID_R006):
             self.generic_visit(node)
             return
 
@@ -24,12 +25,12 @@ class R006Checker(BaseChecker):
             if argument.annotation and AnnotationInspector.contains_any(argument.annotation):
                 self.violations.append(
                     Violation(
-                        rule_id="R006",
+                        rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"typing.Any in parameter: {node.name}",
+                        message=const.MSG_R006_PARAMETER.format(name=node.name),
                     )
                 )
                 return
@@ -38,12 +39,12 @@ class R006Checker(BaseChecker):
             if AnnotationInspector.contains_any(node.args.vararg.annotation):
                 self.violations.append(
                     Violation(
-                        rule_id="R006",
+                        rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"typing.Any in *args: {node.name}",
+                        message=const.MSG_R006_VARARGS.format(name=node.name),
                     )
                 )
                 return
@@ -52,12 +53,12 @@ class R006Checker(BaseChecker):
             if AnnotationInspector.contains_any(node.args.kwarg.annotation):
                 self.violations.append(
                     Violation(
-                        rule_id="R006",
+                        rule_id=const.RULE_ID_R006,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"typing.Any in **kwargs: {node.name}",
+                        message=const.MSG_R006_KWARGS.format(name=node.name),
                     )
                 )
                 return
@@ -65,12 +66,12 @@ class R006Checker(BaseChecker):
         if node.returns and AnnotationInspector.contains_any(node.returns):
             self.violations.append(
                 Violation(
-                    rule_id="R006",
+                    rule_id=const.RULE_ID_R006,
                     severity=RuleSeverity.HIGH,
                     file=str(self.file_path),
                     line=node.lineno,
                     col=node.col_offset,
-                    message=f"typing.Any in return type: {node.name}",
+                    message=const.MSG_R006_RETURN.format(name=node.name),
                 )
             )
 

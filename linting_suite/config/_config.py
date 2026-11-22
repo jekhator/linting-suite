@@ -37,7 +37,7 @@ class Config:
     r006_paths: list[str] = field(default_factory=lambda: const.DEFAULT_R006_PATHS.copy())
     min_dict_keys: int = field(default=const.DEFAULT_MIN_DICT_KEYS)
     r003_strict_repr: bool = field(default=True)
-    r003_sensitivity_bases: list[str] = field(default_factory=lambda: ["SensitiveRepr"])
+    r003_sensitivity_bases: list[str] = field(default_factory=lambda: const.DEFAULT_R003_SENSITIVITY_BASES.copy())
     r003_sensitivity_allowlist: list[str] = field(default_factory=list)
     loc_cap: LocCapConfig = field(default_factory=LocCapConfig)
 
@@ -48,45 +48,45 @@ class Config:
             return cls()
 
         try:
-            with open(path, "rb") as handle:
+            with open(path, const.FILE_MODE_READ_BINARY) as handle:
                 data = tomllib.load(handle)
         except Exception:
             return cls()
 
-        tool_data = data.get("tool", {})
+        tool_data = data.get(const.CONFIG_ROOT_TOOL, {})
         config_data = tool_data.get(const.CONFIG_SECTION_STRICT_MODULE) or tool_data.get(
             const.CONFIG_SECTION_DTO_STRICT, {}
         )
         loc_cap_data = config_data.get(const.CONFIG_SECTION_LOC_CAP, {})
 
         loc_cap = LocCapConfig(
-            hard_cap=loc_cap_data.get("hard_cap", const.DEFAULT_LOC_HARD_CAP),
-            soft_target=loc_cap_data.get("soft_target", const.DEFAULT_LOC_SOFT_TARGET),
+            hard_cap=loc_cap_data.get(const.CONFIG_KEY_HARD_CAP, const.DEFAULT_LOC_HARD_CAP),
+            soft_target=loc_cap_data.get(const.CONFIG_KEY_SOFT_TARGET, const.DEFAULT_LOC_SOFT_TARGET),
             baseline_file=loc_cap_data.get(
-                "baseline_file", const.DEFAULT_LOC_CAP_BASELINE_FILE
+                const.CONFIG_KEY_BASELINE_FILE, const.DEFAULT_LOC_CAP_BASELINE_FILE
             ),
         )
 
         return cls(
-            service_paths=config_data.get("service_paths", const.DEFAULT_SERVICE_PATHS),
-            dto_paths=config_data.get("dto_paths", const.DEFAULT_DTO_PATHS),
-            exception_tags=config_data.get("exception_tags", const.DEFAULT_EXCEPTION_TAGS),
-            disabled_rules=config_data.get("disabled_rules", []),
-            severity_overrides=config_data.get("severity_overrides", {}),
-            strict_collections=config_data.get("strict_collections", False),
+            service_paths=config_data.get(const.CONFIG_KEY_SERVICE_PATHS, const.DEFAULT_SERVICE_PATHS),
+            dto_paths=config_data.get(const.CONFIG_KEY_DTO_PATHS, const.DEFAULT_DTO_PATHS),
+            exception_tags=config_data.get(const.CONFIG_KEY_EXCEPTION_TAGS, const.DEFAULT_EXCEPTION_TAGS),
+            disabled_rules=config_data.get(const.CONFIG_KEY_DISABLED_RULES, []),
+            severity_overrides=config_data.get(const.CONFIG_KEY_SEVERITY_OVERRIDES, {}),
+            strict_collections=config_data.get(const.CONFIG_KEY_STRICT_COLLECTIONS, False),
             exception_tag_requires_justification=config_data.get(
-                "exception_tag_requires_justification", False
+                const.CONFIG_KEY_TAG_REQUIRES_JUSTIFICATION, False
             ),
-            max_exception_tags_per_file=config_data.get("max_exception_tags_per_file"),
-            r003_mode=config_data.get("r003_mode", const.DEFAULT_R003_MODE),
-            r006_paths=config_data.get("r006_paths", const.DEFAULT_R006_PATHS),
-            min_dict_keys=config_data.get("min_dict_keys", const.DEFAULT_MIN_DICT_KEYS),
-            r003_strict_repr=config_data.get("r003_strict_repr", True),
+            max_exception_tags_per_file=config_data.get(const.CONFIG_KEY_MAX_TAGS_PER_FILE),
+            r003_mode=config_data.get(const.CONFIG_KEY_R003_MODE, const.DEFAULT_R003_MODE),
+            r006_paths=config_data.get(const.CONFIG_KEY_R006_PATHS, const.DEFAULT_R006_PATHS),
+            min_dict_keys=config_data.get(const.CONFIG_KEY_MIN_DICT_KEYS, const.DEFAULT_MIN_DICT_KEYS),
+            r003_strict_repr=config_data.get(const.CONFIG_KEY_R003_STRICT_REPR, True),
             r003_sensitivity_bases=config_data.get(
-                "r003_sensitivity_bases", ["SensitiveRepr"]
+                const.CONFIG_KEY_R003_SENSITIVITY_BASES, const.DEFAULT_R003_SENSITIVITY_BASES.copy()
             ),
             r003_sensitivity_allowlist=config_data.get(
-                "r003_sensitivity_allowlist", []
+                const.CONFIG_KEY_R003_SENSITIVITY_ALLOWLIST, []
             ),
             loc_cap=loc_cap,
         )

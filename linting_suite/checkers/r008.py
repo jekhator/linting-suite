@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
@@ -17,17 +18,17 @@ class R008Checker(BaseChecker):
 
         for item in node.body:
             if isinstance(item, ast.FunctionDef):
-                if item.name.startswith("test_"):
-                    if self.is_suppressed(item, "R008"):
+                if item.name.startswith(const.TEST_FUNCTION_PREFIX):
+                    if self.is_suppressed(item, const.RULE_ID_R008):
                         continue
 
                     self.violations.append(
                         Violation(
-                            rule_id="R008",
+                            rule_id=const.RULE_ID_R008,
                             severity=RuleSeverity.MEDIUM,
                             file=str(self.file_path),
                             line=item.lineno,
                             col=item.col_offset,
-                            message=f"Module-level test function: {item.name}. Move into Test<Concern> class.",
+                            message=const.MSG_R008_TEST_FUNCTION.format(name=item.name),
                         )
                     )

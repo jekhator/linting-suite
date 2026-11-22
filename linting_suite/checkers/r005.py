@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
@@ -11,16 +12,16 @@ class R005Checker(BaseChecker):
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """Visit function definitions."""
-        if not node.name.startswith("validate_"):
+        if not node.name.startswith(const.VALIDATOR_PREFIX):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R005"):
+        if self.is_suppressed(node, const.RULE_ID_R005):
             self.generic_visit(node)
             return
 
         has_payload_param = any(
-            argument.arg == "payload" for argument in node.args.args + node.args.kwonlyargs
+            argument.arg == const.PARAMETER_PAYLOAD for argument in node.args.args + node.args.kwonlyargs
         )
 
         if not has_payload_param:
@@ -33,12 +34,12 @@ class R005Checker(BaseChecker):
         if not (has_from_dict or has_validation_error):
             self.violations.append(
                 Violation(
-                    rule_id="R005",
+                    rule_id=const.RULE_ID_R005,
                     severity=RuleSeverity.LOW,
                     file=str(self.file_path),
                     line=node.lineno,
                     col=node.col_offset,
-                    message=f"Validator does not use DTO.from_dict() pattern: {node.name}",
+                    message=const.MSG_R005_NO_FROM_DICT.format(name=node.name),
                 )
             )
 
@@ -49,7 +50,7 @@ class R005Checker(BaseChecker):
         for item in ast.walk(node):
             if isinstance(item, ast.Call):
                 if isinstance(item.func, ast.Attribute):
-                    if item.func.attr == "from_dict":
+                    if item.func.attr == const.METHOD_FROM_DICT:
                         return True
         return False
 
@@ -59,6 +60,6 @@ class R005Checker(BaseChecker):
             if isinstance(item, ast.Raise):
                 if isinstance(item.exc, ast.Call):
                     if isinstance(item.exc.func, ast.Name):
-                        if "ValidationError" in item.exc.func.id:
+                        if const.VALIDATION_ERROR_NAME in item.exc.func.id:
                             return True
         return False

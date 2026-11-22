@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
@@ -17,7 +18,7 @@ class R012Checker(BaseChecker):
 
     def visit_Call(self, node: ast.Call) -> None:
         """Visit call expressions to check fits-one-line-stays rule."""
-        if self.is_suppressed(node, "R012"):
+        if self.is_suppressed(node, const.RULE_ID_R012):
             self.generic_visit(node)
             return
 
@@ -34,21 +35,21 @@ class R012Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if node.end_lineno - node.lineno < 2:
+        if node.end_lineno - node.lineno < const.R012_MIN_LINE_SPAN:
             self.generic_visit(node)
             return
 
         try:
             reconstructed = self._reconstruct_call(node, node.lineno, node.end_lineno)
-            if reconstructed and len(reconstructed) <= 80:
+            if reconstructed and len(reconstructed) <= const.R012_MAX_ONE_LINE_LENGTH:
                 self.violations.append(
                     Violation(
-                        rule_id="R012",
+                        rule_id=const.RULE_ID_R012,
                         severity=RuleSeverity.INFO,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message="Single-argument call unnecessarily split across lines. Keep on one line.",
+                        message=const.MSG_R012_SINGLE_ARGUMENT,
                     )
                 )
         except Exception:
@@ -60,7 +61,7 @@ class R012Checker(BaseChecker):
         """Attempt to reconstruct the call as a single line."""
         try:
             relevant_lines = self.lines[start_line - 1 : end_line]
-            reconstructed = " ".join(line.strip() for line in relevant_lines)
+            reconstructed = const.SPACE.join(line.strip() for line in relevant_lines)
             reconstructed = self._normalize_spacing(reconstructed)
             return reconstructed
         except Exception:
@@ -76,7 +77,7 @@ class R012Checker(BaseChecker):
         while index < len(text):
             char = text[index]
 
-            if char in ('"', "'") and (index == 0 or text[index - 1] != "\\"):
+            if char in const.QUOTE_CHARACTERS and (index == 0 or text[index - 1] != const.ESCAPE_CHARACTER):
                 if not in_string:
                     in_string = True
                     string_char = char
@@ -85,7 +86,7 @@ class R012Checker(BaseChecker):
 
             if in_string:
                 result.append(char)
-            elif char == " " and result and result[-1] == " ":
+            elif char == const.SPACE and result and result[-1] == const.SPACE:
                 pass
             else:
                 result.append(char)

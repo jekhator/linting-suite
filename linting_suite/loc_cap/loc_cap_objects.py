@@ -2,12 +2,14 @@
 
 from dataclasses import dataclass
 
+import linting_suite.config.constants as const
+
 
 @dataclass(frozen=True, slots=True)
 class LocCapConfig:
     """Configuration for LOC cap checker."""
 
-    hard_cap: int = 694
-    soft_target: int = 500
-    baseline_file: str = ".loc-cap-baseline.txt"
-    exclude_patterns: tuple[str, ...] = ("migrations", "management/commands")
+    hard_cap: int = const.DEFAULT_LOC_HARD_CAP
+    soft_target: int = const.DEFAULT_LOC_SOFT_TARGET
+    baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE
+    exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS

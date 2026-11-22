@@ -3,6 +3,7 @@
 import ast
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.config._config import Config
 from linting_suite.inspection import PathClassifier
@@ -66,10 +67,10 @@ class R002Checker(BaseChecker):
     def _is_dataclass_decorator(self, node: ast.expr) -> bool:
         """Check if decorator is @dataclass (any form)."""
         if isinstance(node, ast.Name):
-            return node.id == "dataclass"
+            return node.id == const.DECORATOR_DATACLASS
         elif isinstance(node, ast.Call):
             if isinstance(node.func, ast.Name):
-                return node.func.id == "dataclass"
+                return node.func.id == const.DECORATOR_DATACLASS
         return False
 
     def _is_class_decorated_with_dataclass(self, class_node: ast.ClassDef) -> bool:
@@ -88,7 +89,7 @@ class R002Checker(BaseChecker):
             return False
 
         if self.current_function is None or not self.current_function.name.startswith(
-            "to_"
+            const.SERIALIZER_PREFIX
         ):
             return False
 
@@ -106,7 +107,7 @@ class R002Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R002"):
+        if self.is_suppressed(node, const.RULE_ID_R002):
             self.generic_visit(node)
             return
 
@@ -141,19 +142,19 @@ class R002Checker(BaseChecker):
                         if tag in comment:
                             tag_index = comment.find(tag)
                             after_tag = comment[tag_index + len(tag) :].strip()
-                            if after_tag.startswith(":") and len(after_tag) > 1:
+                            if after_tag.startswith(const.TAG_JUSTIFICATION_SEPARATOR) and len(after_tag) > 1:
                                 has_justification = True
                                 break
 
                     if not has_justification:
                         self.violations.append(
                             Violation(
-                                rule_id="R002",
+                                rule_id=const.RULE_ID_R002,
                                 severity=RuleSeverity.MEDIUM,
                                 file=str(self.file_path),
                                 line=node.lineno,
                                 col=node.col_offset,
-                                message="Exception tag missing justification. Format: 'tag: explanation' (e.g., 'facade - celery schedule: transient event payload')",
+                                message=const.MSG_R002_MISSING_JUSTIFICATION,
                             )
                         )
                         self.generic_visit(node)
@@ -164,23 +165,23 @@ class R002Checker(BaseChecker):
                     if self.tag_count > self.config.max_exception_tags_per_file:
                         self.violations.append(
                             Violation(
-                                rule_id="R002",
+                                rule_id=const.RULE_ID_R002,
                                 severity=RuleSeverity.MEDIUM,
                                 file=str(self.file_path),
                                 line=node.lineno,
                                 col=node.col_offset,
-                                message=f"Exceeded max exception tags ({self.config.max_exception_tags_per_file}) in file",
+                                message=const.MSG_R002_TAG_LIMIT.format(limit=self.config.max_exception_tags_per_file),
                             )
                         )
             else:
                 self.violations.append(
                     Violation(
-                        rule_id="R002",
+                        rule_id=const.RULE_ID_R002,
                         severity=RuleSeverity.MEDIUM,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Inline dict literal with {string_keys} keys (likely business-shape; convert to DTO)",
+                        message=const.MSG_R002_INLINE_DICT.format(count=string_keys),
                     )
                 )
 

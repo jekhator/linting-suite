@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
@@ -34,7 +35,7 @@ class R011Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R011"):
+        if self.is_suppressed(node, const.RULE_ID_R011):
             self.generic_visit(node)
             return
 
@@ -42,12 +43,12 @@ class R011Checker(BaseChecker):
         if has_literal:
             self.violations.append(
                 Violation(
-                    rule_id="R011",
+                    rule_id=const.RULE_ID_R011,
                     severity=RuleSeverity.HIGH,
                     file=str(self.file_path),
                     line=node.lineno,
                     col=node.col_offset,
-                    message="String literal found in raise statement. Extract to constants/<feature>.py as ERR_<DOMAIN>_<CONDITION>, reference via const.",
+                    message=const.MSG_R011_RAISE_LITERAL,
                 )
             )
 
@@ -56,9 +57,9 @@ class R011Checker(BaseChecker):
     def _is_constant_module(self, file_path) -> bool:
         """Check if file is a constants module."""
         return (
-            file_path.name == "constants.py"
-            or file_path.name.endswith("_const.py")
-            or "constants" in str(file_path)
+            file_path.name == const.BASENAME_CONSTANTS
+            or file_path.name.endswith(const.BASENAME_CONST_SUFFIX)
+            or const.CONSTANTS_PATH_WORD in str(file_path)
         )
 
     def _check_for_string_literals(self, call_node: ast.Call) -> bool:

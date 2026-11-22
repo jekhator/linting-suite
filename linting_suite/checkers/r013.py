@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
@@ -18,7 +19,7 @@ class R013Checker(BaseChecker):
 
     def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
         """Visit function definitions to check signature grouping."""
-        if self.is_suppressed(node, "R013"):
+        if self.is_suppressed(node, const.RULE_ID_R013):
             self.generic_visit(node)
             return
 
@@ -31,7 +32,7 @@ class R013Checker(BaseChecker):
 
     def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
         """Visit async function definitions to check signature grouping."""
-        if self.is_suppressed(node, "R013"):
+        if self.is_suppressed(node, const.RULE_ID_R013):
             self.generic_visit(node)
             return
 
@@ -48,7 +49,7 @@ class R013Checker(BaseChecker):
         """Check signature formatting per P14 calibration."""
         params_after_self = self._get_params_after_self(node.args)
 
-        if len(params_after_self) <= 3:
+        if len(params_after_self) <= const.R013_MIN_PARAMETERS:
             return
 
         if node.lineno == node.end_lineno:
@@ -73,16 +74,16 @@ class R013Checker(BaseChecker):
     def _is_classmethod(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
         """Check if function is a classmethod (never flag)."""
         for decorator in node.decorator_list:
-            if isinstance(decorator, ast.Name) and decorator.id == "classmethod":
+            if isinstance(decorator, ast.Name) and decorator.id == const.DECORATOR_CLASSMETHOD:
                 return True
         return False
 
     def _is_handler_method(self, method_name: str) -> bool:
         """Check if method is a handler (log_*, record_*, wrap_*)."""
         return (
-            method_name.startswith("log_")
-            or method_name.startswith("record_")
-            or method_name.startswith("wrap_")
+            method_name.startswith(const.R013_HANDLER_PREFIX_LOG)
+            or method_name.startswith(const.R013_HANDLER_PREFIX_RECORD)
+            or method_name.startswith(const.R013_HANDLER_PREFIX_WRAP)
         )
 
     def _check_handler_signature(
@@ -100,14 +101,14 @@ class R013Checker(BaseChecker):
 
         for line_num, param_names in sorted_lines:
             param_count = len(param_names)
-            if param_count > 5:
+            if param_count > const.R013_MAX_PARAMETERS_PER_LINE:
                 self.violations.append(
                     Violation(
-                        rule_id="R013",
+                        rule_id=const.RULE_ID_R013,
                         severity=RuleSeverity.INFO,
                         file=str(self.file_path),
                         line=line_num,
                         col=0,
-                        message=f"Handler signature line has {param_count} params (>5). Group 2-5 per line.",
+                        message=const.MSG_R013_HANDLER_LINE.format(count=param_count),
                     )
                 )

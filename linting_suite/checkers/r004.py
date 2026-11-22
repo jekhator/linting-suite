@@ -3,6 +3,7 @@
 import ast
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.config._config import Config
 from linting_suite.inspection import PathClassifier
@@ -26,19 +27,19 @@ class R004Checker(BaseChecker):
 
         for item in node.body:
             if isinstance(item, ast.FunctionDef):
-                if self.is_suppressed(item, "R004"):
+                if self.is_suppressed(item, const.RULE_ID_R004):
                     continue
                 if not self._has_exception_tag(
                     item
                 ) and not self._is_class_method_wrapper(item):
                     self.violations.append(
                         Violation(
-                            rule_id="R004",
+                            rule_id=const.RULE_ID_R004,
                             severity=RuleSeverity.HIGH,
                             file=str(self.file_path),
                             line=item.lineno,
                             col=item.col_offset,
-                            message=f"Module-level def without exception tag: {item.name}",
+                            message=const.MSG_R004_NO_TAG.format(name=item.name),
                         )
                     )
 

@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import AnnotationInspector, PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
@@ -17,7 +18,7 @@ class R001Checker(BaseChecker):
         ):
             return
 
-        if self.is_suppressed(node, "R001"):
+        if self.is_suppressed(node, const.RULE_ID_R001):
             return
 
         for argument in node.args.args + node.args.posonlyargs + node.args.kwonlyargs:
@@ -25,12 +26,12 @@ class R001Checker(BaseChecker):
                 if AnnotationInspector.is_dict_str_any(argument.annotation):
                     self.violations.append(
                         Violation(
-                            rule_id="R001",
+                            rule_id=const.RULE_ID_R001,
                             severity=RuleSeverity.HIGH,
                             file=str(self.file_path),
                             line=node.lineno,
                             col=node.col_offset,
-                            message=f"Dict[str, Any] in signature: {node.name}",
+                            message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
                         )
                     )
                     return
@@ -40,12 +41,12 @@ class R001Checker(BaseChecker):
                 ):
                     self.violations.append(
                         Violation(
-                            rule_id="R001",
+                            rule_id=const.RULE_ID_R001,
                             severity=RuleSeverity.HIGH,
                             file=str(self.file_path),
                             line=node.lineno,
                             col=node.col_offset,
-                            message=f"Bare collection type in signature: {node.name} (use strict_collections=False to disable)",
+                            message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
                         )
                     )
                     return
@@ -54,12 +55,12 @@ class R001Checker(BaseChecker):
             if AnnotationInspector.is_dict_str_any(node.args.vararg.annotation):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Dict[str, Any] in signature: {node.name}",
+                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
                     )
                 )
                 return
@@ -69,12 +70,12 @@ class R001Checker(BaseChecker):
             ):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Bare collection type in signature: {node.name} (use strict_collections=False to disable)",
+                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
                     )
                 )
                 return
@@ -83,12 +84,12 @@ class R001Checker(BaseChecker):
             if AnnotationInspector.is_dict_str_any(node.args.kwarg.annotation):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Dict[str, Any] in signature: {node.name}",
+                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
                     )
                 )
                 return
@@ -98,12 +99,12 @@ class R001Checker(BaseChecker):
             ):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Bare collection type in signature: {node.name} (use strict_collections=False to disable)",
+                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
                     )
                 )
                 return
@@ -112,12 +113,12 @@ class R001Checker(BaseChecker):
             if AnnotationInspector.is_dict_str_any(node.returns):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Dict[str, Any] in signature: {node.name}",
+                        message=const.MSG_R001_DICT_STR_ANY.format(name=node.name),
                     )
                 )
             elif (
@@ -126,12 +127,12 @@ class R001Checker(BaseChecker):
             ):
                 self.violations.append(
                     Violation(
-                        rule_id="R001",
+                        rule_id=const.RULE_ID_R001,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=node.lineno,
                         col=node.col_offset,
-                        message=f"Bare collection type in signature: {node.name} (use strict_collections=False to disable)",
+                        message=const.MSG_R001_BARE_COLLECTION.format(name=node.name),
                     )
                 )
 

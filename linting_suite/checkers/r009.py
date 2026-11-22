@@ -2,6 +2,7 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
@@ -10,7 +11,7 @@ from linting_suite.rules import RuleSeverity, Violation
 class R009Checker(BaseChecker):
     """Check for bare module-level functions outside allowed entry points."""
 
-    ALLOWED_ENTRY_POINTS = {"main", "handle_command", "handle_event", "handle_request"}
+    ALLOWED_ENTRY_POINTS = set(const.R009_ALLOWED_ENTRY_POINTS)
 
     def visit_Module(self, node: ast.Module) -> None:
         """Visit module to find top-level function definitions."""
@@ -28,17 +29,17 @@ class R009Checker(BaseChecker):
                 if self._has_exception_tag(item):
                     continue
 
-                if self.is_suppressed(item, "R009"):
+                if self.is_suppressed(item, const.RULE_ID_R009):
                     continue
 
                 self.violations.append(
                     Violation(
-                        rule_id="R009",
+                        rule_id=const.RULE_ID_R009,
                         severity=RuleSeverity.HIGH,
                         file=str(self.file_path),
                         line=item.lineno,
                         col=item.col_offset,
-                        message=f"Module-level function '{item.name}' found in service path. Every method must be in a class. Allowed exceptions: {self._format_allowed_list()}.",
+                        message=const.MSG_R009_MODULE_FUNCTION.format(name=item.name, allowed=self._format_allowed_list()),
                     )
                 )
 
@@ -54,25 +55,25 @@ class R009Checker(BaseChecker):
     def _is_pytest_fixture_decorator(self, decorator: ast.expr) -> bool:
         """Check if decorator is @pytest.fixture."""
         if isinstance(decorator, ast.Name):
-            return decorator.id == "fixture"
+            return decorator.id == const.DECORATOR_FIXTURE
         elif isinstance(decorator, ast.Attribute):
-            if decorator.attr == "fixture":
+            if decorator.attr == const.DECORATOR_FIXTURE:
                 if isinstance(decorator.value, ast.Name):
-                    return decorator.value.id == "pytest"
+                    return decorator.value.id == const.MODULE_PYTEST
         elif isinstance(decorator, ast.Call):
             if isinstance(decorator.func, ast.Name):
-                return decorator.func.id == "fixture"
+                return decorator.func.id == const.DECORATOR_FIXTURE
             elif isinstance(decorator.func, ast.Attribute):
-                if decorator.func.attr == "fixture":
+                if decorator.func.attr == const.DECORATOR_FIXTURE:
                     if isinstance(decorator.func.value, ast.Name):
-                        return decorator.func.value.id == "pytest"
+                        return decorator.func.value.id == const.MODULE_PYTEST
         return False
 
     def _is_allowed_entry_point(self, name: str) -> bool:
         """Check if function name is an allowed entry point."""
         if name in self.ALLOWED_ENTRY_POINTS:
             return True
-        if name.startswith("handle_"):
+        if name.startswith(const.HANDLER_PREFIX):
             return True
         return False
 
@@ -90,4 +91,4 @@ class R009Checker(BaseChecker):
 
     def _format_allowed_list(self) -> str:
         """Format allowed entry point names for error message."""
-        return ", ".join(sorted(self.ALLOWED_ENTRY_POINTS | {"handle_*"}))
+        return const.ELEMENT_SEPARATOR.join(sorted(self.ALLOWED_ENTRY_POINTS | {const.HANDLER_WILDCARD}))
