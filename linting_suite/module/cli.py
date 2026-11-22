@@ -5,18 +5,8 @@ import json
 import sys
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    DEFAULT_LOC_CAP_BASELINE_FILE,
-    DEFAULT_LOC_HARD_CAP,
-    DEFAULT_LOC_SOFT_TARGET,
-    ERR_NONEXISTENT_PATH,
-    EXIT_CODE_HIGH_VIOLATION,
-    EXIT_CODE_SUCCESS,
-    FORMAT_TEXT,
-    MSG_BASELINE_LOADED,
-    VALID_FORMATS,
-)
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 from linting_suite.loc_cap import LocCap
 
@@ -36,16 +26,16 @@ def handle_loc_cap(args: list[str]) -> int:
     parser.add_argument(
         "--hard-cap",
         type=int,
-        help=f"Hard cap limit (default: {DEFAULT_LOC_HARD_CAP}, or from [tool.strict-module.loc-cap].hard_cap)",
+        help=f"Hard cap limit (default: {const.DEFAULT_LOC_HARD_CAP}, or from [tool.strict-module.loc-cap].hard_cap)",
     )
     parser.add_argument(
         "--soft-target",
         type=int,
-        help=f"Soft target limit (default: {DEFAULT_LOC_SOFT_TARGET}, or from [tool.strict-module.loc-cap].soft_target)",
+        help=f"Soft target limit (default: {const.DEFAULT_LOC_SOFT_TARGET}, or from [tool.strict-module.loc-cap].soft_target)",
     )
     parser.add_argument(
         "--baseline",
-        help=f"Baseline file path (default: {DEFAULT_LOC_CAP_BASELINE_FILE}, or from [tool.strict-module.loc-cap].baseline_file)",
+        help=f"Baseline file path (default: {const.DEFAULT_LOC_CAP_BASELINE_FILE}, or from [tool.strict-module.loc-cap].baseline_file)",
     )
     parser.add_argument(
         "--generate-baseline",
@@ -92,9 +82,9 @@ def main() -> int:
     )
     parser.add_argument(
         "--format",
-        choices=VALID_FORMATS,
-        default=FORMAT_TEXT,
-        help=f"Output format (default: {FORMAT_TEXT})",
+        choices=const.VALID_FORMATS,
+        default=const.FORMAT_TEXT,
+        help=f"Output format (default: {const.FORMAT_TEXT})",
     )
     parser.add_argument(
         "--generate-baseline",
@@ -115,7 +105,7 @@ def main() -> int:
     if args.generate_baseline:
         if not args.path:
             print("error: --generate-baseline requires PATH argument", file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            return const.EXIT_CODE_HIGH_VIOLATION
 
         all_violations = []
         for path_str in args.path:
@@ -125,20 +115,20 @@ def main() -> int:
 
         baseline_data = linter.generate_baseline(all_violations)
         print(json.dumps(baseline_data, indent=2))
-        return EXIT_CODE_SUCCESS
+        return const.EXIT_CODE_SUCCESS
 
     if not args.path:
         print(
             "error: PATH argument required (unless using --generate-baseline)",
             file=sys.stderr,
         )
-        return EXIT_CODE_HIGH_VIOLATION
+        return const.EXIT_CODE_HIGH_VIOLATION
 
     for path_str in args.path:
         target_path = Path(path_str)
         if not target_path.exists():
-            print(ERR_NONEXISTENT_PATH.format(path=path_str), file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            print(const.ERR_NONEXISTENT_PATH.format(path=path_str), file=sys.stderr)
+            return const.EXIT_CODE_HIGH_VIOLATION
 
     baseline = None
     if args.baseline:
@@ -146,12 +136,12 @@ def main() -> int:
             baseline = DtoStrictLinter.load_baseline(args.baseline)
             baseline_count = len(baseline)
             print(
-                MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline),
+                const.MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline),
                 file=sys.stderr,
             )
         except BaselineLoadError as error:
             print(str(error), file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            return const.EXIT_CODE_HIGH_VIOLATION
 
     linter = DtoStrictLinter(config, baseline=baseline)
     all_violations = []

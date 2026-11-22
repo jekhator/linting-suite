@@ -9,11 +9,8 @@ from unittest.mock import Mock
 
 import pytest
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-)
 from linting_suite.inspection import AnnotationInspector
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 from linting_suite.rules.rules_client import RuleRegistry
@@ -475,7 +472,7 @@ class TestLinterFileHandling:
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_file)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
                 path=baseline_file
             )
 
@@ -484,7 +481,7 @@ class TestLinterFileHandling:
         baseline_file = Path("/nonexistent/baseline.json")
         with pytest.raises(BaselineLoadError) as caught:
             DtoStrictLinter.load_baseline(baseline_file)
-        assert str(caught.value) == ERR_BASELINE_MISSING.format(path=baseline_file)
+        assert str(caught.value) == const.ERR_BASELINE_MISSING.format(path=baseline_file)
 
     def test_severity_overrides_high(self):
         """Test severity override to HIGH."""

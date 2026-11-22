@@ -5,29 +5,16 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Self
 
-from linting_suite.config.constants import (
-    CONFIG_SECTION_DTO_STRICT,
-    CONFIG_SECTION_LOC_CAP,
-    CONFIG_SECTION_STRICT_MODULE,
-    DEFAULT_DTO_PATHS,
-    DEFAULT_EXCEPTION_TAGS,
-    DEFAULT_LOC_CAP_BASELINE_FILE,
-    DEFAULT_LOC_HARD_CAP,
-    DEFAULT_LOC_SOFT_TARGET,
-    DEFAULT_MIN_DICT_KEYS,
-    DEFAULT_R003_MODE,
-    DEFAULT_R006_PATHS,
-    DEFAULT_SERVICE_PATHS,
-)
+import linting_suite.config.constants as const
 
 
 @dataclass(frozen=True, slots=True)
 class LocCapConfig:
     """Configuration for LOC cap checker."""
 
-    hard_cap: int = DEFAULT_LOC_HARD_CAP
-    soft_target: int = DEFAULT_LOC_SOFT_TARGET
-    baseline_file: str = DEFAULT_LOC_CAP_BASELINE_FILE
+    hard_cap: int = const.DEFAULT_LOC_HARD_CAP
+    soft_target: int = const.DEFAULT_LOC_SOFT_TARGET
+    baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,20 +22,20 @@ class Config:
     """Configuration for strict-module linter."""
 
     service_paths: list[str] = field(
-        default_factory=lambda: DEFAULT_SERVICE_PATHS.copy()
+        default_factory=lambda: const.DEFAULT_SERVICE_PATHS.copy()
     )
-    dto_paths: list[str] = field(default_factory=lambda: DEFAULT_DTO_PATHS.copy())
+    dto_paths: list[str] = field(default_factory=lambda: const.DEFAULT_DTO_PATHS.copy())
     exception_tags: list[str] = field(
-        default_factory=lambda: DEFAULT_EXCEPTION_TAGS.copy()
+        default_factory=lambda: const.DEFAULT_EXCEPTION_TAGS.copy()
     )
     disabled_rules: list[str] = field(default_factory=list)
     severity_overrides: dict[str, str] = field(default_factory=dict)
     strict_collections: bool = field(default=False)
     exception_tag_requires_justification: bool = field(default=False)
     max_exception_tags_per_file: int | None = field(default=None)
-    r003_mode: str = field(default=DEFAULT_R003_MODE)
-    r006_paths: list[str] = field(default_factory=lambda: DEFAULT_R006_PATHS.copy())
-    min_dict_keys: int = field(default=DEFAULT_MIN_DICT_KEYS)
+    r003_mode: str = field(default=const.DEFAULT_R003_MODE)
+    r006_paths: list[str] = field(default_factory=lambda: const.DEFAULT_R006_PATHS.copy())
+    min_dict_keys: int = field(default=const.DEFAULT_MIN_DICT_KEYS)
     r003_strict_repr: bool = field(default=True)
     r003_sensitivity_bases: list[str] = field(default_factory=lambda: ["SensitiveRepr"])
     r003_sensitivity_allowlist: list[str] = field(default_factory=list)
@@ -67,23 +54,23 @@ class Config:
             return cls()
 
         tool_data = data.get("tool", {})
-        config_data = tool_data.get(CONFIG_SECTION_STRICT_MODULE) or tool_data.get(
-            CONFIG_SECTION_DTO_STRICT, {}
+        config_data = tool_data.get(const.CONFIG_SECTION_STRICT_MODULE) or tool_data.get(
+            const.CONFIG_SECTION_DTO_STRICT, {}
         )
-        loc_cap_data = config_data.get(CONFIG_SECTION_LOC_CAP, {})
+        loc_cap_data = config_data.get(const.CONFIG_SECTION_LOC_CAP, {})
 
         loc_cap = LocCapConfig(
-            hard_cap=loc_cap_data.get("hard_cap", DEFAULT_LOC_HARD_CAP),
-            soft_target=loc_cap_data.get("soft_target", DEFAULT_LOC_SOFT_TARGET),
+            hard_cap=loc_cap_data.get("hard_cap", const.DEFAULT_LOC_HARD_CAP),
+            soft_target=loc_cap_data.get("soft_target", const.DEFAULT_LOC_SOFT_TARGET),
             baseline_file=loc_cap_data.get(
-                "baseline_file", DEFAULT_LOC_CAP_BASELINE_FILE
+                "baseline_file", const.DEFAULT_LOC_CAP_BASELINE_FILE
             ),
         )
 
         return cls(
-            service_paths=config_data.get("service_paths", DEFAULT_SERVICE_PATHS),
-            dto_paths=config_data.get("dto_paths", DEFAULT_DTO_PATHS),
-            exception_tags=config_data.get("exception_tags", DEFAULT_EXCEPTION_TAGS),
+            service_paths=config_data.get("service_paths", const.DEFAULT_SERVICE_PATHS),
+            dto_paths=config_data.get("dto_paths", const.DEFAULT_DTO_PATHS),
+            exception_tags=config_data.get("exception_tags", const.DEFAULT_EXCEPTION_TAGS),
             disabled_rules=config_data.get("disabled_rules", []),
             severity_overrides=config_data.get("severity_overrides", {}),
             strict_collections=config_data.get("strict_collections", False),
@@ -91,9 +78,9 @@ class Config:
                 "exception_tag_requires_justification", False
             ),
             max_exception_tags_per_file=config_data.get("max_exception_tags_per_file"),
-            r003_mode=config_data.get("r003_mode", DEFAULT_R003_MODE),
-            r006_paths=config_data.get("r006_paths", DEFAULT_R006_PATHS),
-            min_dict_keys=config_data.get("min_dict_keys", DEFAULT_MIN_DICT_KEYS),
+            r003_mode=config_data.get("r003_mode", const.DEFAULT_R003_MODE),
+            r006_paths=config_data.get("r006_paths", const.DEFAULT_R006_PATHS),
+            min_dict_keys=config_data.get("min_dict_keys", const.DEFAULT_MIN_DICT_KEYS),
             r003_strict_repr=config_data.get("r003_strict_repr", True),
             r003_sensitivity_bases=config_data.get(
                 "r003_sensitivity_bases", ["SensitiveRepr"]

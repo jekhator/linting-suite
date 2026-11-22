@@ -4,11 +4,7 @@ import io
 import json
 import sys
 
-from linting_suite.config.constants import (
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-    MSG_BASELINE_LOADED,
-)
+import linting_suite.config.constants as const
 from linting_suite.module.cli import main
 
 
@@ -136,7 +132,7 @@ service_paths = ["**/*.py"]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 0
-            assert stderr_output.strip() == MSG_BASELINE_LOADED.format(
+            assert stderr_output.strip() == const.MSG_BASELINE_LOADED.format(
                 count=1, path=baseline_file
             )
         finally:
@@ -168,7 +164,7 @@ service_paths = ["**/*.py"]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 1
-            assert stderr_output.strip() == ERR_BASELINE_MISSING.format(
+            assert stderr_output.strip() == const.ERR_BASELINE_MISSING.format(
                 path=baseline_file
             )
         finally:
@@ -201,7 +197,7 @@ service_paths = ["**/*.py"]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 1
-            assert stderr_output.strip() == ERR_BASELINE_INVALID_JSON.format(
+            assert stderr_output.strip() == const.ERR_BASELINE_INVALID_JSON.format(
                 path=baseline_file
             )
         finally:

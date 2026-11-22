@@ -2,7 +2,7 @@
 
 import sys
 
-from linting_suite.config.constants import ERR_NONEXISTENT_PATH
+import linting_suite.config.constants as const
 from linting_suite.module.cli import main
 
 
@@ -107,5 +107,5 @@ service_paths = ["**/*.py"]
         assert exit_code != 0
 
         captured = capsys.readouterr()
-        expected_msg = ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
+        expected_msg = const.ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
         assert expected_msg in captured.err

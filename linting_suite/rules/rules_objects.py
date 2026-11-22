@@ -3,11 +3,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from linting_suite.config.constants import (
-    GITHUB_LEVEL_ERROR,
-    GITHUB_LEVEL_NOTICE,
-    GITHUB_LEVEL_WARNING,
-)
+import linting_suite.config.constants as const
 
 
 class RuleSeverity(Enum):
@@ -37,11 +33,11 @@ class Violation:
     def format_github(self) -> str:
         """Format as GitHub Actions annotation."""
         if self.severity == RuleSeverity.HIGH:
-            level = GITHUB_LEVEL_ERROR
+            level = const.GITHUB_LEVEL_ERROR
         elif self.severity == RuleSeverity.INFO:
-            level = GITHUB_LEVEL_NOTICE
+            level = const.GITHUB_LEVEL_NOTICE
         else:
-            level = GITHUB_LEVEL_WARNING
+            level = const.GITHUB_LEVEL_WARNING
         return f"::{level} file={self.file},line={self.line},col={self.col}::{self.message}"
 
 

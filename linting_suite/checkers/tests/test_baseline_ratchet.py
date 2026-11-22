@@ -6,14 +6,8 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import pytest
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    ERR_BASELINE_ENTRY_NOT_OBJECT,
-    ERR_BASELINE_ENTRY_SHAPE,
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-    ERR_BASELINE_NOT_LIST,
-)
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 
 
@@ -144,7 +138,7 @@ def bad_function_2(x: Dict[str, Any]):
         baseline_path = Path("/nonexistent/baseline.json")
         with pytest.raises(BaselineLoadError) as caught:
             DtoStrictLinter.load_baseline(baseline_path)
-        assert str(caught.value) == ERR_BASELINE_MISSING.format(path=baseline_path)
+        assert str(caught.value) == const.ERR_BASELINE_MISSING.format(path=baseline_path)
 
     def test_baseline_entry_hash_consistency(self):
         """Baseline: Message hash is consistent across runs."""
@@ -165,7 +159,7 @@ def bad_function_2(x: Dict[str, Any]):
             baseline_path.write_text("{ invalid json }")
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
                 path=baseline_path
             )
 
@@ -176,7 +170,7 @@ def bad_function_2(x: Dict[str, Any]):
             baseline_path.write_text('{"violations": []}')
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_NOT_LIST.format(path=baseline_path)
+            assert str(caught.value) == const.ERR_BASELINE_NOT_LIST.format(path=baseline_path)
 
     @pytest.mark.parametrize("missing_key", ["file", "line", "rule_id", "message_hash"])
     def test_baseline_entry_missing_key_raises_error(self, missing_key):
@@ -197,7 +191,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_ENTRY_SHAPE.format(
+            assert str(caught.value) == const.ERR_BASELINE_ENTRY_SHAPE.format(
                 index=0, key=missing_key, path=baseline_path
             )
 
@@ -210,7 +204,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_ENTRY_NOT_OBJECT.format(
+            assert str(caught.value) == const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(
                 index=0, path=baseline_path
             )
 
@@ -222,7 +216,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(
                 path=baseline_path
             )
 

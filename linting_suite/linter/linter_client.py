@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
+import linting_suite.config.constants as const
+import linting_suite.linter.linter_objects as objs
 from linting_suite.checkers import (
     R001Checker,
     R002Checker,
@@ -23,24 +25,6 @@ from linting_suite.checkers import (
     R015Checker,
 )
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    ERR_BASELINE_ENTRY_NOT_OBJECT,
-    ERR_BASELINE_ENTRY_SHAPE,
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-    ERR_BASELINE_NOT_LIST,
-    EXIT_CODE_HIGH_VIOLATION,
-    EXIT_CODE_LOW_VIOLATION,
-    EXIT_CODE_MEDIUM_VIOLATION,
-    EXIT_CODE_SUCCESS,
-    FORMAT_GITHUB,
-    FORMAT_JSON,
-    FORMAT_TEXT,
-    PY_EXTENSION,
-    REQUIRED_BASELINE_KEYS,
-    VALID_SEVERITY_LEVELS,
-)
-from linting_suite.linter.linter_objects import BaselineLoadError
 from linting_suite.rules import RuleSeverity, Violation
 
 
@@ -56,7 +40,7 @@ class DtoStrictLinter:
 
     def lint_file(self, file_path: Path) -> list[Violation]:
         """Lint a single Python file."""
-        if not file_path.suffix == PY_EXTENSION:
+        if not file_path.suffix == const.PY_EXTENSION:
             return []
 
         try:
@@ -124,7 +108,7 @@ class DtoStrictLinter:
         for violation in filtered:
             if violation.rule_id in self.config.severity_overrides:
                 new_severity = self.config.severity_overrides[violation.rule_id].upper()
-                if new_severity in VALID_SEVERITY_LEVELS:
+                if new_severity in const.VALID_SEVERITY_LEVELS:
                     violation = Violation(
                         rule_id=violation.rule_id,
                         severity=RuleSeverity[new_severity],
@@ -172,29 +156,29 @@ class DtoStrictLinter:
             with open(baseline_path, "r") as handle:
                 data = json.load(handle)
         except (json.JSONDecodeError, UnicodeDecodeError) as error:
-            raise BaselineLoadError(
-                ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
+            raise objs.BaselineLoadError(
+                const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
             ) from error
         except OSError as error:
-            raise BaselineLoadError(
-                ERR_BASELINE_MISSING.format(path=baseline_path)
+            raise objs.BaselineLoadError(
+                const.ERR_BASELINE_MISSING.format(path=baseline_path)
             ) from error
 
         if not isinstance(data, list):
-            raise BaselineLoadError(ERR_BASELINE_NOT_LIST.format(path=baseline_path))
+            raise objs.BaselineLoadError(const.ERR_BASELINE_NOT_LIST.format(path=baseline_path))
 
         baseline = {}
         for index, entry in enumerate(data):
             if not isinstance(entry, dict):
-                raise BaselineLoadError(
-                    ERR_BASELINE_ENTRY_NOT_OBJECT.format(
+                raise objs.BaselineLoadError(
+                    const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(
                         index=index, path=baseline_path
                     )
                 )
-            for key in REQUIRED_BASELINE_KEYS:
+            for key in const.REQUIRED_BASELINE_KEYS:
                 if key not in entry:
-                    raise BaselineLoadError(
-                        ERR_BASELINE_ENTRY_SHAPE.format(
+                    raise objs.BaselineLoadError(
+                        const.ERR_BASELINE_ENTRY_SHAPE.format(
                             index=index, key=key, path=baseline_path
                         )
                     )
@@ -203,12 +187,12 @@ class DtoStrictLinter:
         return baseline
 
     def format_violations(
-        self, violations: list[Violation], format_type: str = FORMAT_TEXT
+        self, violations: list[Violation], format_type: str = const.FORMAT_TEXT
     ) -> str:
         """Format violations for output."""
-        if format_type == FORMAT_GITHUB:
+        if format_type == const.FORMAT_GITHUB:
             return "\n".join(violation.format_github() for violation in violations)
-        elif format_type == FORMAT_JSON:
+        elif format_type == const.FORMAT_JSON:
             return json.dumps(
                 [
                     {
@@ -229,7 +213,7 @@ class DtoStrictLinter:
     def get_exit_code(self, violations: list[Violation]) -> int:
         """Determine exit code based on violation severities."""
         if not violations:
-            return EXIT_CODE_SUCCESS
+            return const.EXIT_CODE_SUCCESS
 
         has_high = any(violation.severity == RuleSeverity.HIGH for violation in violations)
         has_medium = any(violation.severity == RuleSeverity.MEDIUM for violation in violations)
@@ -237,12 +221,12 @@ class DtoStrictLinter:
         has_info = any(violation.severity == RuleSeverity.INFO for violation in violations)
 
         if has_high:
-            return EXIT_CODE_HIGH_VIOLATION
+            return const.EXIT_CODE_HIGH_VIOLATION
         elif has_medium:
-            return EXIT_CODE_MEDIUM_VIOLATION
+            return const.EXIT_CODE_MEDIUM_VIOLATION
         elif has_low:
-            return EXIT_CODE_LOW_VIOLATION
+            return const.EXIT_CODE_LOW_VIOLATION
         elif has_info:
-            return EXIT_CODE_SUCCESS
+            return const.EXIT_CODE_SUCCESS
         else:
-            return EXIT_CODE_SUCCESS
+            return const.EXIT_CODE_SUCCESS
