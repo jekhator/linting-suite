@@ -4,11 +4,7 @@ import io
 import json
 import sys
 
-from linting_suite.config.constants import (
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-    MSG_BASELINE_LOADED,
-)
+import linting_suite.config.constants as const
 from linting_suite.module.cli import main
 
 
@@ -104,14 +100,7 @@ service_paths = ["**/*.py"]
 
     def test_main_with_baseline_file(self, tmp_path):
         """Test main() with baseline file."""
-        baseline_data = [
-            {
-                "file": "test.py",
-                "line": 10,
-                "rule_id": "R001",
-                "message_hash": "abc123",
-            }
-        ]
+        baseline_data = [{"file": "test.py", "line": 10, "rule_id": "R001", "message_hash": "abc123"}]
         baseline_file = tmp_path / "baseline.json"
         baseline_file.write_text(json.dumps(baseline_data))
 
@@ -127,18 +116,11 @@ service_paths = ["**/*.py"]
         original_stderr = sys.stderr
         try:
             sys.stderr = io.StringIO()
-            sys.argv = [
-                "strict-module",
-                str(test_file),
-                "--baseline",
-                str(baseline_file),
-            ]
+            sys.argv = ["strict-module", str(test_file), "--baseline", str(baseline_file)]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 0
-            assert stderr_output.strip() == MSG_BASELINE_LOADED.format(
-                count=1, path=baseline_file
-            )
+            assert stderr_output.strip() == const.MSG_BASELINE_LOADED.format(count=1, path=baseline_file)
         finally:
             sys.argv = original_argv
             sys.stderr = original_stderr
@@ -159,18 +141,11 @@ service_paths = ["**/*.py"]
         original_stderr = sys.stderr
         try:
             sys.stderr = io.StringIO()
-            sys.argv = [
-                "strict-module",
-                str(test_file),
-                "--baseline",
-                str(baseline_file),
-            ]
+            sys.argv = ["strict-module", str(test_file), "--baseline", str(baseline_file)]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 1
-            assert stderr_output.strip() == ERR_BASELINE_MISSING.format(
-                path=baseline_file
-            )
+            assert stderr_output.strip() == const.ERR_BASELINE_MISSING.format(path=baseline_file)
         finally:
             sys.argv = original_argv
             sys.stderr = original_stderr
@@ -192,18 +167,11 @@ service_paths = ["**/*.py"]
         original_stderr = sys.stderr
         try:
             sys.stderr = io.StringIO()
-            sys.argv = [
-                "strict-module",
-                str(test_file),
-                "--baseline",
-                str(baseline_file),
-            ]
+            sys.argv = ["strict-module", str(test_file), "--baseline", str(baseline_file)]
             result = main()
             stderr_output = sys.stderr.getvalue()
             assert result == 1
-            assert stderr_output.strip() == ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_file
-            )
+            assert stderr_output.strip() == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_file)
         finally:
             sys.argv = original_argv
             sys.stderr = original_stderr

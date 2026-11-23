@@ -19,22 +19,17 @@ def build_response():
         "key2": "value2",
     }
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=2,  # Lower threshold
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=2)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r002_violations = [v for v in violations if v.rule_id == "R002"]
-            assert len(r002_violations) >= 1, (
-                "2 keys should trigger with min_dict_keys=2"
-            )
+            r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
+            assert len(r002_violations) >= 1, "2 keys should trigger with min_dict_keys=2"
         finally:
             path.unlink()
 
@@ -47,19 +42,16 @@ def build_response():
         "key2": "value2",
     }
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=3,  # Default
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=3)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r002_violations = [v for v in violations if v.rule_id == "R002"]
+            r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
             assert len(r002_violations) == 0, "2 keys should be OK with min_dict_keys=3"
         finally:
             path.unlink()
@@ -75,19 +67,16 @@ def build_response():
         "key4": "value4",
     }
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=5,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=5)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r002_violations = [v for v in violations if v.rule_id == "R002"]
+            r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
             assert len(r002_violations) == 0, "4 keys should be OK with min_dict_keys=5"
         finally:
             path.unlink()
@@ -104,21 +93,16 @@ def build_response():
         "key5": "value5",
     }
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                service_paths=["**/*.py"],
-                min_dict_keys=5,
-            )
+            config = Config(service_paths=["**/*.py"], min_dict_keys=5)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r002_violations = [v for v in violations if v.rule_id == "R002"]
-            assert len(r002_violations) >= 1, (
-                "5+ keys should trigger with min_dict_keys=5"
-            )
+            r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
+            assert len(r002_violations) >= 1, "5+ keys should trigger with min_dict_keys=5"
         finally:
             path.unlink()

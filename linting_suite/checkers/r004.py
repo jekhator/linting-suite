@@ -3,6 +3,7 @@
 import ast
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.config._config import Config
 from linting_suite.inspection import PathClassifier
@@ -15,9 +16,7 @@ class R004Checker(BaseChecker):
     def __init__(self, file_path: Path, source: str, config: Config):
         super().__init__(file_path, source, config)
         self.in_service_file = False
-        self.in_service_file = PathClassifier.is_service_path(
-            file_path, config.service_paths
-        )
+        self.in_service_file = PathClassifier.is_service_path(file_path, config.service_paths)
 
     def visit_Module(self, node: ast.Module) -> None:
         """Visit module to find top-level function defs."""
@@ -26,35 +25,31 @@ class R004Checker(BaseChecker):
 
         for item in node.body:
             if isinstance(item, ast.FunctionDef):
-                if self.is_suppressed(item, "R004"):
+                if self.is_suppressed(item, const.RULE_ID_R004):
                     continue
-                if not self._has_exception_tag(
-                    item
-                ) and not self._is_class_method_wrapper(item):
+                if not self._has_exception_tag(item) and not self._is_class_method_wrapper(item):
+                    file = str(self.file_path)
+                    message = const.MSG_R004_NO_TAG.format(name=item.name)
                     self.violations.append(
                         Violation(
-                            rule_id="R004",
-                            severity=RuleSeverity.HIGH,
-                            file=str(self.file_path),
-                            line=item.lineno,
-                            col=item.col_offset,
-                            message=f"Module-level def without exception tag: {item.name}",
+                            rule_id=const.RULE_ID_R004, severity=RuleSeverity.HIGH, file=file,
+                            line=item.lineno, col=item.col_offset, message=message
                         )
                     )
 
     def _is_class_method_wrapper(self, node: ast.FunctionDef) -> bool:
         """Check if function body delegates to class methods (auto-detected wrapper pattern)."""
-        for stmt in node.body:
-            if isinstance(stmt, ast.Return) and stmt.value:
-                if self._is_method_delegation(stmt.value):
+        for statement in node.body:
+            if isinstance(statement, ast.Return) and statement.value:
+                if self._is_method_delegation(statement.value):
                     return True
         return False
 
     def _is_method_delegation(self, node: ast.expr) -> bool:
         """Check if node is a method call (attribute access followed by call)."""
         if isinstance(node, ast.Call):
-            func = node.func
-            if isinstance(func, ast.Attribute):
+            function = node.func
+            if isinstance(function, ast.Attribute):
                 return True
         return False
 

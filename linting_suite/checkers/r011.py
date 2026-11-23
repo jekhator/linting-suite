@@ -2,13 +2,15 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.inspection import PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
 
 
 class R011Checker(BaseChecker):
-    """Check for string literals in raise exception arguments.
+    """
+    Check for string literals in raise exception arguments.
 
     Enforces that exception message arguments must be references to ERR_*
     constants (via const.* or similar), never inline string literals or
@@ -33,20 +35,17 @@ class R011Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R011"):
+        if self.is_suppressed(node, const.RULE_ID_R011):
             self.generic_visit(node)
             return
 
         has_literal = self._check_for_string_literals(node.exc)
         if has_literal:
+            file = str(self.file_path)
             self.violations.append(
                 Violation(
-                    rule_id="R011",
-                    severity=RuleSeverity.HIGH,
-                    file=str(self.file_path),
-                    line=node.lineno,
-                    col=node.col_offset,
-                    message="String literal found in raise statement. Extract to constants/<feature>.py as ERR_<DOMAIN>_<CONDITION>, reference via const.",
+                    rule_id=const.RULE_ID_R011, severity=RuleSeverity.HIGH, file=file,
+                    line=node.lineno, col=node.col_offset, message=const.MSG_R011_RAISE_LITERAL
                 )
             )
 
@@ -55,20 +54,21 @@ class R011Checker(BaseChecker):
     def _is_constant_module(self, file_path) -> bool:
         """Check if file is a constants module."""
         return (
-            file_path.name == "constants.py"
-            or file_path.name.endswith("_const.py")
-            or "constants" in str(file_path)
+            file_path.name == const.BASENAME_CONSTANTS
+            or file_path.name.endswith(const.BASENAME_CONST_SUFFIX)
+            or const.CONSTANTS_PATH_WORD in str(file_path)
         )
 
     def _check_for_string_literals(self, call_node: ast.Call) -> bool:
-        """Check if a Call node contains string literal arguments.
+        """
+        Check if a Call node contains string literal arguments.
 
         Returns True if any positional or keyword argument is:
         - An ast.Constant with string value
         - An ast.JoinedStr (f-string)
         """
-        for arg in call_node.args:
-            if self._is_string_literal(arg):
+        for argument in call_node.args:
+            if self._is_string_literal(argument):
                 return True
 
         for keyword in call_node.keywords:

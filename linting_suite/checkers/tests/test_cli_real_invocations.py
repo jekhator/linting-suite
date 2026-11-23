@@ -12,18 +12,10 @@ class TestCLIRealInvocations:
         """Test CLI linting with text output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(bad_file),
-                "--format",
-                "text",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(bad_file), "--format", "text"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 1
@@ -34,18 +26,10 @@ class TestCLIRealInvocations:
         """Test CLI linting with JSON output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(bad_file),
-                "--format",
-                "json",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(bad_file), "--format", "json"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 1
@@ -55,26 +39,16 @@ class TestCLIRealInvocations:
             assert len(data) > 0
             assert "rule_id" in data[0]
         else:
-            assert any(
-                v["rule_id"] in ["R001", "R006"] for v in data.get("violations", [])
-            )
+            assert any(violation["rule_id"] in ["R001", "R006"] for violation in data.get("violations", []))
 
     def test_cli_lint_github_format(self, cli_project_dir):
         """Test CLI linting with GitHub Actions output format."""
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(bad_file),
-                "--format",
-                "github",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(bad_file), "--format", "github"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 1
@@ -84,35 +58,20 @@ class TestCLIRealInvocations:
         """Test CLI linting clean file exits with 0."""
         good_file = cli_project_dir / "apps" / "services" / "good.py"
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(good_file),
-                "--format",
-                "text",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(good_file), "--format", "text"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 0
 
     def test_cli_generate_baseline(self, cli_project_dir):
         """Test CLI baseline generation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(cli_project_dir),
-                "--generate-baseline",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(cli_project_dir), "--generate-baseline"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 0
@@ -128,65 +87,37 @@ class TestCLIRealInvocations:
         baseline_file = cli_project_dir / ".strict-module-baseline.json"
         bad_file = cli_project_dir / "apps" / "services" / "bad.py"
 
+        cwd = str(cli_project_dir)
         gen_result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(bad_file),
-                "--generate-baseline",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(bad_file), "--generate-baseline"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         baseline_file.write_text(gen_result.stdout)
 
+        cwd = str(cli_project_dir)
         lint_result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                str(bad_file),
-                "--baseline",
-                str(baseline_file),
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", str(bad_file), "--baseline", str(baseline_file)],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert lint_result.returncode == 0
 
     def test_cli_loc_cap_help(self, cli_project_dir):
         """Test loc-cap subcommand basic invocation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                "loc-cap",
-                str(cli_project_dir),
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", "loc-cap", str(cli_project_dir)],
+            cwd=cwd, capture_output=True, text=True
         )
 
-        assert (
-            "Python files" in result.stdout
-            or "LOC" in result.stdout
-            or result.returncode in [0, 1]
-        )
+        assert "Python files" in result.stdout or "LOC" in result.stdout or result.returncode in [0, 1]
 
     def test_cli_missing_path_error(self, cli_project_dir):
         """Test CLI error when path is missing."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [sys.executable, "-m", "linting_suite.module.cli"],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli"], cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 1
@@ -198,18 +129,10 @@ class TestCLILocCap:
 
     def test_loc_cap_generate_baseline(self, cli_project_dir):
         """Test loc-cap baseline generation."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                "loc-cap",
-                str(cli_project_dir),
-                "--generate-baseline",
-            ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            [sys.executable, "-m", "linting_suite.module.cli", "loc-cap", str(cli_project_dir), "--generate-baseline"],
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode == 0
@@ -221,21 +144,13 @@ class TestCLILocCap:
 
     def test_loc_cap_with_custom_limits(self, cli_project_dir):
         """Test loc-cap with custom hard and soft limits."""
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                "loc-cap",
-                str(cli_project_dir),
-                "--hard-cap",
-                "50",
-                "--soft-target",
-                "30",
+                sys.executable, "-m", "linting_suite.module.cli", "loc-cap", str(cli_project_dir), "--hard-cap", "50",
+                "--soft-target", "30"
             ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode in [0, 1]
@@ -245,19 +160,13 @@ class TestCLILocCap:
         baseline_file = cli_project_dir / ".loc-cap-baseline.txt"
         baseline_file.write_text("apps/services/bad.py: 100\n")
 
+        cwd = str(cli_project_dir)
         result = subprocess.run(
             [
-                sys.executable,
-                "-m",
-                "linting_suite.module.cli",
-                "loc-cap",
-                str(cli_project_dir),
-                "--baseline",
-                str(baseline_file),
+                sys.executable, "-m", "linting_suite.module.cli", "loc-cap", str(cli_project_dir), "--baseline",
+                str(baseline_file)
             ],
-            cwd=str(cli_project_dir),
-            capture_output=True,
-            text=True,
+            cwd=cwd, capture_output=True, text=True
         )
 
         assert result.returncode in [0, 1]

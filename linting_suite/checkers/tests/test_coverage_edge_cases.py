@@ -106,7 +106,7 @@ def process(data: Any) -> dict:
         config = Config(service_paths=["apps/*/services/*.py"], disabled_rules=["R006"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(service_file)
-        r006_violations = [v for v in violations if v.rule_id == "R006"]
+        r006_violations = [violation for violation in violations if violation.rule_id == "R006"]
         assert len(r006_violations) == 0
 
     def test_generate_baseline_empty_violations(self, tmp_path):
@@ -130,7 +130,7 @@ def process(data: Any) -> dict:
         linter = DtoStrictLinter(config, baseline=baseline)
         violations = []
 
-        for v in linter.format_violations(violations, "text").split("\n"):
+        for violation in linter.format_violations(violations, "text").split("\n"):
             pass
 
 
@@ -147,7 +147,7 @@ def handle_event():  # FRAMEWORK
         config = Config(service_paths=["**/*.py"], exception_tags=["FRAMEWORK"])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(code_file)
-        r004_violations = [v for v in violations if v.rule_id == "R004"]
+        r004_violations = [violation for violation in violations if violation.rule_id == "R004"]
         assert len(r004_violations) == 0
 
     def test_multiple_violations_per_function(self, tmp_path):

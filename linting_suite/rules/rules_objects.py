@@ -3,20 +3,16 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from linting_suite.config.constants import (
-    GITHUB_LEVEL_ERROR,
-    GITHUB_LEVEL_NOTICE,
-    GITHUB_LEVEL_WARNING,
-)
+import linting_suite.config.constants as const
 
 
 class RuleSeverity(Enum):
     """Severity levels for violations."""
 
-    HIGH = "HIGH"
-    MEDIUM = "MEDIUM"
-    LOW = "LOW"
-    INFO = "INFO"
+    HIGH = const.SEVERITY_HIGH
+    MEDIUM = const.SEVERITY_MEDIUM
+    LOW = const.SEVERITY_LOW
+    INFO = const.SEVERITY_INFO
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,17 +28,21 @@ class Violation:
 
     def format_text(self) -> str:
         """Format as plain text."""
-        return f"{self.file}:{self.line}: {self.rule_id} {self.message}"
+        return const.TEMPLATE_VIOLATION_TEXT.format(
+            file=self.file, line=self.line, rule_id=self.rule_id, message=self.message
+        )
 
     def format_github(self) -> str:
         """Format as GitHub Actions annotation."""
         if self.severity == RuleSeverity.HIGH:
-            level = GITHUB_LEVEL_ERROR
+            level = const.GITHUB_LEVEL_ERROR
         elif self.severity == RuleSeverity.INFO:
-            level = GITHUB_LEVEL_NOTICE
+            level = const.GITHUB_LEVEL_NOTICE
         else:
-            level = GITHUB_LEVEL_WARNING
-        return f"::{level} file={self.file},line={self.line},col={self.col}::{self.message}"
+            level = const.GITHUB_LEVEL_WARNING
+        return const.TEMPLATE_VIOLATION_GITHUB.format(
+            level=level, file=self.file, line=self.line, col=self.col, message=self.message
+        )
 
 
 @dataclass(frozen=True, slots=True)

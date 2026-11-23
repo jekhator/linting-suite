@@ -5,9 +5,9 @@ Issues and pull requests welcome. Please include fixtures (good and bad examples
 When submitting a fix or feature:
 
 1. Ensure all tests pass: `python3.12 -m pytest linting_suite/module/tests/ -v --tb=short`
-2. Format code: `ruff format linting_suite/module/`
-3. Lint code: `ruff check linting_suite/module/` and `strict-module linting_suite/module/`
-4. Check LOC caps: `strict-module loc-cap linting_suite/module/`
+2. Never run `ruff format`: the layout is written by hand (one line when it fits 120, otherwise packed entries, closing bracket alone, no trailing comma)
+3. Lint code: `ruff check linting_suite/` and `strict-module linting_suite/`
+4. Check LOC caps: `strict-module loc-cap linting_suite/`
 5. Update CHANGELOG.md with your changes under an [Unreleased] section
 
 ## Development Setup

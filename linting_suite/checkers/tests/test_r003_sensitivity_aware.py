@@ -19,16 +19,12 @@ class PlainDTO:
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) >= 1
-        assert any("repr=False" in v.message for v in r003_violations)
+        assert any("repr=False" in violation.message for violation in r003_violations)
 
     def test_r003_sensitivity_base_allows_repr_false(self, tmp_path):
         """repr=False allowed when class inherits SensitiveRepr base."""
@@ -43,14 +39,10 @@ class SensitiveDTO(SensitiveRepr):
     name: str
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_sensitivity_field_metadata_allows_repr_false(self, tmp_path):
@@ -67,14 +59,10 @@ class SensitiveDTO:
     ssn: str = field(metadata={"sensitivity": Sensitivity.PII})
 """
         )
-        config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-        )
+        config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_allowlist_by_class_name_allows_repr_false(self, tmp_path):
@@ -90,14 +78,12 @@ class AllowlistedDTO:
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_allowlist=["AllowlistedDTO"],
+            dto_paths=["**/*.py"], r003_mode="canonical",
+            r003_strict_repr=True, r003_sensitivity_allowlist=["AllowlistedDTO"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_allowlist_by_full_path_allows_repr_false(self, tmp_path):
@@ -113,14 +99,12 @@ class FullPathAllowlistedDTO:
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_allowlist=["dtos.FullPathAllowlistedDTO"],
+            dto_paths=["**/*.py"], r003_mode="canonical",
+            r003_strict_repr=True, r003_sensitivity_allowlist=["dtos.FullPathAllowlistedDTO"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0
 
     def test_r003_multiple_sensitivity_bases_allowed(self, tmp_path):
@@ -139,12 +123,10 @@ class SensitiveDTO(CustomSensitiveBase):
 """
         )
         config = Config(
-            dto_paths=["**/*.py"],
-            r003_mode="canonical",
-            r003_strict_repr=True,
-            r003_sensitivity_bases=["SensitiveRepr", "CustomSensitiveBase"],
+            dto_paths=["**/*.py"], r003_mode="canonical",
+            r003_strict_repr=True, r003_sensitivity_bases=["SensitiveRepr", "CustomSensitiveBase"]
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r003_violations = [v for v in violations if v.rule_id == "R003"]
+        r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
         assert len(r003_violations) == 0

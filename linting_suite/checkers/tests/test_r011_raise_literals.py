@@ -9,16 +9,10 @@ class TestR011RaiseLiterals:
 
     def test_r011_detects_literal_messages(self, fixture_dir):
         """R011 should flag string literals in raise statements."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "bad" / "r011_raise_literal_message.py"
-        )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        violations = linter.lint_file(fixture_dir / "bad" / "r011_raise_literal_message.py")
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 4, (
             f"Expected 4 R011 violations (plain literal, f-string, keyword arg literal, "
@@ -27,16 +21,10 @@ class TestR011RaiseLiterals:
 
     def test_r011_allows_const_references(self, fixture_dir):
         """R011 should allow const.ERR_* references."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "r011_const_reference_raise.py"
-        )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        violations = linter.lint_file(fixture_dir / "good" / "r011_const_reference_raise.py")
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, (
             f"Expected 0 R011 violations (all use const references), "
@@ -45,39 +33,23 @@ class TestR011RaiseLiterals:
 
     def test_r011_exempts_test_files(self, fixture_dir):
         """R011 should not flag violations in test files."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "good" / "test_r008_good_test_class.py"
-        )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        violations = linter.lint_file(fixture_dir / "good" / "test_r008_good_test_class.py")
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 0, (
-            "R011 should not flag violations in test files"
-        )
+        assert len(r011_violations) == 0, "R011 should not flag violations in test files"
 
     def test_r011_message_suggests_fix(self, fixture_dir):
         """R011 violation message should suggest const extraction."""
-        config = Config(
-            service_paths=["**/fixtures/**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/fixtures/**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
-        violations = linter.lint_file(
-            fixture_dir / "bad" / "r011_raise_literal_message.py"
-        )
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        violations = linter.lint_file(fixture_dir / "bad" / "r011_raise_literal_message.py")
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) > 0
         message = r011_violations[0].message
-        assert "constants" in message.lower(), (
-            "Message should mention extracting to constants module"
-        )
+        assert "constants" in message.lower(), "Message should mention extracting to constants module"
         assert "const" in message.lower(), "Message should mention const reference"
 
     def test_r011_bare_reraise_allowed(self, tmp_path):
@@ -90,14 +62,10 @@ def handle_error():
     except Exception:
         raise
 """)
-        config = Config(
-            service_paths=[str(tmp_path / "*.py")],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=[str(tmp_path / "*.py")], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should allow bare re-raise"
 
@@ -110,14 +78,10 @@ class Handler:
         if True:
             raise ValueError()
 """)
-        config = Config(
-            service_paths=[str(tmp_path / "*.py")],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=[str(tmp_path / "*.py")], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should allow raise with no arguments"
 
@@ -129,18 +93,12 @@ class Handler:
     def handle_error(self, exc):
         raise exc
 """)
-        config = Config(
-            service_paths=[str(tmp_path / "*.py")],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=[str(tmp_path / "*.py")], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 0, (
-            "R011 should allow non-Call exception (direct re-raise)"
-        )
+        assert len(r011_violations) == 0, "R011 should allow non-Call exception (direct re-raise)"
 
     def test_r011_suppressed_with_noqa(self, tmp_path):
         """R011 violations can be suppressed with noqa in service files."""
@@ -150,14 +108,10 @@ class Handler:
     def handle_error(self):
         raise ValueError("error message")  # noqa: dto-strict-R011
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should respect noqa comments"
 
@@ -171,18 +125,12 @@ class Handler:
     def handle_error(self):
         raise ValueError(const.ERR_X, "extra message")
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 1, (
-            f"R011 should catch literal in second argument, got {len(r011_violations)}"
-        )
+        assert len(r011_violations) == 1, f"R011 should catch literal in second argument, got {len(r011_violations)}"
 
     def test_r011_exempts_constants_module(self, tmp_path):
         """R011 should exempt files in constants modules."""
@@ -193,14 +141,10 @@ def create_error(msg):
 
 ERR_X = "some error"
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
         assert len(r011_violations) == 0, "R011 should exempt constants modules"
 
@@ -217,18 +161,12 @@ class Handler:
         except Exception as error:
             raise ValueError(const.ERR_X) from error
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 0, (
-            "R011 should allow raise from with const reference"
-        )
+        assert len(r011_violations) == 0, "R011 should allow raise from with const reference"
 
     def test_r011_bare_reraise_in_service_path(self, tmp_path):
         """R011 should allow bare re-raise even in service paths."""
@@ -241,18 +179,12 @@ class MyService:
         except ValueError:
             raise
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 0, (
-            "R011 should allow bare re-raise in service files"
-        )
+        assert len(r011_violations) == 0, "R011 should allow bare re-raise in service files"
 
     def test_r011_non_call_raise_in_service_path(self, tmp_path):
         """R011 should allow raising non-Call exception types."""
@@ -268,18 +200,12 @@ class MyService:
             exc = ValueError(sys.exc_info()[1])
             raise exc
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 0, (
-            "R011 should allow raising variables in service files"
-        )
+        assert len(r011_violations) == 0, "R011 should allow raising variables in service files"
 
     def test_r011_keyword_argument_literal(self, tmp_path):
         """R011 should flag string literals in keyword arguments."""
@@ -289,15 +215,9 @@ class MyService:
     def process(self):
         raise ValueError(message="inline error string")
 """)
-        config = Config(
-            service_paths=["**/*.py"],
-            dto_paths=["**/dtos.py"],
-            disabled_rules=[],
-        )
+        config = Config(service_paths=["**/*.py"], dto_paths=["**/dtos.py"], disabled_rules=[])
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(test_file)
-        r011_violations = [v for v in violations if v.rule_id == "R011"]
+        r011_violations = [violation for violation in violations if violation.rule_id == "R011"]
 
-        assert len(r011_violations) == 1, (
-            f"R011 should catch keyword argument literals, got {len(r011_violations)}"
-        )
+        assert len(r011_violations) == 1, f"R011 should catch keyword argument literals, got {len(r011_violations)}"

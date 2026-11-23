@@ -4,15 +4,11 @@ import ast
 import logging
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.config._config import Config
 from linting_suite.inspection import PathClassifier
 from linting_suite.rules import RuleSeverity, Violation
-
-ERR_R003_ALLOWLIST_UNDETECTED = (
-    "Class {class_name} is in r003_sensitivity_allowlist but no sensitivity "
-    "base or field metadata detected. Config may be stale."
-)
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +27,7 @@ class R003Checker(BaseChecker):
             self.generic_visit(node)
             return
 
-        if self.is_suppressed(node, "R003"):
+        if self.is_suppressed(node, const.RULE_ID_R003):
             self.generic_visit(node)
             return
 
@@ -39,65 +35,59 @@ class R003Checker(BaseChecker):
             if self._is_dataclass_decorator(decorator):
                 kwargs = self._extract_decorator_kwargs(decorator)
 
-                if self.config.r003_mode == "canonical":
+                if self.config.r003_mode == const.R003_MODE_CANONICAL:
                     if self.config.r003_strict_repr:
-                        has_repr_false = kwargs.get("repr") == "False"
-                        if has_repr_false and not self._is_sensitivity_aware_repr_false(
-                            node
-                        ):
+                        has_repr_false = kwargs.get(const.DATACLASS_KWARG_REPR) == const.LITERAL_FALSE
+                        if has_repr_false and not self._is_sensitivity_aware_repr_false(node):
+                            file = str(self.file_path)
+                            message = const.MSG_R003_REPR_FALSE.format(name=node.name)
                             self.violations.append(
                                 Violation(
-                                    rule_id="R003",
-                                    severity=RuleSeverity.MEDIUM,
-                                    file=str(self.file_path),
-                                    line=node.lineno,
-                                    col=node.col_offset,
-                                    message=f"@dataclass uses anti-canonical repr=False: {node.name}. Remove it.",
+                                    rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                    line=node.lineno, col=node.col_offset, message=message
                                 )
                             )
                     else:
-                        has_frozen = kwargs.get("frozen") == "True"
-                        has_slots = kwargs.get("slots") == "True"
+                        has_frozen = kwargs.get(const.DATACLASS_KWARG_FROZEN) == const.LITERAL_TRUE
+                        has_slots = kwargs.get(const.DATACLASS_KWARG_SLOTS) == const.LITERAL_TRUE
 
                         if not (has_frozen and has_slots):
                             missing = []
                             if not has_frozen:
-                                missing.append("frozen=True")
+                                missing.append(const.DATACLASS_FROZEN_TRUE)
                             if not has_slots:
-                                missing.append("slots=True")
+                                missing.append(const.DATACLASS_SLOTS_TRUE)
 
+                            file = str(self.file_path)
+                            missing_text = const.ELEMENT_SEPARATOR.join(missing)
+                            message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                             self.violations.append(
                                 Violation(
-                                    rule_id="R003",
-                                    severity=RuleSeverity.MEDIUM,
-                                    file=str(self.file_path),
-                                    line=node.lineno,
-                                    col=node.col_offset,
-                                    message=f"@dataclass missing {', '.join(missing)}: {node.name}",
+                                    rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                    line=node.lineno, col=node.col_offset, message=message
                                 )
                             )
                 else:
-                    has_frozen = kwargs.get("frozen") == "True"
-                    has_slots = kwargs.get("slots") == "True"
-                    has_repr_false = kwargs.get("repr") == "False"
+                    has_frozen = kwargs.get(const.DATACLASS_KWARG_FROZEN) == const.LITERAL_TRUE
+                    has_slots = kwargs.get(const.DATACLASS_KWARG_SLOTS) == const.LITERAL_TRUE
+                    has_repr_false = kwargs.get(const.DATACLASS_KWARG_REPR) == const.LITERAL_FALSE
 
                     if not (has_frozen and has_slots and has_repr_false):
                         missing = []
                         if not has_frozen:
-                            missing.append("frozen=True")
+                            missing.append(const.DATACLASS_FROZEN_TRUE)
                         if not has_slots:
-                            missing.append("slots=True")
+                            missing.append(const.DATACLASS_SLOTS_TRUE)
                         if not has_repr_false:
-                            missing.append("repr=False")
+                            missing.append(const.DATACLASS_REPR_FALSE)
 
+                        file = str(self.file_path)
+                        missing_text = const.ELEMENT_SEPARATOR.join(missing)
+                        message = const.MSG_R003_MISSING.format(missing=missing_text, name=node.name)
                         self.violations.append(
                             Violation(
-                                rule_id="R003",
-                                severity=RuleSeverity.MEDIUM,
-                                file=str(self.file_path),
-                                line=node.lineno,
-                                col=node.col_offset,
-                                message=f"@dataclass missing {', '.join(missing)}: {node.name}",
+                                rule_id=const.RULE_ID_R003, severity=RuleSeverity.MEDIUM, file=file,
+                                line=node.lineno, col=node.col_offset, message=message
                             )
                         )
 
@@ -105,24 +95,18 @@ class R003Checker(BaseChecker):
 
     def _is_sensitivity_aware_repr_false(self, node: ast.ClassDef) -> bool:
         """Check if repr=False is allowed due to sensitivity mixin or metadata."""
-        full_class_path = f"{self.file_path.stem}.{node.name}"
+        full_class_path = const.TEMPLATE_CLASS_PATH.format(module=self.file_path.stem, name=node.name)
 
         if node.name in self.config.r003_sensitivity_allowlist:
-            has_sensitivity = self._has_sensitivity_base(
-                node
-            ) or self._has_sensitivity_field_metadata(node)
+            has_sensitivity = self._has_sensitivity_base(node) or self._has_sensitivity_field_metadata(node)
             if not has_sensitivity:
-                logger.info(ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=node.name))
+                logger.info(const.ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=node.name))
             return True
 
         if full_class_path in self.config.r003_sensitivity_allowlist:
-            has_sensitivity = self._has_sensitivity_base(
-                node
-            ) or self._has_sensitivity_field_metadata(node)
+            has_sensitivity = self._has_sensitivity_base(node) or self._has_sensitivity_field_metadata(node)
             if not has_sensitivity:
-                logger.info(
-                    ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=full_class_path)
-                )
+                logger.info(const.ERR_R003_ALLOWLIST_UNDETECTED.format(class_name=full_class_path))
             return True
 
         if self._has_sensitivity_base(node):
@@ -153,12 +137,10 @@ class R003Checker(BaseChecker):
             if isinstance(item, ast.AnnAssign):
                 if isinstance(item.value, ast.Call):
                     if isinstance(item.value.func, ast.Name):
-                        if item.value.func.id == "field":
+                        if item.value.func.id == const.FUNCTION_FIELD:
                             for keyword in item.value.keywords:
-                                if keyword.arg == "metadata":
-                                    if self._metadata_contains_sensitivity_key(
-                                        keyword.value
-                                    ):
+                                if keyword.arg == const.FIELD_KWARG_METADATA:
+                                    if self._metadata_contains_sensitivity_key(keyword.value):
                                         return True
 
         return False
@@ -170,7 +152,7 @@ class R003Checker(BaseChecker):
 
         for key in metadata_node.keys:
             if isinstance(key, ast.Constant):
-                if key.value == "sensitivity":
+                if key.value == const.METADATA_KEY_SENSITIVITY:
                     return True
 
         return False
@@ -178,10 +160,10 @@ class R003Checker(BaseChecker):
     def _is_dataclass_decorator(self, decorator: ast.expr) -> bool:
         """Check if decorator is @dataclass."""
         if isinstance(decorator, ast.Name):
-            return decorator.id == "dataclass"
+            return decorator.id == const.DECORATOR_DATACLASS
         elif isinstance(decorator, ast.Call):
             if isinstance(decorator.func, ast.Name):
-                return decorator.func.id == "dataclass"
+                return decorator.func.id == const.DECORATOR_DATACLASS
         return False
 
     def _extract_decorator_kwargs(self, decorator: ast.expr) -> dict[str, str]:

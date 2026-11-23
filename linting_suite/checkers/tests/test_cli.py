@@ -2,7 +2,7 @@
 
 import sys
 
-from linting_suite.config.constants import ERR_NONEXISTENT_PATH
+import linting_suite.config.constants as const
 from linting_suite.module.cli import main
 
 
@@ -21,11 +21,7 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", str(fixture_file), "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", str(fixture_file), "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code == 0
@@ -42,11 +38,7 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", str(fixture_file), "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", str(fixture_file), "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code > 0
@@ -67,16 +59,7 @@ service_paths = ["**/*.py"]
         )
 
         monkeypatch.setattr(
-            sys,
-            "argv",
-            [
-                "dto-strict",
-                str(fixture_file),
-                "--format",
-                "github",
-                "--config",
-                str(config_file),
-            ],
+            sys, "argv", ["dto-strict", str(fixture_file), "--format", "github", "--config", str(config_file)]
         )
 
         exit_code = main()
@@ -97,15 +80,11 @@ service_paths = ["**/*.py"]
 """
         )
 
-        monkeypatch.setattr(
-            sys,
-            "argv",
-            ["dto-strict", nonexistent_path, "--config", str(config_file)],
-        )
+        monkeypatch.setattr(sys, "argv", ["dto-strict", nonexistent_path, "--config", str(config_file)])
 
         exit_code = main()
         assert exit_code != 0
 
         captured = capsys.readouterr()
-        expected_msg = ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
-        assert expected_msg in captured.err
+        expected_message = const.ERR_NONEXISTENT_PATH.format(path=nonexistent_path)
+        assert expected_message in captured.err

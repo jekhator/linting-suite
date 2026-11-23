@@ -2,12 +2,14 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
 
 class R014Checker(BaseChecker):
-    """Check packed keyword groups per P15 calibration (authority: formatting-rule-boundaries.md).
+    """
+    Check packed keyword groups per P15 calibration (authority: formatting-rule-boundaries.md).
 
     Conditions:
     1. Log-event calls (first arg = LOG_EVENT_* constant reference):
@@ -22,7 +24,7 @@ class R014Checker(BaseChecker):
 
     def visit_Call(self, node: ast.Call) -> None:
         """Visit call expressions to check kwarg grouping."""
-        if self.is_suppressed(node, "R014"):
+        if self.is_suppressed(node, const.RULE_ID_R014):
             self.generic_visit(node)
             return
 
@@ -40,7 +42,7 @@ class R014Checker(BaseChecker):
     def _check_call_kwargs(self, node: ast.Call) -> None:
         """Check kwarg grouping per P15."""
         kwarg_count = len(node.keywords)
-        if kwarg_count < 2:
+        if kwarg_count < const.R014_MIN_KWARGS:
             return
 
         is_log_event = self._is_log_event_call(node)
@@ -56,20 +58,18 @@ class R014Checker(BaseChecker):
         if not isinstance(node.func, ast.Attribute):
             return False
 
-        # Must be self.log_* or cls.log_* pattern
-        if not node.func.attr.startswith("log"):
+        if not node.func.attr.startswith(const.LOG_METHOD_PREFIX):
             return False
 
-        # Check if first positional arg is a LOG_EVENT_* constant reference
-        first_arg = node.args[0]
-        return self._is_log_event_constant(first_arg)
+        first_argument = node.args[0]
+        return self._is_log_event_constant(first_argument)
 
     def _is_log_event_constant(self, node: ast.expr) -> bool:
         """Check if node is a LOG_EVENT_* constant reference (e.g., const.LOG_EVENT_*)."""
         if isinstance(node, ast.Attribute):
-            return "LOG_EVENT" in node.attr
+            return const.LOG_EVENT_MARKER in node.attr
         if isinstance(node, ast.Name):
-            return "LOG_EVENT" in node.id
+            return const.LOG_EVENT_MARKER in node.id
         return False
 
     def _check_log_event_kwargs(self, node: ast.Call, kwarg_count: int) -> None:
@@ -79,51 +79,40 @@ class R014Checker(BaseChecker):
             line = keyword.lineno  # type: ignore[union-attr]
             if line not in kwarg_lines:
                 kwarg_lines[line] = []
-            kwarg_lines[line].append(keyword.arg or "**kwarg")
+            kwarg_lines[line].append(keyword.arg or const.KWARG_SPREAD_LABEL)
 
         sorted_lines = sorted(kwarg_lines.items())
         first_kwarg_line = sorted_lines[0][0] if sorted_lines else None
 
-        if kwarg_count >= 4:
+        if kwarg_count >= const.R014_PACK_MIN_KWARGS:
             self._check_log_event_pack_2_3(sorted_lines, first_kwarg_line, node.lineno)
-        elif kwarg_count in (2, 3):
+        elif kwarg_count in const.R014_EXPLODE_KWARG_COUNTS:
             self._check_log_event_full_explode(sorted_lines, node)
 
     def _check_log_event_pack_2_3(
         self, sorted_lines: list[tuple[int, list[str]]], first_kwarg_line: int | None, call_line: int | None
     ) -> None:
         """Check >=4 kwargs: flag ONLY over-packing (>3 per line). One-per-line never flagged."""
-        for line_num, kwarg_names in sorted_lines:
+        for line_number, kwarg_names in sorted_lines:
             count = len(kwarg_names)
-            # Only flag if line has MORE than 3 kwargs (over-packing)
-            # One-per-line is never flagged for any call, any size
-            if count > 3:
+            if count > const.R014_MAX_KWARGS_PER_LINE:
+                file = str(self.file_path)
+                message = const.MSG_R014_PACK.format(count=count)
                 self.violations.append(
                     Violation(
-                        rule_id="R014",
-                        severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
-                        line=line_num,
-                        col=0,
-                        message=f"Log event call: pack maximum 3 kwargs per line (found {count}).",
+                        rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
+                        line=line_number, col=0, message=message
                     )
                 )
 
-    def _check_log_event_full_explode(
-        self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call
-    ) -> None:
+    def _check_log_event_full_explode(self, sorted_lines: list[tuple[int, list[str]]], node: ast.Call) -> None:
         """Check 2-3 kwargs: must FULL-EXPLODE one-per-line (constant on its own line)."""
-        # For 2-3 kwarg calls, each kwarg should be on its own line
-        # Event constant should be on its own line (no kwargs on that line)
-        for line_num, kwarg_names in sorted_lines:
+        for line_number, kwarg_names in sorted_lines:
             if len(kwarg_names) != 1:
+                file = str(self.file_path)
                 self.violations.append(
                     Violation(
-                        rule_id="R014",
-                        severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
-                        line=line_num,
-                        col=0,
-                        message="Log event call 2-3 kwargs: FULL-EXPLODE one-per-line.",
+                        rule_id=const.RULE_ID_R014, severity=RuleSeverity.INFO, file=file,
+                        line=line_number, col=0, message=const.MSG_R014_EXPLODE
                     )
                 )

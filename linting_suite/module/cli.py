@@ -5,106 +5,68 @@ import json
 import sys
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    DEFAULT_LOC_CAP_BASELINE_FILE,
-    DEFAULT_LOC_HARD_CAP,
-    DEFAULT_LOC_SOFT_TARGET,
-    ERR_NONEXISTENT_PATH,
-    EXIT_CODE_HIGH_VIOLATION,
-    EXIT_CODE_SUCCESS,
-    FORMAT_TEXT,
-    MSG_BASELINE_LOADED,
-    VALID_FORMATS,
-)
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 from linting_suite.loc_cap import LocCap
 
 
 def handle_loc_cap(args: list[str]) -> int:
     """Handle loc-cap subcommand (invoked when sys.argv[1] == 'loc-cap')."""
-    parser = argparse.ArgumentParser(
-        prog="dto-strict loc-cap",
-        description="LOC cap enforcer with configurable hard/soft limits and ratchet baseline.",
-    )
-    parser.add_argument("path", help="Path to directory to scan")
+    parser = argparse.ArgumentParser(prog=const.CLI_PROG_LOC_CAP, description=const.CLI_DESCRIPTION_LOC_CAP)
     parser.add_argument(
-        "--config",
-        default="pyproject.toml",
-        help="Path to pyproject.toml config file (default: pyproject.toml)",
+        const.CLI_ARG_PATH, help=const.CLI_HELP_LOC_PATH
     )
     parser.add_argument(
-        "--hard-cap",
-        type=int,
-        help=f"Hard cap limit (default: {DEFAULT_LOC_HARD_CAP}, or from [tool.strict-module.loc-cap].hard_cap)",
+        const.CLI_FLAG_CONFIG, default=const.DEFAULT_CONFIG_FILE, help=const.CLI_HELP_CONFIG
     )
     parser.add_argument(
-        "--soft-target",
-        type=int,
-        help=f"Soft target limit (default: {DEFAULT_LOC_SOFT_TARGET}, or from [tool.strict-module.loc-cap].soft_target)",
+        const.CLI_FLAG_HARD_CAP, type=int, help=const.CLI_HELP_HARD_CAP
     )
     parser.add_argument(
-        "--baseline",
-        help=f"Baseline file path (default: {DEFAULT_LOC_CAP_BASELINE_FILE}, or from [tool.strict-module.loc-cap].baseline_file)",
+        const.CLI_FLAG_SOFT_TARGET, type=int, help=const.CLI_HELP_SOFT_TARGET
     )
     parser.add_argument(
-        "--generate-baseline",
-        action="store_true",
-        help="Generate baseline from all Python files in path (stdout)",
+        const.CLI_FLAG_BASELINE, help=const.CLI_HELP_LOC_BASELINE
+    )
+    parser.add_argument(
+        const.CLI_FLAG_GENERATE_BASELINE, action=const.CLI_ACTION_STORE_TRUE, help=const.CLI_HELP_LOC_GENERATE_BASELINE
     )
 
-    parsed = parser.parse_args(args[2:])
+    parsed = parser.parse_args(args[const.CLI_ARGUMENTS_OFFSET:])
 
     config_path = Path(parsed.config)
     config = Config.from_pyproject(config_path)
-    hard_cap = (
-        parsed.hard_cap if parsed.hard_cap is not None else config.loc_cap.hard_cap
-    )
-    soft_target = (
-        parsed.soft_target
-        if parsed.soft_target is not None
-        else config.loc_cap.soft_target
-    )
+    hard_cap = parsed.hard_cap if parsed.hard_cap is not None else config.loc_cap.hard_cap
+    soft_target = parsed.soft_target if parsed.soft_target is not None else config.loc_cap.soft_target
     baseline_file = parsed.baseline if parsed.baseline else config.loc_cap.baseline_file
 
     return LocCap.run_loc_cap(
-        path=parsed.path,
-        hard_cap=hard_cap,
-        soft_target=soft_target,
-        baseline_file=baseline_file,
-        generate=parsed.generate_baseline,
+        path=parsed.path, hard_cap=hard_cap, soft_target=soft_target,
+        baseline_file=baseline_file, generate=parsed.generate_baseline
     )
 
 
 def main() -> int:
     """Main CLI entry point."""
-    if len(sys.argv) > 1 and sys.argv[1] == "loc-cap":
+    if len(sys.argv) > 1 and sys.argv[1] == const.CLI_SUBCOMMAND_LOC_CAP:
         return handle_loc_cap(sys.argv)
 
-    parser = argparse.ArgumentParser(
-        description="AST-based linter for Python DTO discipline and facade-ban enforcement."
-    )
-    parser.add_argument("path", nargs="*", help="Path(s) to file or directory to lint")
+    parser = argparse.ArgumentParser(description=const.CLI_DESCRIPTION)
     parser.add_argument(
-        "--config",
-        default="pyproject.toml",
-        help="Path to pyproject.toml config file (default: pyproject.toml)",
+        const.CLI_ARG_PATH, nargs=const.CLI_NARGS_ANY, help=const.CLI_HELP_PATH
     )
     parser.add_argument(
-        "--format",
-        choices=VALID_FORMATS,
-        default=FORMAT_TEXT,
-        help=f"Output format (default: {FORMAT_TEXT})",
+        const.CLI_FLAG_CONFIG, default=const.DEFAULT_CONFIG_FILE, help=const.CLI_HELP_CONFIG
     )
     parser.add_argument(
-        "--generate-baseline",
-        action="store_true",
-        help="Generate baseline JSON from all violations in path and output to stdout",
+        const.CLI_FLAG_FORMAT, choices=const.VALID_FORMATS, default=const.FORMAT_TEXT, help=const.CLI_HELP_FORMAT
     )
     parser.add_argument(
-        "--baseline",
-        type=Path,
-        help="Path to baseline JSON file; violations in baseline are accepted (ratchet mode)",
+        const.CLI_FLAG_GENERATE_BASELINE, action=const.CLI_ACTION_STORE_TRUE, help=const.CLI_HELP_GENERATE_BASELINE
+    )
+    parser.add_argument(
+        const.CLI_FLAG_BASELINE, type=Path, help=const.CLI_HELP_BASELINE
     )
 
     args = parser.parse_args()
@@ -114,8 +76,8 @@ def main() -> int:
 
     if args.generate_baseline:
         if not args.path:
-            print("error: --generate-baseline requires PATH argument", file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            print(const.ERR_GENERATE_BASELINE_REQUIRES_PATH, file=sys.stderr)
+            return const.EXIT_CODE_HIGH_VIOLATION
 
         all_violations = []
         for path_str in args.path:
@@ -124,34 +86,28 @@ def main() -> int:
             all_violations.extend(linter.lint_path(target_path))
 
         baseline_data = linter.generate_baseline(all_violations)
-        print(json.dumps(baseline_data, indent=2))
-        return EXIT_CODE_SUCCESS
+        print(json.dumps(baseline_data, indent=const.JSON_INDENT))
+        return const.EXIT_CODE_SUCCESS
 
     if not args.path:
-        print(
-            "error: PATH argument required (unless using --generate-baseline)",
-            file=sys.stderr,
-        )
-        return EXIT_CODE_HIGH_VIOLATION
+        print(const.ERR_PATH_REQUIRED, file=sys.stderr)
+        return const.EXIT_CODE_HIGH_VIOLATION
 
     for path_str in args.path:
         target_path = Path(path_str)
         if not target_path.exists():
-            print(ERR_NONEXISTENT_PATH.format(path=path_str), file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            print(const.ERR_NONEXISTENT_PATH.format(path=path_str), file=sys.stderr)
+            return const.EXIT_CODE_HIGH_VIOLATION
 
     baseline = None
     if args.baseline:
         try:
             baseline = DtoStrictLinter.load_baseline(args.baseline)
             baseline_count = len(baseline)
-            print(
-                MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline),
-                file=sys.stderr,
-            )
+            print(const.MSG_BASELINE_LOADED.format(count=baseline_count, path=args.baseline), file=sys.stderr)
         except BaselineLoadError as error:
             print(str(error), file=sys.stderr)
-            return EXIT_CODE_HIGH_VIOLATION
+            return const.EXIT_CODE_HIGH_VIOLATION
 
     linter = DtoStrictLinter(config, baseline=baseline)
     all_violations = []

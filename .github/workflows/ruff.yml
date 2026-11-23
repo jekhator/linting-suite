@@ -1,7 +1,7 @@
 name: Ruff
 
-# Ruff lint + format check. Pinned to 0.15.14 to match local version.
-# Format drift was previously undetected; this gate prevents future drift.
+# Ruff lint only (trailing whitespace, unused imports, import order). Pinned to 0.15.14 to match local version.
+# The format check is off: the layout is written by hand and ruff format is never run.
 
 on:
   pull_request:
@@ -26,5 +26,3 @@ jobs:
           enable-cache: true
       - name: Ruff lint
         run: uvx ruff@0.15.14 check linting_suite/checkers/ linting_suite/config/ linting_suite/inspection/ linting_suite/linter/ linting_suite/loc_cap/ linting_suite/rules/ linting_suite/module/
-      - name: Ruff format check
-        run: uvx ruff@0.15.14 format --check linting_suite/module/

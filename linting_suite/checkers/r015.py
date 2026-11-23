@@ -2,12 +2,14 @@
 
 import ast
 
+import linting_suite.config.constants as const
 from linting_suite.checkers.base import BaseChecker
 from linting_suite.rules import RuleSeverity, Violation
 
 
 class R015Checker(BaseChecker):
-    """Check wrap-path blank-line rhythm per P16 final calibration.
+    """
+    Check wrap-path blank-line rhythm per P16 final calibration.
 
     Applies ONLY to wrap-function try/except constructs:
     - Nested function inside a wrapper class/method
@@ -23,7 +25,7 @@ class R015Checker(BaseChecker):
 
     def visit_Try(self, node: ast.Try) -> None:
         """Visit try statements to check wrap-path blank-line rhythm."""
-        if self.is_suppressed(node, "R015"):
+        if self.is_suppressed(node, const.RULE_ID_R015):
             self.generic_visit(node)
             return
 
@@ -42,8 +44,8 @@ class R015Checker(BaseChecker):
             return False
 
         for handler in node.handlers:
-            for stmt in handler.body:
-                if isinstance(stmt, ast.Raise):
+            for statement in handler.body:
+                if isinstance(statement, ast.Raise):
                     return True
 
         return False
@@ -51,88 +53,77 @@ class R015Checker(BaseChecker):
     def _check_wrap_function_structure(self, node: ast.Try) -> None:
         """Check per-leg blank-line structure."""
         if node.body:
-            self._check_leg_structure(node.body, node.lineno, "try")
+            self._check_leg_structure(node.body, node.lineno, const.LEG_TRY)
 
         for handler in node.handlers:
             if handler.body:
-                self._check_leg_structure(handler.body, handler.lineno, "except")
+                self._check_leg_structure(handler.body, handler.lineno, const.LEG_EXCEPT)
 
-    def _check_leg_structure(
-        self, statements: list[ast.stmt], start_line: int | None, leg_type: str
-    ) -> None:
+    def _check_leg_structure(self, statements: list[ast.stmt], start_line: int | None, leg_type: str) -> None:
         """Check per-leg structure: group separation and timing-capture contiguity."""
         if not statements or start_line is None:
             return
 
-        # Check for timing-capture contiguity (no blank within timing pair)
         self._check_timing_capture_contiguity(statements)
 
-        # Check for statement group separation: exactly one blank between groups
         self._check_group_separation(statements, leg_type)
 
-    def _check_group_separation(
-        self, statements: list[ast.stmt], leg_type: str
-    ) -> None:
-        """Check that statement groups are separated by EXACTLY one blank line."""
-        for i in range(len(statements) - 1):
-            curr = statements[i]
-            next_stmt = statements[i + 1]
+    def _check_group_separation(self, statements: list[ast.stmt], leg_type: str) -> None:
+        """
+        Check that statement groups are separated by EXACTLY one blank line.
 
-            if curr.end_lineno is None or next_stmt.lineno is None:
+        The gap is the line distance between two statements: 1 is contiguous, 2 is one blank line, more is too many.
+        """
+        for index in range(len(statements) - 1):
+            current = statements[index]
+            next_statement = statements[index + 1]
+
+            if current.end_lineno is None or next_statement.lineno is None:
                 continue
 
-            gap = next_stmt.lineno - curr.end_lineno
-            # gap == 1: no blank (statements are contiguous)
-            # gap == 2: one blank (correct separation)
-            # gap > 2: multiple blanks (incorrect)
-            if gap > 2:
+            gap = next_statement.lineno - current.end_lineno
+            if gap > const.R015_MAX_GROUP_GAP:
+                file = str(self.file_path)
+                leg = leg_type.capitalize()
+                message = const.MSG_R015_GROUPS.format(leg=leg)
                 self.violations.append(
                     Violation(
-                        rule_id="R015",
-                        severity=RuleSeverity.INFO,
-                        file=str(self.file_path),
-                        line=next_stmt.lineno,
-                        col=0,
-                        message=f"{leg_type.capitalize()} leg: statement groups must be separated by EXACTLY one blank line.",
+                        rule_id=const.RULE_ID_R015, severity=RuleSeverity.INFO, file=file,
+                        line=next_statement.lineno, col=0, message=message
                     )
                 )
 
     def _check_timing_capture_contiguity(self, statements: list[ast.stmt]) -> None:
         """Check that timing-capture pair (perf_counter + latency calculation) has zero internal blanks."""
-        for i in range(len(statements) - 1):
-            curr = statements[i]
-            next_stmt = statements[i + 1]
+        for index in range(len(statements) - 1):
+            current = statements[index]
+            next_statement = statements[index + 1]
 
-            if self._is_timing_start(curr) and self._is_timing_end(next_stmt):
-                # Timing pair found - check for gap
-                if curr.end_lineno is not None and next_stmt.lineno is not None:
-                    gap = next_stmt.lineno - curr.end_lineno
+            if self._is_timing_start(current) and self._is_timing_end(next_statement):
+                if current.end_lineno is not None and next_statement.lineno is not None:
+                    gap = next_statement.lineno - current.end_lineno
                     if gap > 1:
+                        file = str(self.file_path)
                         self.violations.append(
                             Violation(
-                                rule_id="R015",
-                                severity=RuleSeverity.INFO,
-                                file=str(self.file_path),
-                                line=next_stmt.lineno,
-                                col=0,
-                                message="Timing-capture pair (perf_counter + latency calc) must be contiguous (no blank lines within).",
+                                rule_id=const.RULE_ID_R015, severity=RuleSeverity.INFO, file=file,
+                                line=next_statement.lineno, col=0, message=const.MSG_R015_TIMING
                             )
                         )
 
-    def _is_timing_start(self, stmt: ast.stmt) -> bool:
+    def _is_timing_start(self, statement: ast.stmt) -> bool:
         """Check if statement is a timing-start (perf_counter call)."""
-        if not isinstance(stmt, ast.Assign):
+        if not isinstance(statement, ast.Assign):
             return False
-        return self._contains_perf_counter(stmt.value)
+        return self._contains_perf_counter(statement.value)
 
-    def _is_timing_end(self, stmt: ast.stmt) -> bool:
+    def _is_timing_end(self, statement: ast.stmt) -> bool:
         """Check if statement is a timing-end (latency calculation)."""
-        if not isinstance(stmt, ast.Assign):
+        if not isinstance(statement, ast.Assign):
             return False
-        # Check for latency_ms = ... with round() call
-        for target in stmt.targets:
-            if isinstance(target, ast.Name) and "latency" in target.id:
-                return self._contains_round(stmt.value)
+        for target in statement.targets:
+            if isinstance(target, ast.Name) and const.TIMING_TARGET_MARKER in target.id:
+                return self._contains_round(statement.value)
         return False
 
     def _contains_perf_counter(self, node: ast.expr) -> bool:
@@ -140,10 +131,10 @@ class R015Checker(BaseChecker):
         for child in ast.walk(node):
             if isinstance(child, ast.Call):
                 if isinstance(child.func, ast.Attribute):
-                    if child.func.attr == "perf_counter":
+                    if child.func.attr == const.TIMING_CLOCK_NAME:
                         return True
                 elif isinstance(child.func, ast.Name):
-                    if child.func.id == "perf_counter":
+                    if child.func.id == const.TIMING_CLOCK_NAME:
                         return True
         return False
 
@@ -152,6 +143,6 @@ class R015Checker(BaseChecker):
         for child in ast.walk(node):
             if isinstance(child, ast.Call):
                 if isinstance(child.func, ast.Name):
-                    if child.func.id == "round":
+                    if child.func.id == const.FUNCTION_ROUND:
                         return True
         return False

@@ -20,23 +20,17 @@ class UserDTO:
     user_id: int
     name: str
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=True,  # Strict mode (default)
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r003_violations = [v for v in violations if v.rule_id == "R003"]
-            assert len(r003_violations) >= 1, (
-                "repr=False should be flagged in strict mode"
-            )
+            r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
+            assert len(r003_violations) >= 1, "repr=False should be flagged in strict mode"
         finally:
             path.unlink()
 
@@ -50,23 +44,17 @@ class UserDTO:
     user_id: int
     name: str
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=True,  # Strict mode
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=True)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r003_violations = [v for v in violations if v.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "repr=False absent should be OK in strict mode"
-            )
+            r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
+            assert len(r003_violations) == 0, "repr=False absent should be OK in strict mode"
         finally:
             path.unlink()
 
@@ -80,23 +68,17 @@ class UserDTO:
     user_id: int
     name: str
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r003_violations = [v for v in violations if v.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "repr=False should be ignored in relaxed mode"
-            )
+            r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
+            assert len(r003_violations) == 0, "repr=False should be ignored in relaxed mode"
         finally:
             path.unlink()
 
@@ -110,23 +92,17 @@ class UserDTO:
     user_id: int
     name: str
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r003_violations = [v for v in violations if v.rule_id == "R003"]
-            assert len(r003_violations) >= 1, (
-                "Missing frozen+slots should still be flagged in relaxed mode"
-            )
+            r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
+            assert len(r003_violations) >= 1, "Missing frozen+slots should still be flagged in relaxed mode"
         finally:
             path.unlink()
 
@@ -140,22 +116,16 @@ class UserDTO:
     user_id: int
     name: str
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
-            config = Config(
-                dto_paths=["**/*.py"],
-                r003_mode="canonical",
-                r003_strict_repr=False,  # Relaxed mode
-            )
+            config = Config(dto_paths=["**/*.py"], r003_mode="canonical", r003_strict_repr=False)
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
-            r003_violations = [v for v in violations if v.rule_id == "R003"]
-            assert len(r003_violations) == 0, (
-                "frozen+slots should be sufficient in relaxed mode"
-            )
+            r003_violations = [violation for violation in violations if violation.rule_id == "R003"]
+            assert len(r003_violations) == 0, "frozen+slots should be sufficient in relaxed mode"
         finally:
             path.unlink()

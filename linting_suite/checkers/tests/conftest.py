@@ -7,13 +7,24 @@ import pytest
 
 @pytest.fixture
 def fixture_dir():
-    """Get fixtures directory."""
+    """
+    Get fixtures directory.
+
+    Used by: TestCli, TestR001DictStrAny, TestR001VarArgKwarg, TestR002InlineDict, TestR002MultipleDataclassRegression,
+    TestR002SerializerExemption, TestR002TagJustification, TestR003DataclassTrio, TestR004ModuleFacade,
+    TestR005ValidatorPattern, TestR006VarArgKwarg, TestR007FixtureDecorators, TestR007Fixtures, TestR008TestFunctions,
+    TestR009ModuleLevelFunctions, TestR010LegacyTypingABC, TestR011RaiseLiterals.
+    """
     return Path(__file__).parent / "fixtures"
 
 
 @pytest.fixture
 def config():
-    """Get default config."""
+    """
+    Get default config.
+
+    Used by: no Test class yet (kept provisioned).
+    """
     from linting_suite.config._config import Config
 
     return Config()
@@ -21,20 +32,28 @@ def config():
 
 @pytest.fixture
 def temp_project(tmp_path):
-    """Create a temporary project directory with Python files."""
+    """
+    Create a temporary project directory with Python files.
+
+    Used by: no Test class yet (kept provisioned).
+    """
     project_root = tmp_path / "project"
     project_root.mkdir()
 
-    src_dir = project_root / "src"
-    src_dir.mkdir()
-    (src_dir / "__init__.py").touch()
+    source_dir = project_root / "src"
+    source_dir.mkdir()
+    (source_dir / "__init__.py").touch()
 
     return project_root
 
 
 @pytest.fixture
 def project_dir(tmp_path):
-    """Create a temporary project with test files for CLI testing."""
+    """
+    Create a temporary project with test files for CLI testing.
+
+    Used by: TestCLILocCap, TestCLIRealInvocations (through the cli_project_dir fixture).
+    """
     project_root = tmp_path / "cli_project"
 
     bad_service_file = project_root / "apps" / "services" / "bad.py"
@@ -83,37 +102,40 @@ service_paths = ["apps/*/services/*.py"]
 
 @pytest.fixture
 def cli_project_dir(project_dir):
-    """CLI project directory fixture."""
+    """
+    CLI project directory fixture.
+
+    Used by: TestCLILocCap, TestCLIRealInvocations.
+    """
     return project_dir
 
 
 @pytest.fixture
 def temp_project_with_test_files(tmp_path):
-    """Create a temporary project structure with test and source files."""
+    """
+    Create a temporary project structure with test and source files.
+
+    Used by: TestLocCapTestExemption.
+    """
     root = tmp_path
 
-    # Create source file (should be counted)
-    src_file = root / "src" / "module.py"
-    src_file.parent.mkdir(parents=True, exist_ok=True)
-    src_file.write_text("x = 1\n" * 500)  # 500 lines
+    source_file = root / "src" / "module.py"
+    source_file.parent.mkdir(parents=True, exist_ok=True)
+    source_file.write_text("x = 1\n" * 500)
 
-    # Create test_*.py file (should be exempt)
     test_file = root / "test_module.py"
-    test_file.write_text("x = 1\n" * 600)  # 600 lines (would normally warn)
+    test_file.write_text("x = 1\n" * 600)
 
-    # Create conftest.py (should be exempt)
     conftest = root / "conftest.py"
-    conftest.write_text("x = 1\n" * 700)  # 700 lines (would normally error)
+    conftest.write_text("x = 1\n" * 700)
 
-    # Create file under tests/ directory (should be exempt)
     tests_dir = root / "tests"
     tests_dir.mkdir()
     test_in_dir = tests_dir / "test_helper.py"
-    test_in_dir.write_text("x = 1\n" * 800)  # 800 lines (would normally error)
+    test_in_dir.write_text("x = 1\n" * 800)
 
-    # Create another source file under src/tests/ (should be exempt because under tests/)
-    src_test_file = root / "src" / "tests" / "helper.py"
-    src_test_file.parent.mkdir(parents=True, exist_ok=True)
-    src_test_file.write_text("x = 1\n" * 750)  # 750 lines
+    source_test_file = root / "src" / "tests" / "helper.py"
+    source_test_file.parent.mkdir(parents=True, exist_ok=True)
+    source_test_file.write_text("x = 1\n" * 750)
 
     return root

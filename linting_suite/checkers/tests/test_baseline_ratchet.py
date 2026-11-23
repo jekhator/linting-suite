@@ -6,14 +6,8 @@ from tempfile import NamedTemporaryFile, TemporaryDirectory
 
 import pytest
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    ERR_BASELINE_ENTRY_NOT_OBJECT,
-    ERR_BASELINE_ENTRY_SHAPE,
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-    ERR_BASELINE_NOT_LIST,
-)
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 
 
@@ -26,10 +20,10 @@ class TestBaselineRatchet:
 def bad_function(x: Dict[str, Any]):
     return {"key": "value"}
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             config = Config(service_paths=["**/*.py"])
@@ -50,18 +44,8 @@ def bad_function(x: Dict[str, Any]):
     def test_baseline_load(self):
         """Baseline: Load baseline JSON file."""
         baseline_json = [
-            {
-                "file": "test.py",
-                "line": 10,
-                "rule_id": "R001",
-                "message_hash": "abc123",
-            },
-            {
-                "file": "test.py",
-                "line": 20,
-                "rule_id": "R002",
-                "message_hash": "def456",
-            },
+            {"file": "test.py", "line": 10, "rule_id": "R001", "message_hash": "abc123"},
+            {"file": "test.py", "line": 20, "rule_id": "R002", "message_hash": "def456"}
         ]
 
         with TemporaryDirectory() as tmpdir:
@@ -88,21 +72,16 @@ def bad_function(x: Dict[str, Any]):
             linter = DtoStrictLinter(config)
             violations = linter.lint_file(path)
 
-            # First, generate baseline from current violations
             baseline_data = linter.generate_baseline(violations)
             baseline = {}
             for entry in baseline_data:
                 key = (entry["file"], entry["line"], entry["rule_id"])
                 baseline[key] = entry["message_hash"]
 
-            # Now lint again with baseline loaded
             linter_with_baseline = DtoStrictLinter(config, baseline=baseline)
             violations_filtered = linter_with_baseline.lint_file(path)
 
-            # All violations should be filtered (in baseline)
-            assert len(violations_filtered) == 0, (
-                f"Baseline violations should be filtered. Got {violations_filtered}"
-            )
+            assert len(violations_filtered) == 0, f"Baseline violations should be filtered. Got {violations_filtered}"
 
     def test_baseline_ratchet_new_violations(self):
         """Baseline ratchet: New violations (not in baseline) trigger exit 1."""
@@ -117,15 +96,14 @@ def bad_function_1(x: Dict[str, Any]):
 def bad_function_2(x: Dict[str, Any]):
     return {"foo": "bar"}
 """
-        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
-            f.write(source_original)
-            f.flush()
-            path = Path(f.name)
+        with NamedTemporaryFile(mode="w", suffix=".py", delete=False) as handle:
+            handle.write(source_original)
+            handle.flush()
+            path = Path(handle.name)
 
         try:
             config = Config(service_paths=["**/*.py"])
 
-            # Generate baseline from original
             linter = DtoStrictLinter(config)
             violations_original = linter.lint_file(path)
             baseline_data = linter.generate_baseline(violations_original)
@@ -134,14 +112,11 @@ def bad_function_2(x: Dict[str, Any]):
                 key = (entry["file"], entry["line"], entry["rule_id"])
                 baseline[key] = entry["message_hash"]
 
-            # Now update file with new violation
             path.write_text(source_new)
 
-            # Lint with baseline
             linter_with_baseline = DtoStrictLinter(config, baseline=baseline)
             violations_new = linter_with_baseline.lint_file(path)
 
-            # Should detect new violation not in baseline
             assert len(violations_new) > 0, "New violations should not be filtered"
         finally:
             path.unlink()
@@ -151,7 +126,7 @@ def bad_function_2(x: Dict[str, Any]):
         baseline_path = Path("/nonexistent/baseline.json")
         with pytest.raises(BaselineLoadError) as caught:
             DtoStrictLinter.load_baseline(baseline_path)
-        assert str(caught.value) == ERR_BASELINE_MISSING.format(path=baseline_path)
+        assert str(caught.value) == const.ERR_BASELINE_MISSING.format(path=baseline_path)
 
     def test_baseline_entry_hash_consistency(self):
         """Baseline: Message hash is consistent across runs."""
@@ -161,9 +136,7 @@ def bad_function_2(x: Dict[str, Any]):
         assert hash1 == hash2, "Hash should be deterministic"
 
         hash_different = DtoStrictLinter._hash_message("Different message")
-        assert hash1 != hash_different, (
-            "Different messages should have different hashes"
-        )
+        assert hash1 != hash_different, "Different messages should have different hashes"
 
     def test_baseline_invalid_json_raises_error(self):
         """Baseline: Load raises BaselineLoadError on invalid JSON."""
@@ -172,9 +145,7 @@ def bad_function_2(x: Dict[str, Any]):
             baseline_path.write_text("{ invalid json }")
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
 
     def test_baseline_not_list_raises_error(self):
         """Baseline: Load raises BaselineLoadError if top level not a list."""
@@ -183,20 +154,13 @@ def bad_function_2(x: Dict[str, Any]):
             baseline_path.write_text('{"violations": []}')
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_NOT_LIST.format(path=baseline_path)
+            assert str(caught.value) == const.ERR_BASELINE_NOT_LIST.format(path=baseline_path)
 
     @pytest.mark.parametrize("missing_key", ["file", "line", "rule_id", "message_hash"])
     def test_baseline_entry_missing_key_raises_error(self, missing_key):
         """Baseline: Load raises BaselineLoadError if entry missing required key."""
         with TemporaryDirectory() as tmpdir:
-            baseline_json = [
-                {
-                    "file": "test.py",
-                    "line": 10,
-                    "rule_id": "R001",
-                    "message_hash": "abc123",
-                }
-            ]
+            baseline_json = [{"file": "test.py", "line": 10, "rule_id": "R001", "message_hash": "abc123"}]
             del baseline_json[0][missing_key]
 
             baseline_path = Path(tmpdir) / "baseline.json"
@@ -204,7 +168,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_ENTRY_SHAPE.format(
+            assert str(caught.value) == const.ERR_BASELINE_ENTRY_SHAPE.format(
                 index=0, key=missing_key, path=baseline_path
             )
 
@@ -217,9 +181,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_ENTRY_NOT_OBJECT.format(
-                index=0, path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_ENTRY_NOT_OBJECT.format(index=0, path=baseline_path)
 
     def test_baseline_undecodable_bytes_raises_error(self):
         """Baseline: Load raises BaselineLoadError on undecodable (non-UTF-8) bytes."""
@@ -229,9 +191,7 @@ def bad_function_2(x: Dict[str, Any]):
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_path)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_path
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_path)
 
     def test_baseline_generate_then_load_round_trip(self):
         """Baseline: Generate-then-load round-trip preserves violations."""
@@ -254,7 +214,7 @@ def bad_function(x: Dict[str, Any]):
 
             loaded_baseline = DtoStrictLinter.load_baseline(baseline_path)
             assert len(loaded_baseline) == len(violations)
-            for v in violations:
-                key = (v.file, v.line, v.rule_id)
+            for violation in violations:
+                key = (violation.file, violation.line, violation.rule_id)
                 assert key in loaded_baseline
-                assert loaded_baseline[key] == linter._hash_message(v.message)
+                assert loaded_baseline[key] == linter._hash_message(violation.message)

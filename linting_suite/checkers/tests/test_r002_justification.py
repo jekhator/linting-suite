@@ -18,15 +18,14 @@ def process():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) >= 1
-        assert any("justification" in v.message.lower() for v in r002_violations)
+        assert any("justification" in violation.message.lower() for violation in r002_violations)
 
     def test_r002_tag_with_justification(self, tmp_path):
         """Tag with justification allowed when required."""
@@ -39,13 +38,12 @@ def process():  # facade - celery schedule: transient event payload
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=True,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=True
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) == 0
 
     def test_r002_max_exception_tags(self, tmp_path):
@@ -67,14 +65,11 @@ def process3():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            max_exception_tags_per_file=2,
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"], max_exception_tags_per_file=2
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
-        # Should flag the third tag usage
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) >= 1
 
     def test_r002_no_justification_required(self, tmp_path):
@@ -88,11 +83,10 @@ def process():  # facade - celery schedule
 """
         )
         config = Config(
-            service_paths=["**/*.py"],
-            exception_tags=["facade - celery schedule"],
-            exception_tag_requires_justification=False,  # default
+            service_paths=["**/*.py"], exception_tags=["facade - celery schedule"],
+            exception_tag_requires_justification=False
         )
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(good_file)
-        r002_violations = [v for v in violations if v.rule_id == "R002"]
+        r002_violations = [violation for violation in violations if violation.rule_id == "R002"]
         assert len(r002_violations) == 0

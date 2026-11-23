@@ -3,6 +3,7 @@
 import ast
 from pathlib import Path
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
 from linting_suite.inspection import AnnotationInspector
 from linting_suite.rules import Violation
@@ -23,8 +24,8 @@ class BaseChecker(ast.NodeVisitor):
         if line_num <= 0 or line_num > len(self.lines):
             return ""
         line = self.lines[line_num - 1]
-        if "#" in line:
-            return line.split("#", 1)[1].strip()
+        if const.COMMENT_MARKER in line:
+            return line.split(const.COMMENT_MARKER, 1)[1].strip()
         return ""
 
     def is_suppressed(self, node: ast.AST, rule_id: str) -> bool:

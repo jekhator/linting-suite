@@ -90,9 +90,9 @@ class TestFindPythonFiles:
     def test_find_python_files_excludes_management_commands(self, tmp_path):
         """Find Python files excludes management commands."""
         (tmp_path / "file.py").write_text("a\n")
-        mgmt_dir = tmp_path / "management" / "commands"
-        mgmt_dir.mkdir(parents=True)
-        (mgmt_dir / "cmd.py").write_text("a\nb\n")
+        management_dir = tmp_path / "management" / "commands"
+        management_dir.mkdir(parents=True)
+        (management_dir / "cmd.py").write_text("a\nb\n")
         files = LocCap.find_python_files(str(tmp_path))
         assert len(files) == 1
         assert str(tmp_path / "file.py") in files
@@ -124,9 +124,8 @@ class TestGenerateBaseline:
         output = LocCap.generate_baseline(str(tmp_path))
         lines = output.strip().split("\n")
         assert len(lines) == 2
-        # Should be sorted by LOC descending
-        assert "100" in lines[0]  # file1 is first (higher LOC)
-        assert "50" in lines[1]  # file2 is second (lower LOC)
+        assert "100" in lines[0]
+        assert "50" in lines[1]
 
     def test_generate_baseline_with_floor(self, tmp_path):
         """Generate baseline respects floor parameter."""
@@ -167,12 +166,8 @@ class TestRunLocCap:
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
         (tmp_path / "file.py").write_text("a\n" * 700)
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=str(baseline_file),
-        )
+        baseline_text = str(baseline_file)
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 0
 
     def test_run_loc_cap_baselined_file_grew(self, tmp_path, capsys):
@@ -180,13 +175,9 @@ class TestRunLocCap:
         baseline_file = tmp_path / "baseline.txt"
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
-        (tmp_path / "file.py").write_text("a\n" * 750)  # Grew from 700 to 750
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=str(baseline_file),
-        )
+        (tmp_path / "file.py").write_text("a\n" * 750)
+        baseline_text = str(baseline_file)
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 1
         captured = capsys.readouterr()
         assert "grew by" in captured.out
@@ -204,13 +195,9 @@ class TestRunLocCap:
         baseline_file = tmp_path / "baseline.txt"
         baseline_file.write_text(f"{tmp_path}/file.py:700\n")
 
-        (tmp_path / "file.py").write_text("a\n" * 600)  # Improved from 700 to 600
-        exit_code = LocCap.run_loc_cap(
-            str(tmp_path),
-            hard_cap=694,
-            soft_target=500,
-            baseline_file=str(baseline_file),
-        )
+        (tmp_path / "file.py").write_text("a\n" * 600)
+        baseline_text = str(baseline_file)
+        exit_code = LocCap.run_loc_cap(str(tmp_path), hard_cap=694, soft_target=500, baseline_file=baseline_text)
         assert exit_code == 0
         captured = capsys.readouterr()
         assert "improved" in captured.out

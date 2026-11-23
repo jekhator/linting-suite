@@ -9,11 +9,8 @@ from unittest.mock import Mock
 
 import pytest
 
+import linting_suite.config.constants as const
 from linting_suite.config._config import Config
-from linting_suite.config.constants import (
-    ERR_BASELINE_INVALID_JSON,
-    ERR_BASELINE_MISSING,
-)
 from linting_suite.inspection import AnnotationInspector
 from linting_suite.linter import BaselineLoadError, DtoStrictLinter
 from linting_suite.rules.rules_client import RuleRegistry
@@ -46,9 +43,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_em_dash_explanation(self):
         """Test noqa comment with em-dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 — explanation here",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 — explanation here"]
         node = Mock()
         node.lineno = 1
 
@@ -57,9 +52,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_en_dash_explanation(self):
         """Test noqa comment with en-dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 – explanation",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 – explanation"]
         node = Mock()
         node.lineno = 1
 
@@ -68,9 +61,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_malformed_with_regular_dash_explanation(self):
         """Test noqa comment with regular dash explanation."""
-        source = [
-            "x = 1  # noqa: strict-module-R001 - explanation",
-        ]
+        source = ["x = 1  # noqa: strict-module-R001 - explanation"]
         node = Mock()
         node.lineno = 1
 
@@ -79,9 +70,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_with_multiple_spaces(self):
         """Test noqa comment with multiple spaces."""
-        source = [
-            "x = 1  #    noqa:    strict-module-R001",
-        ]
+        source = ["x = 1  #    noqa:    strict-module-R001"]
         node = Mock()
         node.lineno = 1
 
@@ -90,9 +79,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_bare_noqa_suppresses_all(self):
         """Test bare noqa suppresses all rules."""
-        source = [
-            "x = 1  # noqa",
-        ]
+        source = ["x = 1  # noqa"]
         node = Mock()
         node.lineno = 1
 
@@ -127,9 +114,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_dto_strict_backward_compat(self):
         """Test backward-compat dto-strict tag."""
-        source = [
-            "x = 1  # noqa: dto-strict",
-        ]
+        source = ["x = 1  # noqa: dto-strict"]
         node = Mock()
         node.lineno = 1
 
@@ -138,9 +123,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_dto_strict_specific_backward_compat(self):
         """Test backward-compat dto-strict-R001 tag."""
-        source = [
-            "x = 1  # noqa: dto-strict-R001",
-        ]
+        source = ["x = 1  # noqa: dto-strict-R001"]
         node = Mock()
         node.lineno = 1
 
@@ -149,9 +132,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_comma_separated_mixed(self):
         """Test comma-separated list with mixed old/new syntax."""
-        source = [
-            "x = 1  # noqa: dto-strict-R001,strict-module-R002",
-        ]
+        source = ["x = 1  # noqa: dto-strict-R001,strict-module-R002"]
         node = Mock()
         node.lineno = 1
 
@@ -161,9 +142,7 @@ class TestNoqaCommentEdgeCases:
 
     def test_noqa_no_comment(self):
         """Test line without comment."""
-        source = [
-            "x = 1",
-        ]
+        source = ["x = 1"]
         node = Mock()
         node.lineno = 1
 
@@ -178,10 +157,10 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for Name node."""
         source = "def f(x: int): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert result == "int"
 
     def test_get_annotation_string_none(self):
@@ -193,10 +172,10 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for simple subscript."""
         source = "def f(x: list[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert "list" in result.lower()
         assert "int" in result.lower()
 
@@ -204,129 +183,129 @@ class TestAnnotationParsingEdgeCases:
         """Test annotation string for tuple."""
         source = "def f(x: tuple[int, str]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert "tuple" in result.lower() or "int" in result.lower()
 
     def test_get_annotation_string_attribute(self):
         """Test annotation string for attribute."""
         source = "def f(x: typing.Optional[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.get_annotation_string(arg.annotation)
+        result = AnnotationInspector.get_annotation_string(argument.annotation)
         assert len(result) > 0
 
     def test_get_annotation_string_constant(self):
         """Test annotation string for constant."""
         source = "x: 'int' = 1"
         tree = ast.parse(source)
-        ann_assign = tree.body[0]
+        annotated_assign = tree.body[0]
 
-        result = AnnotationInspector.get_annotation_string(ann_assign.annotation)
+        result = AnnotationInspector.get_annotation_string(annotated_assign.annotation)
         assert "'int'" in result or "int" in result
 
     def test_is_dict_str_any_valid(self):
         """Test detection of Dict[str, Any]."""
         source = "from typing import Dict, Any\ndef f(x: Dict[str, Any]): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is True
 
     def test_is_dict_str_any_lowercase(self):
         """Test detection of dict[str, any]."""
         source = "def f(x: dict[str, any]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is True
 
     def test_is_dict_str_any_invalid(self):
         """Test detection rejects wrong types."""
         source = "def f(x: dict[str, int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_dict_str_any(arg.annotation)
+        result = AnnotationInspector.is_dict_str_any(argument.annotation)
         assert result is False
 
     def test_is_bare_collection_dict(self):
         """Test detection of bare dict."""
         source = "def f(x: dict): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_list(self):
         """Test detection of bare list."""
         source = "def f(x: list): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_tuple(self):
         """Test detection of bare tuple."""
         source = "def f(x: tuple): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is True
 
     def test_is_bare_collection_parametrized(self):
         """Test bare collection rejects parametrized."""
         source = "def f(x: list[int]): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.is_bare_collection(arg.annotation)
+        result = AnnotationInspector.is_bare_collection(argument.annotation)
         assert result is False
 
     def test_contains_any_present(self):
         """Test detection of Any."""
         source = "from typing import Any\ndef f(x: Any): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is True
 
     def test_contains_any_in_optional(self):
         """Test detection of Any in Optional."""
         source = "from typing import Optional, Any\ndef f(x: Optional[Any]): pass"
         tree = ast.parse(source)
-        func = tree.body[1]
-        arg = func.args.args[0]
+        function = tree.body[1]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is True
 
     def test_contains_any_absent(self):
         """Test detection rejects non-Any."""
         source = "def f(x: int): pass"
         tree = ast.parse(source)
-        func = tree.body[0]
-        arg = func.args.args[0]
+        function = tree.body[0]
+        argument = function.args.args[0]
 
-        result = AnnotationInspector.contains_any(arg.annotation)
+        result = AnnotationInspector.contains_any(argument.annotation)
         assert result is False
 
 
@@ -438,13 +417,11 @@ class TestLinterFileHandling:
             bad_file = Path(tmpdir) / "bad.py"
             bad_file.write_text("x = {1: 2, 3: 4, 5: 6}")
 
-            baseline = {
-                (str(bad_file), 1, "R002"): "abc123",
-            }
+            baseline = {(str(bad_file), 1, "R002"): "abc123"}
             linter = DtoStrictLinter(config, baseline=baseline)
 
             result = linter.lint_file(bad_file)
-            filtered = [v for v in result if v.rule_id == "R002" and v.line == 1]
+            filtered = [violation for violation in result if violation.rule_id == "R002" and violation.line == 1]
             assert len(filtered) == 0
 
     def test_load_baseline_valid(self):
@@ -452,16 +429,7 @@ class TestLinterFileHandling:
         with tempfile.TemporaryDirectory() as tmpdir:
             baseline_file = Path(tmpdir) / "baseline.json"
             baseline_file.write_text(
-                json.dumps(
-                    [
-                        {
-                            "file": "test.py",
-                            "line": 1,
-                            "rule_id": "R001",
-                            "message_hash": "abc123",
-                        }
-                    ]
-                )
+                json.dumps([{"file": "test.py", "line": 1, "rule_id": "R001", "message_hash": "abc123"}])
             )
 
             result = DtoStrictLinter.load_baseline(baseline_file)
@@ -475,16 +443,14 @@ class TestLinterFileHandling:
 
             with pytest.raises(BaselineLoadError) as caught:
                 DtoStrictLinter.load_baseline(baseline_file)
-            assert str(caught.value) == ERR_BASELINE_INVALID_JSON.format(
-                path=baseline_file
-            )
+            assert str(caught.value) == const.ERR_BASELINE_INVALID_JSON.format(path=baseline_file)
 
     def test_load_baseline_nonexistent(self):
         """Test loading nonexistent baseline file raises error."""
         baseline_file = Path("/nonexistent/baseline.json")
         with pytest.raises(BaselineLoadError) as caught:
             DtoStrictLinter.load_baseline(baseline_file)
-        assert str(caught.value) == ERR_BASELINE_MISSING.format(path=baseline_file)
+        assert str(caught.value) == const.ERR_BASELINE_MISSING.format(path=baseline_file)
 
     def test_severity_overrides_high(self):
         """Test severity override to HIGH."""
@@ -497,9 +463,9 @@ class TestLinterFileHandling:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R002":
-                    assert v.severity.name == "HIGH"
+            for violation in result:
+                if violation.rule_id == "R002":
+                    assert violation.severity.name == "HIGH"
 
     def test_get_exit_code_high_severity(self):
         """Test exit code 1 for high severity."""
@@ -508,9 +474,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 1
@@ -522,9 +486,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R002", RuleSeverity.MEDIUM, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R002", RuleSeverity.MEDIUM, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 2
@@ -536,9 +498,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R005", RuleSeverity.LOW, "test.py", 1, 0, "Test"),
-        ]
+        violations = [Violation("R005", RuleSeverity.LOW, "test.py", 1, 0, "Test")]
 
         code = linter.get_exit_code(violations)
         assert code == 3
@@ -558,9 +518,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "text")
         assert "test.py" in output
@@ -574,9 +532,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "json")
         data = json.loads(output)
@@ -593,9 +549,7 @@ class TestLinterFileHandling:
         config = Config()
         linter = DtoStrictLinter(config)
 
-        violations = [
-            Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message"),
-        ]
+        violations = [Violation("R001", RuleSeverity.HIGH, "test.py", 1, 0, "Test message")]
 
         output = linter.format_violations(violations, "github")
         assert "::error" in output

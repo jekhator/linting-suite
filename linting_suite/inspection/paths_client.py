@@ -3,6 +3,8 @@
 import fnmatch
 from pathlib import Path
 
+import linting_suite.config.constants as const
+
 
 class PathClassifier:
     """Classify file paths for linting scope."""
@@ -11,7 +13,7 @@ class PathClassifier:
     def is_test_file(file_path: Path) -> bool:
         """Check if file is a test file by basename (conftest.py or test_*.py) for linting."""
         basename = file_path.name
-        if basename == "conftest.py" or basename.startswith("test_"):
+        if basename == const.BASENAME_CONFTEST or basename.startswith(const.TEST_FILE_PREFIX):
             return True
         return False
 
@@ -19,9 +21,9 @@ class PathClassifier:
     def is_loc_test_file(file_path: Path) -> bool:
         """Check if file is a test file (conftest.py, test_*.py, or under tests/ directory)."""
         basename = file_path.name
-        if basename == "conftest.py" or basename.startswith("test_"):
+        if basename == const.BASENAME_CONFTEST or basename.startswith(const.TEST_FILE_PREFIX):
             return True
-        if "/tests/" in str(file_path) or str(file_path).startswith("tests/"):
+        if const.TESTS_DIRECTORY_INFIX in str(file_path) or str(file_path).startswith(const.TESTS_DIRECTORY_PREFIX):
             return True
         return False
 

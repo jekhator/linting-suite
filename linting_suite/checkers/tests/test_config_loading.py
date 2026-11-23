@@ -27,7 +27,6 @@ class TestConfigLoading:
     def test_config_from_nonexistent_pyproject(self):
         """Test loading from nonexistent config file."""
         config = Config.from_pyproject(Path("/nonexistent/pyproject.toml"))
-        # Should return defaults
         assert config.service_paths == ["apps/*/services/*.py", "**/services/*.py"]
 
     def test_config_from_pyproject(self, tmp_path):

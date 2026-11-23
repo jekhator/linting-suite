@@ -24,9 +24,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.LOW, (
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.LOW, (
                         "Override not applied: R011 should have LOW severity"
                     )
 
@@ -41,9 +41,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.HIGH, (
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.HIGH, (
                         "R011 should have original HIGH severity without override"
                     )
 
@@ -58,17 +58,15 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R002":
-                    assert v.severity == RuleSeverity.HIGH, (
+            for violation in result:
+                if violation.rule_id == "R002":
+                    assert violation.severity == RuleSeverity.HIGH, (
                         "Override not applied: R002 should have HIGH severity"
                     )
 
     def test_severity_override_to_medium(self):
         """Severity override to MEDIUM should work."""
-        config = Config(
-            severity_overrides={"R001": "MEDIUM"}, service_paths=["**/*.py"]
-        )
+        config = Config(severity_overrides={"R001": "MEDIUM"}, service_paths=["**/*.py"])
 
         with tempfile.TemporaryDirectory() as tmpdir:
             bad_file = Path(tmpdir) / "bad.py"
@@ -82,9 +80,9 @@ class TestSeverityOverridesFix:
             linter = DtoStrictLinter(config)
             result = linter.lint_path(bad_file)
 
-            for v in result:
-                if v.rule_id == "R001":
-                    assert v.severity == RuleSeverity.MEDIUM, (
+            for violation in result:
+                if violation.rule_id == "R001":
+                    assert violation.severity == RuleSeverity.MEDIUM, (
                         "Override not applied: R001 should have MEDIUM severity"
                     )
 
@@ -95,12 +93,7 @@ class TestInfoSeverityLevel:
     def test_info_severity_exit_code_zero(self):
         """Violations with only INFO severity should exit 0."""
         info_violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Test info violation",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Test info violation"
         )
 
         config = Config()
@@ -122,31 +115,17 @@ class TestInfoSeverityLevel:
 
             exit_code = linter.get_exit_code(result)
 
-            for v in result:
-                if v.rule_id == "R011":
-                    assert v.severity == RuleSeverity.INFO, "R011 should be INFO"
+            for violation in result:
+                if violation.rule_id == "R011":
+                    assert violation.severity == RuleSeverity.INFO, "R011 should be INFO"
 
             assert exit_code == 0, "Exit code should be 0 when only INFO violations"
 
     def test_info_not_blocking_with_other_violations(self):
         """When INFO and LOW are present, should exit 3 (LOW blocking)."""
         violations = [
-            Violation(
-                rule_id="R011",
-                severity=RuleSeverity.INFO,
-                file="test.py",
-                line=1,
-                col=0,
-                message="Info",
-            ),
-            Violation(
-                rule_id="R005",
-                severity=RuleSeverity.LOW,
-                file="test.py",
-                line=2,
-                col=0,
-                message="Low",
-            ),
+            Violation(rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Info"),
+            Violation(rule_id="R005", severity=RuleSeverity.LOW, file="test.py", line=2, col=0, message="Low")
         ]
 
         config = Config()
@@ -158,22 +137,8 @@ class TestInfoSeverityLevel:
     def test_high_overrides_info(self):
         """HIGH severity should block even with INFO present."""
         violations = [
-            Violation(
-                rule_id="R011",
-                severity=RuleSeverity.INFO,
-                file="test.py",
-                line=1,
-                col=0,
-                message="Info",
-            ),
-            Violation(
-                rule_id="R001",
-                severity=RuleSeverity.HIGH,
-                file="test.py",
-                line=2,
-                col=0,
-                message="High",
-            ),
+            Violation(rule_id="R011", severity=RuleSeverity.INFO, file="test.py", line=1, col=0, message="Info"),
+            Violation(rule_id="R001", severity=RuleSeverity.HIGH, file="test.py", line=2, col=0, message="High")
         ]
 
         config = Config()
@@ -191,10 +156,10 @@ class TestNoqaRuleCodeShorthand:
         source = "def foo(x: Any): pass  # noqa: R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_bare_rule_code_r011(self):
         """# noqa: R011 should suppress R011 only."""
@@ -211,66 +176,66 @@ class TestNoqaRuleCodeShorthand:
         source = "def foo(x: Any): pass  # noqa: R006, R011"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R011", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R011", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_bare_code_not_suppressing_other(self):
         """# noqa: R006 should NOT suppress R001."""
         source = "def foo(x: dict[str, Any]): pass  # noqa: R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
-        assert AnnotationInspector.has_noqa_comment(func_node, "R001", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R001", lines) is False
 
     def test_noqa_namespaced_still_works(self):
         """Existing # noqa: strict-module-R006 should still work."""
         source = "def foo(x: Any): pass  # noqa: strict-module-R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_dto_strict_compat_still_works(self):
         """Existing # noqa: dto-strict-R006 backward-compat should still work."""
         source = "def foo(x: Any): pass  # noqa: dto-strict-R006"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_bare_code_with_explanation(self):
         """# noqa: R006 - explanation should work."""
         source = "def foo(x: Any): pass  # noqa: R006 - legacy payload"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is True
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is True
 
     def test_noqa_negative_control_without_comment(self):
         """RED control: Without noqa comment, should return False."""
         source = "def foo(x: Any): pass"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is False
 
     def test_noqa_negative_control_wrong_rule(self):
         """RED control: # noqa: R001 should not suppress R006."""
         source = "def foo(x: Any): pass  # noqa: R001"
         lines = source.splitlines()
         tree = ast.parse(source)
-        func_node = tree.body[0]
+        function_node = tree.body[0]
 
-        assert AnnotationInspector.has_noqa_comment(func_node, "R006", lines) is False
+        assert AnnotationInspector.has_noqa_comment(function_node, "R006", lines) is False
 
 
 class TestInfoSeverityFormatting:
@@ -279,12 +244,8 @@ class TestInfoSeverityFormatting:
     def test_format_text_info(self):
         """INFO violations should format correctly as text."""
         violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="String literal at raise site",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py",
+            line=1, col=0, message="String literal at raise site"
         )
 
         output = violation.format_text()
@@ -294,12 +255,8 @@ class TestInfoSeverityFormatting:
     def test_format_github_info(self):
         """INFO violations should use 'notice' level in GitHub format."""
         violation = Violation(
-            rule_id="R011",
-            severity=RuleSeverity.INFO,
-            file="test.py",
-            line=1,
-            col=0,
-            message="String literal at raise site",
+            rule_id="R011", severity=RuleSeverity.INFO, file="test.py",
+            line=1, col=0, message="String literal at raise site"
         )
 
         output = violation.format_github()
@@ -309,12 +266,7 @@ class TestInfoSeverityFormatting:
     def test_format_github_high_is_error(self):
         """HIGH violations should use 'error' level in GitHub format."""
         violation = Violation(
-            rule_id="R001",
-            severity=RuleSeverity.HIGH,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Dict[str, Any]",
+            rule_id="R001", severity=RuleSeverity.HIGH, file="test.py", line=1, col=0, message="Dict[str, Any]"
         )
 
         output = violation.format_github()
@@ -323,12 +275,7 @@ class TestInfoSeverityFormatting:
     def test_format_github_medium_is_warning(self):
         """MEDIUM violations should use 'warning' level in GitHub format."""
         violation = Violation(
-            rule_id="R002",
-            severity=RuleSeverity.MEDIUM,
-            file="test.py",
-            line=1,
-            col=0,
-            message="Inline dict",
+            rule_id="R002", severity=RuleSeverity.MEDIUM, file="test.py", line=1, col=0, message="Inline dict"
         )
 
         output = violation.format_github()
