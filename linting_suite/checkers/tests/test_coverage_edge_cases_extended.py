@@ -346,7 +346,7 @@ class TestLinterFileHandling:
             assert result == []
 
     def test_lint_file_unreadable(self):
-        """Test linting unreadable file returns empty."""
+        """Test linting unreadable file is reported, not passed."""
         config = Config()
         linter = DtoStrictLinter(config)
 
@@ -357,7 +357,7 @@ class TestLinterFileHandling:
             os.chmod(py_file, 0o000)
             try:
                 result = linter.lint_file(py_file)
-                assert result == []
+                assert [v.rule_id for v in result] == ["E001"]
             finally:
                 os.chmod(py_file, 0o644)
 
@@ -371,7 +371,7 @@ class TestLinterFileHandling:
             py_file.write_bytes(b"\x80\x81\x82\x83")
 
             result = linter.lint_file(py_file)
-            assert result == []
+            assert [v.rule_id for v in result] == ["E001"]
 
     def test_lint_file_syntax_error(self):
         """Test linting file with syntax error."""
@@ -383,7 +383,7 @@ class TestLinterFileHandling:
             py_file.write_text("x = (")
 
             result = linter.lint_file(py_file)
-            assert result == []
+            assert [v.rule_id for v in result] == ["E002"]
 
     def test_lint_path_single_file(self):
         """Test linting single file via lint_path."""
