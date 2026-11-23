@@ -15,6 +15,7 @@ EXIT_CODE_MEDIUM_VIOLATION = 2
 EXIT_CODE_LOW_VIOLATION = 3
 
 ERR_NONEXISTENT_PATH = "error: path does not exist: {path}"
+ERR_LOC_CAP_UNREADABLE_FILE = "error: file could not be read: {path}"
 ERR_BASELINE_MISSING = "error: baseline file not found or unreadable: {path}"
 ERR_BASELINE_INVALID_JSON = "error: baseline file contains invalid JSON: {path}"
 ERR_BASELINE_NOT_LIST = "error: baseline file top level must be a list: {path}"
@@ -23,6 +24,11 @@ ERR_BASELINE_ENTRY_SHAPE = (
     "error: baseline entry {index} is missing required key '{key}': {path}"
 )
 MSG_BASELINE_LOADED = "baseline: {count} entries loaded from {path}"
+
+RULE_ID_UNREADABLE_FILE = "E001"
+RULE_ID_UNPARSEABLE_FILE = "E002"
+MSG_UNREADABLE_FILE = "File could not be read, so it was not linted: {reason}"
+MSG_UNPARSEABLE_FILE = "File could not be parsed, so it was not linted: {reason}"
 
 REQUIRED_BASELINE_KEYS: tuple[str, ...] = ("file", "line", "rule_id", "message_hash")
 

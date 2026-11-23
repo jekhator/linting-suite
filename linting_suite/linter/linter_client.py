@@ -36,8 +36,12 @@ from linting_suite.config.constants import (
     FORMAT_GITHUB,
     FORMAT_JSON,
     FORMAT_TEXT,
+    MSG_UNPARSEABLE_FILE,
+    MSG_UNREADABLE_FILE,
     PY_EXTENSION,
     REQUIRED_BASELINE_KEYS,
+    RULE_ID_UNPARSEABLE_FILE,
+    RULE_ID_UNREADABLE_FILE,
     VALID_SEVERITY_LEVELS,
 )
 from linting_suite.linter.linter_objects import BaselineLoadError
@@ -61,13 +65,17 @@ class DtoStrictLinter:
 
         try:
             source = file_path.read_text()
-        except Exception:
-            return []
+        except (OSError, UnicodeDecodeError) as error:
+            return self._file_error(
+                file_path, RULE_ID_UNREADABLE_FILE, MSG_UNREADABLE_FILE, error
+            )
 
         try:
             tree = ast.parse(source)
-        except SyntaxError:
-            return []
+        except (SyntaxError, ValueError) as error:
+            return self._file_error(
+                file_path, RULE_ID_UNPARSEABLE_FILE, MSG_UNPARSEABLE_FILE, error
+            )
 
         violations = []
 
@@ -101,6 +109,25 @@ class DtoStrictLinter:
             filtered = self._filter_by_baseline(filtered)
 
         return filtered
+
+    def _file_error(
+        self, file_path: Path, rule_id: str, message: str, error: Exception
+    ) -> list[Violation]:
+        """Report a file that could not be linted as one HIGH violation."""
+        if not self.config.is_rule_enabled(rule_id):
+            return []
+
+        violation = Violation(
+            rule_id=rule_id,
+            severity=RuleSeverity.HIGH,
+            file=str(file_path),
+            line=getattr(error, "lineno", None) or 1,
+            col=getattr(error, "offset", None) or 0,
+            message=message.format(reason=type(error).__name__),
+        )
+        if self.baseline:
+            return self._filter_by_baseline([violation])
+        return [violation]
 
     def lint_path(self, path: Path) -> list[Violation]:
         """Lint all Python files in a directory or single file."""
