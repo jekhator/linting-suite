@@ -5,6 +5,10 @@ from dataclasses import dataclass
 import linting_suite.config.constants as const
 
 
+class LocCapReadError(ValueError):
+    """Error reading a file whose lines were to be counted."""
+
+
 @dataclass(frozen=True, slots=True)
 class LocCapConfig:
     """Configuration for LOC cap checker."""

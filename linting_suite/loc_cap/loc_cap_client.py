@@ -1,10 +1,12 @@
 """LOC cap enforcer for Python codebases with ratchet baseline semantics."""
 
 import os
+import sys
 from pathlib import Path
 
 import linting_suite.config.constants as const
 from linting_suite.inspection import PathClassifier
+from linting_suite.loc_cap.loc_cap_objects import LocCapReadError
 
 
 class LocCap:
@@ -12,12 +14,12 @@ class LocCap:
 
     @staticmethod
     def count_lines(file_path: str) -> int:
-        """Count all lines (matches wc -l semantics for baseline compatibility)."""
+        """Count all lines (matches wc -l semantics); raise if the file cannot be read."""
         try:
             with open(file_path, const.FILE_MODE_READ, encoding=const.ENCODING_UTF8) as handle:
                 return sum(1 for _ in handle)
-        except (OSError, UnicodeDecodeError):
-            return 0
+        except (OSError, UnicodeDecodeError) as error:
+            raise LocCapReadError(const.ERR_LOC_CAP_UNREADABLE_FILE.format(path=file_path)) from error
 
     @staticmethod
     def load_baseline(baseline_file: str) -> dict[str, int]:
@@ -97,14 +99,24 @@ class LocCap:
         soft_target: int = const.DEFAULT_LOC_SOFT_TARGET, baseline_file: str = const.DEFAULT_LOC_CAP_BASELINE_FILE,
         exclude_patterns: tuple[str, ...] = const.DEFAULT_EXCLUDE_PATTERNS, generate: bool = False
     ) -> int:
-        """Run LOC cap checker with hard/soft caps and baseline ratchet enforcement."""
+        """Run LOC cap checker; a missing path or unreadable file fails the gate."""
+        if not Path(path).exists():
+            print(const.ERR_NONEXISTENT_PATH.format(path=path), file=sys.stderr)
+            return const.EXIT_CODE_HIGH_VIOLATION
+
+        try:
+            current = LocCap.find_python_files(path, exclude_patterns)
+        except LocCapReadError as error:
+            print(str(error), file=sys.stderr)
+            return const.EXIT_CODE_HIGH_VIOLATION
+
         if generate:
-            baseline_output = LocCap.generate_baseline(path, exclude_patterns, floor=0)
-            print(baseline_output)
+            sorted_files = sorted(current.items(), key=lambda entry: (-entry[1], entry[0]))
+            lines = [const.TEMPLATE_LOC_BASELINE_LINE.format(path=path, loc=loc) for path, loc in sorted_files]
+            print(const.LINE_SEPARATOR.join(lines))
             return const.EXIT_CODE_SUCCESS
 
         baseline = LocCap.load_baseline(baseline_file)
-        current = LocCap.find_python_files(path, exclude_patterns)
 
         soft_warnings = []
         hard_violations = []

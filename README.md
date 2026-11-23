@@ -5,13 +5,13 @@ Formerly strict-suite.
 [![PyPI](https://img.shields.io/pypi/v/linting-suite.svg?style=flat)](https://pypi.org/project/linting-suite/)
 [![CI](https://github.com/jekhator/linting-suite/workflows/CI/badge.svg)](https://github.com/jekhator/linting-suite/actions)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 
 Consolidated Python linter with R001-R015 rules for DTO discipline, module structure, typing compliance, constants enforcement, and formatting standards.
 
 **Consolidated from strict-module 0.5.0.** This monorepo consolidates the strict-module package and related linting infrastructure. Backward-compatible CLI entry points (`strict-module` and `dto-strict`) are preserved.
 
-> **Python only.** The strict-component (npm/TypeScript) stays in its own repo. This distribution is Python 3.11+ only.
+> **Python only.** The strict-component (npm/TypeScript) stays in its own repo. This distribution is Python 3.12+ only.
 
 ## Overview
 

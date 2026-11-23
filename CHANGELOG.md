@@ -11,6 +11,17 @@ All notable changes to this project will be documented in this file.
 - **Module namespaces** - Modules no longer carry the constant names they used to pull in with `from ... import` (for example `linting_suite.module.cli.FORMAT_TEXT`); read constants from `linting_suite.config.constants`. Package-root exports are unchanged.
 - **Ruff** - Lint only, line length 120; the format check step is removed and `ruff format` is never run.
 
+## [0.6.1] - 2026-11-22
+
+### Fixed
+
+- **R003 crashed on Python 3.14** - a dataclass decorator argument given as a name (for example `@dataclass(frozen=FROZEN, slots=True)`) in a DTO-path file made the linter die with `AttributeError: module 'ast' has no attribute 'NameConstant'`. The removed node type is no longer referenced; `ast.Constant` covers every literal on 3.12 through 3.14.
+- **`loc-cap` passed on a path that does not exist** - a typo or an unexpanded shell brace in a gate path printed the success line and exited 0. A missing path now prints `error: path does not exist: <path>` to stderr and exits 1, with or without `--generate-baseline`.
+- **`loc-cap` counted an unreadable file as zero lines** - a file that cannot be opened or decoded as UTF-8 now fails the gate with exit code 1 and is named on stderr. `LocCap.count_lines` raises the new `LocCapReadError` instead of returning 0.
+- **Lint passed files it could not read or parse** - an unreadable file is now reported as HIGH violation `E001` and a file with a syntax error as HIGH violation `E002`, so the gate exits 1 instead of treating the file as clean. Both ids honour `disabled_rules` and the baseline.
+- **Typing marker** - `py.typed` now sits at the `linting_suite` import root, so type checkers analyse every subpackage, not only `linting_suite.module`.
+- **Docs** - README states Python 3.12+ (matching `requires-python`); the historical changelog link points at `docs/linting_suite/`.
+
 ## [0.6.0] - 2026-11-22
 
 ### Fixed
@@ -91,4 +102,4 @@ All notable changes to this project will be documented in this file.
 
 ## Historical Changelog
 
-For strict-module v0.1.0-v0.5.0 release history, see [CHANGELOG-history.md](docs/strict_module/CHANGELOG-history.md).
+For strict-module v0.1.0-v0.5.0 release history, see [CHANGELOG-history.md](docs/linting_suite/CHANGELOG-history.md).

@@ -175,8 +175,6 @@ class R003Checker(BaseChecker):
                     continue
                 if isinstance(keyword.value, ast.Constant):
                     kwargs[keyword.arg] = str(keyword.value.value)
-                elif isinstance(keyword.value, ast.NameConstant):
-                    kwargs[keyword.arg] = str(keyword.value.value)
                 elif isinstance(keyword.value, ast.Name):
                     kwargs[keyword.arg] = keyword.value.id
         return kwargs

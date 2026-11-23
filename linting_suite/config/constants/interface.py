@@ -38,12 +38,19 @@ EXIT_CODE_LOW_VIOLATION: Final[int] = 3
 "Baseline file"
 
 ERR_NONEXISTENT_PATH: Final[str] = "error: path does not exist: {path}"
+ERR_LOC_CAP_UNREADABLE_FILE: Final[str] = "error: file could not be read: {path}"
 ERR_BASELINE_MISSING: Final[str] = "error: baseline file not found or unreadable: {path}"
 ERR_BASELINE_INVALID_JSON: Final[str] = "error: baseline file contains invalid JSON: {path}"
 ERR_BASELINE_NOT_LIST: Final[str] = "error: baseline file top level must be a list: {path}"
 ERR_BASELINE_ENTRY_NOT_OBJECT: Final[str] = "error: baseline entry {index} is not an object: {path}"
 ERR_BASELINE_ENTRY_SHAPE: Final[str] = "error: baseline entry {index} is missing required key '{key}': {path}"
 MSG_BASELINE_LOADED: Final[str] = "baseline: {count} entries loaded from {path}"
+MSG_UNREADABLE_FILE: Final[str] = "File could not be read, so it was not linted: {reason}"
+MSG_UNPARSEABLE_FILE: Final[str] = "File could not be parsed, so it was not linted: {reason}"
+ERROR_ATTRIBUTE_LINE: Final[str] = "lineno"
+ERROR_ATTRIBUTE_COLUMN: Final[str] = "offset"
+ERROR_DEFAULT_LINE: Final[int] = 1
+ERROR_DEFAULT_COLUMN: Final[int] = 0
 REQUIRED_BASELINE_KEYS: Final[tuple[str, ...]] = ("file", "line", "rule_id", "message_hash")
 BASELINE_KEY_FILE: Final[str] = "file"
 BASELINE_KEY_LINE: Final[str] = "line"

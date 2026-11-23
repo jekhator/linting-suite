@@ -43,13 +43,13 @@ class DtoStrictLinter:
 
         try:
             source = file_path.read_text()
-        except Exception:
-            return []
+        except (OSError, UnicodeDecodeError) as error:
+            return self._file_error(file_path, const.RULE_ID_UNREADABLE_FILE, const.MSG_UNREADABLE_FILE, error)
 
         try:
             tree = ast.parse(source)
-        except SyntaxError:
-            return []
+        except (SyntaxError, ValueError) as error:
+            return self._file_error(file_path, const.RULE_ID_UNPARSEABLE_FILE, const.MSG_UNPARSEABLE_FILE, error)
 
         violations = []
 
@@ -70,6 +70,23 @@ class DtoStrictLinter:
             filtered = self._filter_by_baseline(filtered)
 
         return filtered
+
+    def _file_error(self, file_path: Path, rule_id: str, message: str, error: Exception) -> list[Violation]:
+        """Report a file that could not be linted as one HIGH violation."""
+        if not self.config.is_rule_enabled(rule_id):
+            return []
+
+        violation = Violation(
+            rule_id=rule_id,
+            severity=RuleSeverity.HIGH,
+            file=str(file_path),
+            line=getattr(error, const.ERROR_ATTRIBUTE_LINE, None) or const.ERROR_DEFAULT_LINE,
+            col=getattr(error, const.ERROR_ATTRIBUTE_COLUMN, None) or const.ERROR_DEFAULT_COLUMN,
+            message=message.format(reason=type(error).__name__),
+        )
+        if self.baseline:
+            return self._filter_by_baseline([violation])
+        return [violation]
 
     def lint_path(self, path: Path) -> list[Violation]:
         """Lint all Python files in a directory or single file."""

@@ -66,7 +66,7 @@ class TestLinterEdgeCases:
         config = Config()
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(bad_file)
-        assert len(violations) == 0
+        assert [v.rule_id for v in violations] == ["E002"]
 
     def test_linter_with_nonexistent_file(self, tmp_path):
         """Test linting a nonexistent file."""
@@ -74,7 +74,7 @@ class TestLinterEdgeCases:
         config = Config()
         linter = DtoStrictLinter(config)
         violations = linter.lint_file(nonexistent)
-        assert len(violations) == 0
+        assert [v.rule_id for v in violations] == ["E001"]
 
     def test_linter_format_github_high_severity(self, tmp_path):
         """Test GitHub format with HIGH severity."""

@@ -23,6 +23,8 @@ RULE_ID_R012: Final[str] = "R012"
 RULE_ID_R013: Final[str] = "R013"
 RULE_ID_R014: Final[str] = "R014"
 RULE_ID_R015: Final[str] = "R015"
+RULE_ID_UNREADABLE_FILE: Final[str] = "E001"
+RULE_ID_UNPARSEABLE_FILE: Final[str] = "E002"
 
 
 "Rule names"

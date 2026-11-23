@@ -1,7 +1,9 @@
 """Tests for loc-cap subcommand."""
 
+import pytest
+
 from linting_suite.config._config import Config, LocCapConfig
-from linting_suite.loc_cap import LocCap
+from linting_suite.loc_cap import LocCap, LocCapReadError
 
 
 class TestCountLines:
@@ -26,8 +28,9 @@ class TestCountLines:
         assert LocCap.count_lines(str(test_file)) == 0
 
     def test_count_lines_nonexistent_file(self):
-        """Count lines in nonexistent file returns 0."""
-        assert LocCap.count_lines("/nonexistent/file.py") == 0
+        """Count lines in nonexistent file raises instead of returning 0."""
+        with pytest.raises(LocCapReadError):
+            LocCap.count_lines("/nonexistent/file.py")
 
 
 class TestLoadBaseline:
